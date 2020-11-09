@@ -1,0 +1,2 @@
+include ':app'
+rootProject.name = "Android-Project-2020-Z_Team"
