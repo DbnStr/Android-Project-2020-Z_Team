@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "392860090063",
+    "firebase_url": "https://android-project-2020-zteam.firebaseio.com",
+    "project_id": "android-project-2020-zteam",
+    "storage_bucket": "android-project-2020-zteam.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:392860090063:android:e28154f17809b6d6ba01ba",
+        "android_client_info": {
+          "package_name": "ru.mail.z_team"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "392860090063-o43sd4qp03p0hbvqj9lfjjgjoa0sciu8.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "ru.mail.z_team",
+            "certificate_hash": "e3987dc22b5f24d3c1813938979158c0e938ab00"
+          }
+        },
+        {
+          "client_id": "392860090063-t2umfekls0d7h6c4deackqschgjqc2c0.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA72sxB2a5kSG4Fh9rGRJnEdFXOQMN9q-g"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "392860090063-t2umfekls0d7h6c4deackqschgjqc2c0.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
