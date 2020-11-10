@@ -10,6 +10,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        new NewUsedClass().sum(2, 6);
+        new NewUsedClass().sum(3, 6);
     }
 }
