@@ -3,6 +3,8 @@ package ru.mail.z_team;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -24,6 +26,13 @@ public class FirebaseUIActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_firebase_ui);
+        Button btn = findViewById(R.id.start_auth);
+        btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                createSignInIntent();
+            }
+        });
         Log.d("FirebaseUIActivity", "onCreate");
     }
 
