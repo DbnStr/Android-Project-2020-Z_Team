@@ -26,13 +26,7 @@ public class FirebaseUIActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_firebase_ui);
-        Button btn = findViewById(R.id.start_auth);
-        btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                createSignInIntent();
-            }
-        });
+        createSignInIntent();
         Log.d("FirebaseUIActivity", "onCreate");
     }
 
@@ -60,6 +54,9 @@ public class FirebaseUIActivity extends AppCompatActivity {
             if (resultCode == RESULT_OK) {
                 // Successfully signed in
                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                Intent intent = new Intent(this, MenuActivity.class);
+                startActivity(intent);
+                finish();
                 // ...
             } else {
                 // Sign in failed. If response is null the user canceled the

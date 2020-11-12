@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">Android-Project-2020-Z_Team</string>
     <string name="authUI">Auth</string>
+    <string name="hello">HELLO</string>
 </resources>
