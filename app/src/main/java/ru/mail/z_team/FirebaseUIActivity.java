@@ -5,11 +5,13 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.firebase.ui.auth.AuthUI;
+import com.firebase.ui.auth.ErrorCodes;
 import com.firebase.ui.auth.IdpResponse;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -21,6 +23,7 @@ import java.util.List;
 
 public class FirebaseUIActivity extends AppCompatActivity {
     private static final int RC_SIGN_IN = 123;
+    private static final String TAG = "SIGN_IN_ERROR";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,10 +65,19 @@ public class FirebaseUIActivity extends AppCompatActivity {
                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                 // ...
             } else {
-                // Sign in failed. If response is null the user canceled the
-                // sign-in flow using the back button. Otherwise check
-                // response.getError().getErrorCode() and handle the error.
-                // ...
+                if (response == null) {
+                    // User pressed back button
+                    Toast.makeText(this, R.string.sign_in_cancelled, Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                if (response.getError().getErrorCode() == ErrorCodes.NO_NETWORK) {
+                    Toast.makeText(this, R.string.no_internet_connection, Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                Toast.makeText(this, R.string.unknown_error, Toast.LENGTH_SHORT).show();
+                Log.e(TAG, "Sign-in error: ", response.getError());
             }
         }
     }
