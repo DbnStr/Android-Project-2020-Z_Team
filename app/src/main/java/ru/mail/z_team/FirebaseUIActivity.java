@@ -53,17 +53,13 @@ public class FirebaseUIActivity extends AppCompatActivity {
 
         if (requestCode == RC_SIGN_IN) {
             IdpResponse response = IdpResponse.fromResultIntent(data);
-
             if (resultCode == RESULT_OK) {
-                // Successfully signed in
                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-                Intent intent = new Intent(this, MenuActivity.class);
+                Intent intent = new Intent(this, MainMenuActivity.class);
                 startActivity(intent);
                 finish();
-                // ...
             } else {
                 if (response == null) {
-                    // User pressed back button
                     Toast.makeText(this, R.string.sign_in_cancelled, Toast.LENGTH_SHORT).show();
                     return;
                 }

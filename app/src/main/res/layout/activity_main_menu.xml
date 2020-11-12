@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/main_menu"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/main_fragment"
+        android:layout_width="650dp"
+        android:layout_height="650dp"
+        android:text="@string/hello">
+
+    </TextView>
+
+    <TableLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/main_fragment">
+
+        <TableRow>
+
+            <TextView
+                android:id="@+id/news_feed_icon"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="@string/hello">
+
+            </TextView>
+
+            <TextView
+                android:id="@+id/walk_icon"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="@string/hello">
+
+            </TextView>
+
+            <TextView
+                android:id="@+id/friends_icon"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="@string/hello">
+
+            </TextView>
+
+            <TextView
+                android:id="@+id/profile_icon"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="@string/hello">
+
+            </TextView>
+        </TableRow>
+    </TableLayout>
+
+
+</RelativeLayout>
