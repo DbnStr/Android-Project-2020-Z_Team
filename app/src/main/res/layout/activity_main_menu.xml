@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main_menu"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -9,22 +10,28 @@
         android:id="@+id/main_fragment"
         android:layout_width="650dp"
         android:layout_height="650dp"
-        android:text="@string/hello">
+        android:gravity="center"
+        android:text="@string/some_menu"
+        android:textSize="100sp">
 
     </TextView>
 
     <TableLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/main_fragment">
+        android:layout_below="@+id/main_fragment"
+        android:stretchColumns="*">
 
-        <TableRow>
-
+        <TableRow
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:layout_weight="1">
             <TextView
                 android:id="@+id/news_feed_icon"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:text="@string/hello">
+                android:gravity="center"
+                android:text="@string/news">
 
             </TextView>
 
@@ -32,7 +39,8 @@
                 android:id="@+id/walk_icon"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:text="@string/hello">
+                android:gravity="center"
+                android:text="@string/walks">
 
             </TextView>
 
@@ -40,7 +48,8 @@
                 android:id="@+id/friends_icon"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:text="@string/hello">
+                android:gravity="center"
+                android:text="@string/friends">
 
             </TextView>
 
@@ -48,7 +57,8 @@
                 android:id="@+id/profile_icon"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:text="@string/hello">
+                android:gravity="center"
+                android:text="@string/profile">
 
             </TextView>
         </TableRow>
