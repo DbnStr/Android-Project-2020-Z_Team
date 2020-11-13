@@ -17,22 +17,22 @@
 
     </LinearLayout>
 
-    <TableLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@+id/current_menu_container"
-        android:stretchColumns="*">
-
-        <TableRow
-            android:layout_height="wrap_content"
-            android:layout_width="wrap_content"
-            android:layout_weight="1">
+        android:stretchColumns="*"
+        android:id="@+id/icon_layout"
+        android:orientation="horizontal">
             <TextView
                 android:id="@+id/news_feed_icon"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:layout_weight="1"
                 android:gravity="center"
-                android:text="@string/news">
+                android:text="@string/news"
+                android:clickable="true"
+                android:focusable="true">
 
             </TextView>
 
@@ -40,8 +40,11 @@
                 android:id="@+id/walk_icon"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:layout_weight="1"
                 android:gravity="center"
-                android:text="@string/walks">
+                android:text="@string/walks"
+                android:clickable="true"
+                android:focusable="true">
 
             </TextView>
 
@@ -49,8 +52,11 @@
                 android:id="@+id/friends_icon"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:layout_weight="1"
                 android:gravity="center"
-                android:text="@string/friends">
+                android:text="@string/friends"
+                android:clickable="true"
+                android:focusable="true">
 
             </TextView>
 
@@ -58,12 +64,14 @@
                 android:id="@+id/profile_icon"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:layout_weight="1"
                 android:gravity="center"
-                android:text="@string/profile">
+                android:text="@string/profile"
+                android:clickable="true"
+                android:focusable="true">
 
             </TextView>
-        </TableRow>
-    </TableLayout>
+    </LinearLayout>
 
 
 </RelativeLayout>
