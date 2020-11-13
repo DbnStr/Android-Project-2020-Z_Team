@@ -10,6 +10,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
 import ru.mail.z_team.icon_fragments.FriendsFragment;
+import ru.mail.z_team.icon_fragments.GoOutFragment;
 import ru.mail.z_team.icon_fragments.NewsFragment;
 import ru.mail.z_team.icon_fragments.ProfileFragment;
 import ru.mail.z_team.icon_fragments.WalksFragment;
@@ -20,6 +21,7 @@ public class MainMenuActivity extends AppCompatActivity {
     static private final String WALKS_TAG = "WALKS FRAGMENT";
     static private final String FRIENDS_TAG = "FRIENDS FRAGMENT";
     static private final String PROFILE_TAG = "PROFILE FRAGMENT";
+    static private final String GO_OUT_TAG = "GO_OUT FRAGMENT";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,14 +32,17 @@ public class MainMenuActivity extends AppCompatActivity {
         final FragmentManager fragmentManager = getSupportFragmentManager();
         final int container = R.id.current_menu_container;
         final TextView news = findViewById(R.id.news_feed_icon);
-        final TextView walks = findViewById(R.id.walk_icon);
+        final TextView walks = findViewById(R.id.walks_icon);
         final TextView friends = findViewById(R.id.friends_icon);
         final TextView profile = findViewById(R.id.profile_icon);
+        final TextView goOut = findViewById(R.id.go_out_icon);
+
 
         news.setOnClickListener(new ClickOnMainIconHandler<>(new NewsFragment()).getListener(NEWS_TAG, fragmentManager, container));
         walks.setOnClickListener(new ClickOnMainIconHandler<>(new WalksFragment()).getListener(WALKS_TAG, fragmentManager, container));
         friends.setOnClickListener(new ClickOnMainIconHandler<>(new FriendsFragment()).getListener(FRIENDS_TAG, fragmentManager, container));
         profile.setOnClickListener(new ClickOnMainIconHandler<>(new ProfileFragment()).getListener(PROFILE_TAG, fragmentManager, container));
+        goOut.setOnClickListener(new ClickOnMainIconHandler<>(new GoOutFragment()).getListener(GO_OUT_TAG, fragmentManager, container));
 
         if (getSupportFragmentManager().findFragmentById(container) == null) {
             getSupportFragmentManager()
