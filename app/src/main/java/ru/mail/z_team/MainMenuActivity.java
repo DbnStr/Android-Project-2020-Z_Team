@@ -16,10 +16,10 @@ import ru.mail.z_team.icon_fragments.WalksFragment;
 
 public class MainMenuActivity extends AppCompatActivity {
 
-    static private final String newsTag = "NEWS FRAGMENT";
-    static private final String walksTag = "WALKS FRAGMENT";
-    static private final String friendsTag = "FRIENDS FRAGMENT";
-    static private final String profileTag = "PROFILE FRAGMENT";
+    static private final String NEWS_TAG = "NEWS FRAGMENT";
+    static private final String WALKS_TAG = "WALKS FRAGMENT";
+    static private final String FRIENDS_TAG = "FRIENDS FRAGMENT";
+    static private final String PROFILE_TAG = "PROFILE FRAGMENT";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,15 +34,15 @@ public class MainMenuActivity extends AppCompatActivity {
         final TextView friends = findViewById(R.id.friends_icon);
         final TextView profile = findViewById(R.id.profile_icon);
 
-        news.setOnClickListener(new ClickOnMainIconHandler<>(new NewsFragment()).getListener(newsTag, fragmentManager, container));
-        walks.setOnClickListener(new ClickOnMainIconHandler<>(new WalksFragment()).getListener(walksTag, fragmentManager, container));
-        friends.setOnClickListener(new ClickOnMainIconHandler<>(new FriendsFragment()).getListener(friendsTag, fragmentManager, container));
-        profile.setOnClickListener(new ClickOnMainIconHandler<>(new ProfileFragment()).getListener(profileTag, fragmentManager, container));
+        news.setOnClickListener(new ClickOnMainIconHandler<>(new NewsFragment()).getListener(NEWS_TAG, fragmentManager, container));
+        walks.setOnClickListener(new ClickOnMainIconHandler<>(new WalksFragment()).getListener(WALKS_TAG, fragmentManager, container));
+        friends.setOnClickListener(new ClickOnMainIconHandler<>(new FriendsFragment()).getListener(FRIENDS_TAG, fragmentManager, container));
+        profile.setOnClickListener(new ClickOnMainIconHandler<>(new ProfileFragment()).getListener(PROFILE_TAG, fragmentManager, container));
 
         if (getSupportFragmentManager().findFragmentById(container) == null) {
             getSupportFragmentManager()
                     .beginTransaction()
-                    .add(container, new NewsFragment(), newsTag)
+                    .add(container, new NewsFragment(), NEWS_TAG)
                     .addToBackStack(null)
                     .commitAllowingStateLoss();
         }
