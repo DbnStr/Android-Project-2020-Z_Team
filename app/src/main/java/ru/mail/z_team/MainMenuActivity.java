@@ -12,5 +12,12 @@ public class MainMenuActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         Log.d("MenuActivity", "onCreate: ");
         setContentView(R.layout.activity_main_menu);
+        if (getSupportFragmentManager().findFragmentById(R.id.main_fragment) == null) {
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .add(R.id.main_fragment, new NewsFragment(), "NEWS FRAGMENT")
+                    .addToBackStack(null)
+                    .commitAllowingStateLoss();
+        }
     }
 }
