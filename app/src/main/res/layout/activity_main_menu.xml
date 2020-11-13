@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main_menu"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:id="@+id/current_menu_container"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:text="@string/some_menu"
+        android:textSize="100sp">
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="6"
+        android:stretchColumns="*"
+        android:id="@+id/icon_layout"
+        android:orientation="horizontal">
+            <TextView
+                android:id="@+id/news_feed_icon"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="@string/news"
+                android:clickable="true"
+                android:focusable="true"
+                tools:ignore="NestedWeights">
+
+            </TextView>
+
+            <TextView
+                android:id="@+id/walk_icon"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="@string/walks"
+                android:clickable="true"
+                android:focusable="true">
+
+            </TextView>
+
+            <TextView
+                android:id="@+id/friends_icon"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="@string/friends"
+                android:clickable="true"
+                android:focusable="true">
+
+            </TextView>
+
+            <TextView
+                android:id="@+id/profile_icon"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="@string/profile"
+                android:clickable="true"
+                android:focusable="true">
+
+            </TextView>
+    </LinearLayout>
+
+
+</LinearLayout>
