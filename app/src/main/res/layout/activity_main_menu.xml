@@ -6,20 +6,21 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/main_fragment"
+    <LinearLayout
+        android:id="@+id/current_menu_container"
+        android:orientation="vertical"
         android:layout_width="650dp"
         android:layout_height="650dp"
         android:gravity="center"
         android:text="@string/some_menu"
         android:textSize="100sp">
 
-    </TextView>
+    </LinearLayout>
 
     <TableLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/main_fragment"
+        android:layout_below="@+id/current_menu_container"
         android:stretchColumns="*">
 
         <TableRow

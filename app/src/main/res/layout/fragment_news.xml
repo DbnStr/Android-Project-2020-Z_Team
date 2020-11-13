@@ -8,7 +8,8 @@
         android:layout_height="match_parent"
         android:text="@string/news_fragment"
         android:textSize="100sp"
-        android:textColor="@color/RED"
-        android:background="@color/BLUE"/>
+        android:textColor="@color/GREEN"
+        android:background="@color/BLUE"
+        android:gravity="center"/>
 
 </FrameLayout>
