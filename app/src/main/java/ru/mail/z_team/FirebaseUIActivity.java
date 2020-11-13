@@ -22,6 +22,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public class FirebaseUIActivity extends AppCompatActivity {
+
     private static final int RC_SIGN_IN = 123;
     private static final String TAG = "SIGN_IN_ERROR";
 

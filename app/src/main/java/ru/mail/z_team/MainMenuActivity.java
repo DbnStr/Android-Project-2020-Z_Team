@@ -1,18 +1,25 @@
 package ru.mail.z_team;
 
-import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.LinearLayout;
-import android.widget.TableLayout;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
+import ru.mail.z_team.icon_fragments.FriendsFragment;
+import ru.mail.z_team.icon_fragments.NewsFragment;
+import ru.mail.z_team.icon_fragments.ProfileFragment;
+import ru.mail.z_team.icon_fragments.WalksFragment;
+
 public class MainMenuActivity extends AppCompatActivity {
+
+    static private final String newsTag = "NEWS FRAGMENT";
+    static private final String walksTag = "WALKS FRAGMENT";
+    static private final String friendsTag = "FRIENDS FRAGMENT";
+    static private final String profileTag = "PROFILE FRAGMENT";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,58 +34,51 @@ public class MainMenuActivity extends AppCompatActivity {
         final TextView friends = findViewById(R.id.friends_icon);
         final TextView profile = findViewById(R.id.profile_icon);
 
-        news.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                NewsFragment fragment = (NewsFragment) fragmentManager.findFragmentByTag("NEWS FRAGMENT");
-                if (fragment != null) {
-                    if (fragmentManager.findFragmentById(container) != fragment) {
-                        fragmentManager
-                                .beginTransaction()
-                                .replace(container, fragment, "NEWS FRAGMENT")
-                                .addToBackStack(null)
-                                .commitAllowingStateLoss();
-                    }
-                }
-                else {
-                    fragmentManager
-                            .beginTransaction()
-                            .replace(container, new NewsFragment(), "NEWS FRAGMENT")
-                            .addToBackStack(null)
-                            .commitAllowingStateLoss();
-                }
-            }
-        });
-
-        walks.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                WalksFragment fragment = (WalksFragment) fragmentManager.findFragmentByTag("WALKS FRAGMENT");
-                if (fragment != null) {
-                    if (fragmentManager.findFragmentById(container) != fragment) {
-                        fragmentManager
-                                .beginTransaction()
-                                .replace(container, fragment, "WALKS FRAGMENT")
-                                .addToBackStack(null)
-                                .commitAllowingStateLoss();
-                    }
-                }
-                else {
-                    fragmentManager
-                            .beginTransaction()
-                            .replace(container, new WalksFragment(), "WALKS FRAGMENT")
-                            .addToBackStack(null)
-                            .commitAllowingStateLoss();
-                }
-            }
-        });
+        news.setOnClickListener(new ClickOnMainIconHandler<>(new NewsFragment()).getListener(newsTag, fragmentManager, container));
+        walks.setOnClickListener(new ClickOnMainIconHandler<>(new WalksFragment()).getListener(walksTag, fragmentManager, container));
+        friends.setOnClickListener(new ClickOnMainIconHandler<>(new FriendsFragment()).getListener(friendsTag, fragmentManager, container));
+        profile.setOnClickListener(new ClickOnMainIconHandler<>(new ProfileFragment()).getListener(profileTag, fragmentManager, container));
 
         if (getSupportFragmentManager().findFragmentById(container) == null) {
             getSupportFragmentManager()
                     .beginTransaction()
-                    .add(container, new NewsFragment(), "NEWS FRAGMENT")
+                    .add(container, new NewsFragment(), newsTag)
                     .addToBackStack(null)
                     .commitAllowingStateLoss();
+        }
+    }
+
+    private class ClickOnMainIconHandler<T extends Fragment> {
+
+        final private T newFr;
+
+        ClickOnMainIconHandler(T newFr) {
+            this.newFr = newFr;
+        }
+
+        public View.OnClickListener getListener(final String tag, final FragmentManager fragmentManager,final int container) {
+            return new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    T fragment = (T) fragmentManager.findFragmentByTag(tag);
+                    if (fragment != null) {
+                        if (fragmentManager.findFragmentById(container) != fragment) {
+                            fragmentManager
+                                    .beginTransaction()
+                                    .replace(container, fragment, tag)
+                                    .addToBackStack(null)
+                                    .commitAllowingStateLoss();
+                        }
+                    }
+                    else {
+                        fragmentManager
+                                .beginTransaction()
+                                .replace(container, newFr, tag)
+                                .addToBackStack(null)
+                                .commitAllowingStateLoss();
+                    }
+                }
+            };
         }
     }
 }
