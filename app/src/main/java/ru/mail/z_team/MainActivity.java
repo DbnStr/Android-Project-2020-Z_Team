@@ -20,6 +20,7 @@ public class MainActivity extends AppCompatActivity {
 
         authBtn = findViewById(R.id.auth_btn);
         registerBtn = findViewById(R.id.register_btn);
+        loginBtn = findViewById(R.id.login_btn);
 
         registerBtn.setOnClickListener(new BtnOnClickListener());
         authBtn.setOnClickListener(new BtnOnClickListener());
