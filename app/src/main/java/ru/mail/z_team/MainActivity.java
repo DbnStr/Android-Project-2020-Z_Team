@@ -21,13 +21,13 @@ public class MainActivity extends AppCompatActivity {
         authBtn = findViewById(R.id.auth_btn);
         registerBtn = findViewById(R.id.register_btn);
 
-        registerBtn.setOnClickListener(new btnOnClickListener());
-        authBtn.setOnClickListener(new btnOnClickListener());
-        loginBtn.setOnClickListener(new btnOnClickListener());
+        registerBtn.setOnClickListener(new BtnOnClickListener());
+        authBtn.setOnClickListener(new BtnOnClickListener());
+        loginBtn.setOnClickListener(new BtnOnClickListener());
     }
 
 
-    private class btnOnClickListener implements View.OnClickListener {
+    private class BtnOnClickListener implements View.OnClickListener {
 
         @Override
         public void onClick(View v) {
