@@ -9,7 +9,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
-import ru.mail.z_team.icon_fragments.FriendsFragment;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+
+import ru.mail.z_team.icon_fragments.friends.FriendsFragment;
 import ru.mail.z_team.icon_fragments.GoOutFragment;
 import ru.mail.z_team.icon_fragments.NewsFragment;
 import ru.mail.z_team.icon_fragments.ProfileFragment;
@@ -51,6 +54,8 @@ public class MainMenuActivity extends AppCompatActivity {
                     .addToBackStack(null)
                     .commitAllowingStateLoss();
         }
+
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
     }
 
     private class ClickOnMainIconHandler<T extends Fragment> {

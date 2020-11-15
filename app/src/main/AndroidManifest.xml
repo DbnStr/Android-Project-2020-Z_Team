@@ -18,6 +18,8 @@
         </activity>
         <activity android:name=".FirebaseUIActivity"/>
         <activity android:name=".MainMenuActivity"/>
+        <activity android:name=".RegisterActivity"/>
+
     </application>
 
 </manifest>

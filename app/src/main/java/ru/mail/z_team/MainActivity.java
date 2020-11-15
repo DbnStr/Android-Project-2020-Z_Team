@@ -10,16 +10,25 @@ import android.widget.Button;
 
 public class MainActivity extends AppCompatActivity {
 
+    Button authBtn, registerBtn, loginBtn;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d("MainActivity", "onCreate: ");
         setContentView(R.layout.activity_main);
-        Button authBtn = findViewById(R.id.auth_btn);
+        authBtn = findViewById(R.id.auth_btn);
+        registerBtn = findViewById(R.id.register_btn);
+        registerBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(MainActivity.this, RegisterActivity.class));
+            }
+        });
         authBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, MainMenuActivity.class);
+                Intent intent = new Intent(MainActivity.this, FirebaseUIActivity.class);
                 startActivity(intent);
             }
         });
