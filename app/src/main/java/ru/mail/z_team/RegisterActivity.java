@@ -66,6 +66,7 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     private void registerUser(String email, String password) {
+        progressDialog.show();
         mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override

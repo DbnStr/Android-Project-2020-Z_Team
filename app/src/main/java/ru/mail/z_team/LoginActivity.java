@@ -42,7 +42,7 @@ public class LoginActivity extends AppCompatActivity {
         emailEt = findViewById(R.id.emailEt);
         passwordEt = findViewById(R.id.passwordEt);
         progressDialog = new ProgressDialog(this);
-        progressDialog.setMessage("Registration...");
+        progressDialog.setMessage("Signing in...");
         mAuth = FirebaseAuth.getInstance();
 
         signInBtn.setOnClickListener(new View.OnClickListener() {
@@ -61,6 +61,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void loginUser(String email, String password) {
+        progressDialog.show();
         mAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
