@@ -2,11 +2,14 @@ package ru.mail.z_team;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+
+import com.firebase.ui.auth.ui.email.EmailActivity;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -32,5 +35,21 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+    }
+
+
+    private class mOnClickListener implements View.OnClickListener {
+
+        @Override
+        public void onClick(View v) {
+            switch (v.getId()) {
+                case (R.id.auth_btn):
+                    startActivity(new Intent(MainActivity.this, FirebaseUIActivity.class));
+                case(R.id.register_btn):
+                    startActivity(new Intent(MainActivity.this, RegisterActivity.class));
+                case (R.id.login_btn):
+                    startActivity(new Intent(MainActivity.this, LoginActivity.class));
+            }
+        }
     }
 }

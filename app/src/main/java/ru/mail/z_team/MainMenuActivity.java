@@ -1,5 +1,6 @@
 package ru.mail.z_team;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -26,11 +27,15 @@ public class MainMenuActivity extends AppCompatActivity {
     static private final String PROFILE_TAG = "PROFILE FRAGMENT";
     static private final String GO_OUT_TAG = "GO_OUT FRAGMENT";
 
+    FirebaseAuth firebaseAuth;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d("MenuActivity", "onCreate: ");
         setContentView(R.layout.activity_main_menu);
+
+        firebaseAuth = FirebaseAuth.getInstance();
 
         final FragmentManager fragmentManager = getSupportFragmentManager();
         final int container = R.id.current_menu_container;
@@ -54,8 +59,23 @@ public class MainMenuActivity extends AppCompatActivity {
                     .addToBackStack(null)
                     .commitAllowingStateLoss();
         }
+    }
 
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+    private void checkUserStatus(){
+        FirebaseUser user = firebaseAuth.getCurrentUser();
+        if (user != null){
+
+        }
+        else {
+            startActivity(new Intent(MainMenuActivity.this, MainActivity.class));
+            finish();
+        }
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        checkUserStatus();
     }
 
     private class ClickOnMainIconHandler<T extends Fragment> {
