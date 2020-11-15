@@ -2,14 +2,11 @@ package ru.mail.z_team;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-
-import com.firebase.ui.auth.ui.email.EmailActivity;
 
 public class MainActivity extends AppCompatActivity {
 

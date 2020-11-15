@@ -89,6 +89,6 @@ public class LoginActivity extends AppCompatActivity {
                         progressDialog.dismiss();
                         Toast.makeText(LoginActivity.this, e.getMessage(), Toast.LENGTH_LONG).show();
                     }
-                });;
+                });
     }
 }

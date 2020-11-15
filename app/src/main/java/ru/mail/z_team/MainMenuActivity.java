@@ -63,10 +63,7 @@ public class MainMenuActivity extends AppCompatActivity {
 
     private void checkUserStatus(){
         FirebaseUser user = firebaseAuth.getCurrentUser();
-        if (user != null){
-
-        }
-        else {
+        if (user == null){
             startActivity(new Intent(MainMenuActivity.this, MainActivity.class));
             finish();
         }
