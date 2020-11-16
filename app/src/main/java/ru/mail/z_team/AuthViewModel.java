@@ -32,7 +32,6 @@ public class AuthViewModel extends AndroidViewModel implements Executor {
     public AuthViewModel(@NonNull Application application) {
         super(application);
         mAuthState.setValue(new Pair<>(NONE, ""));
-        mAuth = FirebaseAuth.getInstance();
     }
 
     public LiveData<Pair<String, String>> getProgress() {
@@ -40,6 +39,8 @@ public class AuthViewModel extends AndroidViewModel implements Executor {
     }
 
     public void loginUser(String email, String password) {
+        Log.d(TAG, "loginUser");
+        mAuth = FirebaseAuth.getInstance();
         mAuthState.postValue(new Pair<>(ON_PROGRESS, ""));
         mAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener((Executor) this, new OnCompleteListener<AuthResult>() {
@@ -65,6 +66,9 @@ public class AuthViewModel extends AndroidViewModel implements Executor {
     }
 
     public void registerUser(String email, String password) {
+        Log.d(TAG, "registerUser");
+        mAuth = FirebaseAuth.getInstance();
+        mAuthState.postValue(new Pair<>(ON_PROGRESS, ""));
         mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
@@ -83,6 +87,7 @@ public class AuthViewModel extends AndroidViewModel implements Executor {
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
+                        Log.e(TAG, e.getMessage());
                         mAuthState.postValue(new Pair<>(ERROR, e.getMessage()));
                     }
                 });
@@ -91,6 +96,7 @@ public class AuthViewModel extends AndroidViewModel implements Executor {
 
     @Override
     public void execute(Runnable command) {
+        Log.d(TAG, "executing command ..." + command.toString());
         Thread t = new Thread(command);
         t.start();
     }
