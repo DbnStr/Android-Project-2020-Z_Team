@@ -16,7 +16,7 @@ import com.google.firebase.auth.FirebaseUser;
 import ru.mail.z_team.icon_fragments.friends.FriendsFragment;
 import ru.mail.z_team.icon_fragments.GoOutFragment;
 import ru.mail.z_team.icon_fragments.NewsFragment;
-import ru.mail.z_team.icon_fragments.ProfileFragment;
+import ru.mail.z_team.icon_fragments.profile.ProfileFragment;
 import ru.mail.z_team.icon_fragments.WalksFragment;
 
 public class MainMenuActivity extends AppCompatActivity {
