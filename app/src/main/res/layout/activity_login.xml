@@ -35,4 +35,14 @@
         android:text="@string/don_t_have_account_yet_sign_up_now"
         app:layout_constraintTop_toBottomOf="@id/sign_in"/>
 
+    <TextView
+        android:id="@+id/forgotPasswordTv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:textAlignment="center"
+        android:text="@string/forgot_password_recover_with_email"
+        android:layout_marginBottom="10dp"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

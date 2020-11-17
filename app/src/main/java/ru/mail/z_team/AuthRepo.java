@@ -88,9 +88,37 @@ public class AuthRepo implements Executor{
         return mAuthProgress;
     }
 
+    public LiveData<RestoreProgress> restorePassword(String email) {
+        final MutableLiveData<RestoreProgress> mRestoreProgress = new MutableLiveData<>(RestoreProgress.IN_PROGRESS);
+        mAuth.sendPasswordResetEmail(email).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if (task.isSuccessful()){
+                    mRestoreProgress.postValue(RestoreProgress.OK);
+                }
+                else{
+                    mRestoreProgress.postValue(RestoreProgress.FAILED);
+                }
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                mRestoreProgress.postValue(RestoreProgress.ERROR);
+            }
+        });
+        return  mRestoreProgress;
+    }
+
     enum AuthProgress {
         IN_PROGRESS,
         SUCCESS,
+        FAILED,
+        ERROR
+    }
+
+    enum RestoreProgress {
+        IN_PROGRESS,
+        OK,
         FAILED,
         ERROR
     }

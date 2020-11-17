@@ -45,7 +45,6 @@ public class RegisterActivity extends AppCompatActivity {
         passwordEt = findViewById(R.id.passwordEt);
         toLogin = findViewById(R.id.toLogin);
         progressDialog = new ProgressDialog(this);
-        progressDialog.setMessage("Registration...");
         mAuth = FirebaseAuth.getInstance();
 
         authViewModel = new ViewModelProvider(this).get(ru.mail.z_team.AuthViewModel.class);
@@ -91,15 +90,24 @@ public class RegisterActivity extends AppCompatActivity {
 
             }
         });
-        toLogin.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(RegisterActivity.this, LoginActivity.class));
+        toLogin.setOnClickListener(new TvListener());
+    }
+
+    private class TvListener implements View.OnClickListener{
+        @Override
+        public void onClick(View v) {
+            switch (v.getId()){
+                case R.id.toLogin:
+                    startActivity(new Intent(RegisterActivity.this, LoginActivity.class));
+                    finish();
+                    break;
             }
-        });
+        }
     }
 
     private void registerUser(String email, String password) {
+        progressDialog.setMessage("Registration...");
+        progressDialog.show();
         authViewModel.registerUser(email, password);
     }
 

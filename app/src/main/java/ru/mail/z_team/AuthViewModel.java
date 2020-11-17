@@ -20,6 +20,7 @@ public class AuthViewModel extends AndroidViewModel{
     private final String success = getApplication().getResources().getString(R.string.SUCCESS);
     private final String failed = getApplication().getResources().getString(R.string.FAILED);
     private final MediatorLiveData<Pair<String, String>> mAuthState = new MediatorLiveData<>();
+    private final MediatorLiveData<String> restoreState = new MediatorLiveData<>();
 
     public AuthViewModel(@NonNull Application application) {
         super(application);
@@ -28,6 +29,10 @@ public class AuthViewModel extends AndroidViewModel{
 
     public LiveData<Pair<String, String>> getProgress() {
         return mAuthState;
+    }
+
+    public LiveData<String> getRestoreProgress() {
+        return restoreState;
     }
 
     public void loginUser(String email, String password) {
@@ -78,5 +83,25 @@ public class AuthViewModel extends AndroidViewModel{
                 }
             }
         });
+    }
+
+    public void recoverPassword(String email) {
+        final LiveData<AuthRepo.RestoreProgress> progressLiveData = AuthRepo.getInstance(getApplication())
+                .restorePassword(email);
+        restoreState.addSource(progressLiveData, new Observer<AuthRepo.RestoreProgress>() {
+            @Override
+            public void onChanged(AuthRepo.RestoreProgress restoreProgress) {
+                if (restoreProgress == AuthRepo.RestoreProgress.OK){
+                    restoreState.postValue(success);
+                }
+                else if (restoreProgress == AuthRepo.RestoreProgress.FAILED) {
+                    restoreState.postValue(failed);
+                }
+                else if (restoreProgress == AuthRepo.RestoreProgress.ERROR) {
+                    restoreState.postValue(error);
+                }
+            }
+        });
+
     }
 }
