@@ -86,6 +86,7 @@ public class LoginActivity extends AppCompatActivity implements LifecycleOwner {
     }
 
     private void loginUser(String email, String password) {
+        Log.d(TAG, "loginUser");
         authViewModel.loginUser(email, password);
     }
 }
