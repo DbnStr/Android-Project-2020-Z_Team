@@ -9,6 +9,7 @@ import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -24,6 +25,7 @@ public class LoginActivity extends AppCompatActivity implements LifecycleOwner {
 
     private static final String TAG = "LoginActivity";
     Button signInBtn;
+    TextView toRegistration;
     EditText emailEt, passwordEt;
     ProgressDialog progressDialog;
 
@@ -42,6 +44,7 @@ public class LoginActivity extends AppCompatActivity implements LifecycleOwner {
         signInBtn = findViewById(R.id.sign_in);
         emailEt = findViewById(R.id.emailEt);
         passwordEt = findViewById(R.id.passwordEt);
+        toRegistration = findViewById(R.id.toRegistration);
         progressDialog = new ProgressDialog(this);
         progressDialog.setMessage("Signing in...");
         mAuth = FirebaseAuth.getInstance();
@@ -71,6 +74,12 @@ public class LoginActivity extends AppCompatActivity implements LifecycleOwner {
             }
         });
 
+        toRegistration.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(LoginActivity.this, RegisterActivity.class));
+            }
+        });
         signInBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

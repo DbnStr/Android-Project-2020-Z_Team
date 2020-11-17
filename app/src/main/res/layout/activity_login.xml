@@ -26,4 +26,13 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
 
+    <TextView
+        android:id="@+id/toRegistration"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:textAlignment="center"
+        android:text="@string/don_t_have_account_yet_sign_up_now"
+        app:layout_constraintTop_toBottomOf="@id/sign_in"/>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -9,6 +9,7 @@ import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -24,6 +25,7 @@ public class RegisterActivity extends AppCompatActivity {
     private static final String TAG = "RegisterActivity";
     Button registerBtn;
     EditText emailEt, passwordEt;
+    TextView toLogin;
     ProgressDialog progressDialog;
 
     private FirebaseAuth mAuth;
@@ -41,6 +43,7 @@ public class RegisterActivity extends AppCompatActivity {
         registerBtn = findViewById(R.id.register);
         emailEt = findViewById(R.id.emailEt);
         passwordEt = findViewById(R.id.passwordEt);
+        toLogin = findViewById(R.id.toLogin);
         progressDialog = new ProgressDialog(this);
         progressDialog.setMessage("Registration...");
         mAuth = FirebaseAuth.getInstance();
@@ -86,6 +89,12 @@ public class RegisterActivity extends AppCompatActivity {
                     registerUser(email, password);
                 }
 
+            }
+        });
+        toLogin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(RegisterActivity.this, LoginActivity.class));
             }
         });
     }
