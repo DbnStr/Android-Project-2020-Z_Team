@@ -102,4 +102,10 @@ public class RegisterActivity extends AppCompatActivity {
     private void registerUser(String email, String password) {
         authViewModel.registerUser(email, password);
     }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return super.onSupportNavigateUp();
+    }
 }

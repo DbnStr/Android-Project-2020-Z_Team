@@ -98,4 +98,10 @@ public class LoginActivity extends AppCompatActivity implements LifecycleOwner {
         Log.d(TAG, "loginUser");
         authViewModel.loginUser(email, password);
     }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return super.onSupportNavigateUp();
+    }
 }
