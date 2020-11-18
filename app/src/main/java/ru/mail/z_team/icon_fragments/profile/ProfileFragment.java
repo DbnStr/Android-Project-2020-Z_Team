@@ -40,13 +40,7 @@ public class ProfileFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         final TextView textView = getActivity().findViewById(R.id.profile_text);
         String id = FirebaseAuth.getInstance().getUid();
-
-        Observer<String> observer = new Observer<String>() {
-            @Override
-            public void onChanged(String s) {
-                textView.setText(s);
-            }
-        };
+        Observer<String> observer = s -> textView.setText(s);
 
         mProfileVewModel = new ViewModelProvider(getActivity())
                 .get(ProfileViewModel.class);
