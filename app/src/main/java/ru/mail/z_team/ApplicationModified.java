@@ -19,11 +19,10 @@ public class ApplicationModified extends Application {
 
     public ApiRepository getApis() {
         return apiRepository;
-        mAuthRepo = new AuthRepo();
     }
 
     public AuthRepo getAuthRepo() {
-        return mAuthRepo;
+        return authRepo;
     }
 
     public static ApplicationModified from(Context context) {

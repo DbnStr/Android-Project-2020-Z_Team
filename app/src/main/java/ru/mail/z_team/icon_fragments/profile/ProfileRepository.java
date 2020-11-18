@@ -30,6 +30,7 @@ public class ProfileRepository {
     }
 
     public void update(final String id) {
+        log(id);
         userApi.getUserById(id).enqueue(new Callback<UserApi.User>() {
             @Override
             public void onResponse(Call<UserApi.User> call, Response<UserApi.User> response) {

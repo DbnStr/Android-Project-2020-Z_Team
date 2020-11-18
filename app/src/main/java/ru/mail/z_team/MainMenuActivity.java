@@ -118,7 +118,7 @@ public class MainMenuActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.logout_action){
-            mAuth.signOut();
+            firebaseAuth.signOut();
             checkUserStatus();
         }
         return super.onOptionsItemSelected(item);
