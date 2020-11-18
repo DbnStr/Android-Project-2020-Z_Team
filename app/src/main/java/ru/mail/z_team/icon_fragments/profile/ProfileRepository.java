@@ -16,7 +16,7 @@ public class ProfileRepository {
 
     private static final String LOG_TAG = "ProfileRepository";
     private final Context context;
-    private static final MutableLiveData<User> data = new MutableLiveData<>();
+    private static final MutableLiveData<User> UserData = new MutableLiveData<>();
 
     private final UserApi userApi;
 
@@ -26,7 +26,7 @@ public class ProfileRepository {
     }
 
     public LiveData<User> getUserInfoById(final String id) {
-        return data;
+        return UserData;
     }
 
     public void update(final String id) {
@@ -42,7 +42,7 @@ public class ProfileRepository {
                     return;
                 }
                 if (response.isSuccessful()) {
-                    data.postValue(transformToUser(response.body()));
+                    UserData.postValue(transformToUser(response.body()));
                 }
             }
 
