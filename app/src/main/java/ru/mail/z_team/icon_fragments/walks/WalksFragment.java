@@ -1,4 +1,4 @@
-package ru.mail.z_team.icon_fragments;
+package ru.mail.z_team.icon_fragments.walks;
 
 import android.os.Bundle;
 import android.util.Log;

@@ -1,4 +1,4 @@
-package ru.mail.z_team.icon_fragments;
+package ru.mail.z_team.icon_fragments.go_out;
 
 import android.os.Bundle;
 import android.util.Log;
@@ -12,17 +12,17 @@ import androidx.fragment.app.Fragment;
 
 import ru.mail.z_team.R;
 
-public class ProfileFragment extends Fragment {
+public class GoOutFragment extends Fragment {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        Log.d("ProfileFragment", "OnCreate");
+        Log.d("GoForWalk", "OnCreate");
         super.onCreate(savedInstanceState);
     }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_profile, container, false);
+        return inflater.inflate(R.layout.fragment_go_out, container, false);
     }
 }

@@ -17,10 +17,10 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 import ru.mail.z_team.icon_fragments.friends.FriendsFragment;
-import ru.mail.z_team.icon_fragments.GoOutFragment;
-import ru.mail.z_team.icon_fragments.NewsFragment;
-import ru.mail.z_team.icon_fragments.ProfileFragment;
-import ru.mail.z_team.icon_fragments.WalksFragment;
+import ru.mail.z_team.icon_fragments.go_out.GoOutFragment;
+import ru.mail.z_team.icon_fragments.news.NewsFragment;
+import ru.mail.z_team.icon_fragments.walks.WalksFragment;
+import ru.mail.z_team.icon_fragments.profile.ProfileFragment;
 
 public class MainMenuActivity extends AppCompatActivity {
 
