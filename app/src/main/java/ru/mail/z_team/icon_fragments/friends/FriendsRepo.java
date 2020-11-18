@@ -7,14 +7,14 @@ import java.util.Collections;
 import java.util.List;
 
 public class FriendsRepo {
-    private final static MutableLiveData<List<Friend>> mFriends = new MutableLiveData<>();
+    private final static MutableLiveData<List<Friend>> FRIENDS = new MutableLiveData<>();
 
     static {
-        mFriends.setValue(Collections.<Friend>emptyList());
+        FRIENDS.setValue(Collections.<Friend>emptyList());
     }
 
     public LiveData<List<Friend>> getFriends(){
-        return mFriends;
+        return FRIENDS;
     }
 
 }

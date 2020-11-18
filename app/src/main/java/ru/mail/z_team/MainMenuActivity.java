@@ -3,9 +3,12 @@ package ru.mail.z_team;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -16,7 +19,7 @@ import com.google.firebase.auth.FirebaseUser;
 import ru.mail.z_team.icon_fragments.friends.FriendsFragment;
 import ru.mail.z_team.icon_fragments.GoOutFragment;
 import ru.mail.z_team.icon_fragments.NewsFragment;
-import ru.mail.z_team.icon_fragments.profile.ProfileFragment;
+import ru.mail.z_team.icon_fragments.ProfileFragment;
 import ru.mail.z_team.icon_fragments.WalksFragment;
 
 public class MainMenuActivity extends AppCompatActivity {
@@ -103,5 +106,21 @@ public class MainMenuActivity extends AppCompatActivity {
                     .addToBackStack(null)
                     .commitAllowingStateLoss();
         }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.app_menu, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        int id = item.getItemId();
+        if (id == R.id.logout_action){
+            mAuth.signOut();
+            checkUserStatus();
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

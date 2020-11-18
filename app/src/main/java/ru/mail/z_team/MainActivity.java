@@ -1,16 +1,17 @@
 package ru.mail.z_team;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 public class MainActivity extends AppCompatActivity {
 
-    Button authBtn, registerBtn, loginBtn;
+    private static final String TAG = "MainActivity";
+    Button registerBtn, loginBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -18,26 +19,27 @@ public class MainActivity extends AppCompatActivity {
         Log.d("MainActivity", "onCreate: ");
         setContentView(R.layout.activity_main);
 
-        authBtn = findViewById(R.id.auth_btn);
         registerBtn = findViewById(R.id.register_btn);
+        loginBtn = findViewById(R.id.login_btn);
 
-        registerBtn.setOnClickListener(new btnOnClickListener());
-        authBtn.setOnClickListener(new btnOnClickListener());
-        loginBtn.setOnClickListener(new btnOnClickListener());
+        registerBtn.setOnClickListener(new BtnOnClickListener());
+        loginBtn.setOnClickListener(new BtnOnClickListener());
     }
 
 
-    private class btnOnClickListener implements View.OnClickListener {
+    private class BtnOnClickListener implements View.OnClickListener {
 
         @Override
         public void onClick(View v) {
             switch (v.getId()) {
-                case (R.id.auth_btn):
-                    startActivity(new Intent(MainActivity.this, FirebaseUIActivity.class));
                 case(R.id.register_btn):
+                    Log.d(TAG, "startRegisterActivity");
                     startActivity(new Intent(MainActivity.this, RegisterActivity.class));
+                    break;
                 case (R.id.login_btn):
+                    Log.d(TAG, "startLoginActivity");
                     startActivity(new Intent(MainActivity.this, LoginActivity.class));
+                    break;
             }
         }
     }
