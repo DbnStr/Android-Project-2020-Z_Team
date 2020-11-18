@@ -14,10 +14,9 @@ import ru.mail.z_team.icon_fragments.profile.network.UserApi;
 
 public class ProfileRepo {
 
-    private static final long ONE_MEGABYTE = 1024 * 1024;
     private static final String LOG_TAG = "ProfileRepo";
     private final Context mContext;
-    private static final MutableLiveData<String> data = new MutableLiveData<>();
+    private static final MutableLiveData<User> data = new MutableLiveData<>();
 
     private final UserApi mUserApi;
 
@@ -26,21 +25,24 @@ public class ProfileRepo {
         mUserApi = ApiRepo.from(mContext).getUserApi();
     }
 
-    public LiveData<String> getUserInfoById(final String id) {
+    public LiveData<User> getUserInfoById(final String id) {
         return data;
     }
 
     public void update(final String id) {
-        mUserApi.getUserById(1).enqueue(new Callback<UserApi.User>() {
+        mUserApi.getUserById(id).enqueue(new Callback<UserApi.User>() {
             @Override
-            public void onResponse(Call<UserApi.User> call,
-                                   Response<UserApi.User> response) {
+            public void onResponse(Call<UserApi.User> call, Response<UserApi.User> response) {
                 if (response.code() == 401) {
                     errorLog("Problem with Auth", null);
+                    return;
                 }
-
-                if (response.isSuccessful() && response.body() != null) {
-                    data.setValue(response.body().name);
+                if (response.body() == null) {
+                    errorLog("File not found", null);
+                    return;
+                }
+                if (response.isSuccessful()) {
+                    data.postValue(transformToUser(response.body()));
                 }
             }
 
@@ -57,5 +59,12 @@ public class ProfileRepo {
 
     private void log(final String message) {
         Log.d(LOG_TAG, message);
+    }
+
+    private User transformToUser(UserApi.User user) {
+        return new User(
+                user.name,
+                user.age
+        );
     }
 }

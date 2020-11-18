@@ -19,12 +19,14 @@ import ru.mail.z_team.R;
 
 public class ProfileFragment extends Fragment {
 
-    private ProfileViewModel mProfileVewModel;
     private static final String LOG_TAG = "ProfileFragment";
 
+    private ProfileViewModel mProfileVewModel;
+    private TextView name;
+    private TextView age;
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        Log.d("ProfileFragment", "OnCreate");
+        log("OnCreate");
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
     }
@@ -38,9 +40,14 @@ public class ProfileFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        final TextView textView = getActivity().findViewById(R.id.profile_text);
         String id = FirebaseAuth.getInstance().getUid();
-        Observer<String> observer = s -> textView.setText(s);
+        name = getActivity().findViewById(R.id.profile_name);
+        age = getActivity().findViewById(R.id.profile_age);
+        Observer<User> observer = user -> {
+            if (user != null) {
+                setAll(user);
+            }
+        };
 
         mProfileVewModel = new ViewModelProvider(getActivity())
                 .get(ProfileViewModel.class);
@@ -48,11 +55,14 @@ public class ProfileFragment extends Fragment {
         mProfileVewModel
                 .getUserInfoById(id)
                 .observe(getViewLifecycleOwner(), observer);
-        textView.setText(mProfileVewModel.getUserInfoById(id).getValue());
-
     }
 
     private void log(String message) {
         Log.d(LOG_TAG, message);
+    }
+
+    private void setAll(@NonNull User user) {
+        name.setText(user.getName());
+        age.setText(String.valueOf(user.getAge()));
     }
 }

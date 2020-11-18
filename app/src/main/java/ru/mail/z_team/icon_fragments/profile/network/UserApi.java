@@ -11,5 +11,5 @@ public interface UserApi {
     }
 
     @GET("/Users/{id}.json")
-    Call<User> getUserById(@Path("id") int id);
+    Call<User> getUserById(@Path("id") String id);
 }

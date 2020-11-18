@@ -14,7 +14,7 @@ public class ProfileViewModel extends AndroidViewModel {
         super(application);
     }
 
-    public LiveData<String> getUserInfoById(final String id) {
+    public LiveData<User> getUserInfoById(final String id) {
         return mRepo.getUserInfoById(id);
     }
 
