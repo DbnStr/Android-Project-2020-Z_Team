@@ -8,17 +8,17 @@ import androidx.lifecycle.LiveData;
 
 public class ProfileViewModel extends AndroidViewModel {
 
-    private final ProfileRepo mRepo = new ProfileRepo(getApplication());
+    private final ProfileRepository repository = new ProfileRepository(getApplication());
 
     public ProfileViewModel(@NonNull Application application) {
         super(application);
     }
 
     public LiveData<User> getUserInfoById(final String id) {
-        return mRepo.getUserInfoById(id);
+        return repository.getUserInfoById(id);
     }
 
     public void update(final String id) {
-        mRepo.update(id);
+        repository.update(id);
     }
 }

@@ -21,7 +21,7 @@ public class ProfileFragment extends Fragment {
 
     private static final String LOG_TAG = "ProfileFragment";
 
-    private ProfileViewModel mProfileVewModel;
+    private ProfileViewModel profileViewModel;
     private TextView name;
     private TextView age;
     @Override
@@ -49,10 +49,10 @@ public class ProfileFragment extends Fragment {
             }
         };
 
-        mProfileVewModel = new ViewModelProvider(getActivity())
+        profileViewModel= new ViewModelProvider(getActivity())
                 .get(ProfileViewModel.class);
-        mProfileVewModel.update(id);
-        mProfileVewModel
+        profileViewModel.update(id);
+        profileViewModel
                 .getUserInfoById(id)
                 .observe(getViewLifecycleOwner(), observer);
     }

@@ -3,20 +3,20 @@ package ru.mail.z_team;
 import android.app.Application;
 import android.content.Context;
 
-import ru.mail.z_team.icon_fragments.profile.network.ApiRepo;
+import ru.mail.z_team.icon_fragments.profile.network.ApiRepository;
 
 public class ApplicationModified extends Application {
 
-    private ApiRepo mApiRepo;
+    private ApiRepository apiRepository;
 
     @Override
     public void onCreate() {
         super.onCreate();
-        mApiRepo = new ApiRepo();
+        apiRepository = new ApiRepository();
     }
 
-    public ApiRepo getApis() {
-        return mApiRepo;
+    public ApiRepository getApis() {
+        return apiRepository;
     }
 
     public static ApplicationModified from(Context context) {

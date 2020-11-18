@@ -6,12 +6,12 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import ru.mail.z_team.ApplicationModified;
 
-public class ApiRepo {
+public class ApiRepository {
 
     private static final String BASE_URL = "https://android-project-2020-zteam.firebaseio.com/";
     private final UserApi mUserApi;
 
-    public ApiRepo() {
+    public ApiRepository() {
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
@@ -24,7 +24,7 @@ public class ApiRepo {
         return mUserApi;
     }
 
-    public static ApiRepo from(Context context) {
+    public static ApiRepository from(Context context) {
         return ApplicationModified.from(context).getApis();
     }
 }

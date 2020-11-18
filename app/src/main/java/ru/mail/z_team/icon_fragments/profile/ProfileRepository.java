@@ -9,20 +9,20 @@ import androidx.lifecycle.MutableLiveData;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import ru.mail.z_team.icon_fragments.profile.network.ApiRepo;
+import ru.mail.z_team.icon_fragments.profile.network.ApiRepository;
 import ru.mail.z_team.icon_fragments.profile.network.UserApi;
 
-public class ProfileRepo {
+public class ProfileRepository {
 
-    private static final String LOG_TAG = "ProfileRepo";
-    private final Context mContext;
+    private static final String LOG_TAG = "ProfileRepository";
+    private final Context context;
     private static final MutableLiveData<User> data = new MutableLiveData<>();
 
-    private final UserApi mUserApi;
+    private final UserApi userApi;
 
-    public ProfileRepo(Context context) {
-        mContext = context;
-        mUserApi = ApiRepo.from(mContext).getUserApi();
+    public ProfileRepository(Context context) {
+        this.context = context;
+        userApi = ApiRepository.from(context).getUserApi();
     }
 
     public LiveData<User> getUserInfoById(final String id) {
@@ -30,7 +30,7 @@ public class ProfileRepo {
     }
 
     public void update(final String id) {
-        mUserApi.getUserById(id).enqueue(new Callback<UserApi.User>() {
+        userApi.getUserById(id).enqueue(new Callback<UserApi.User>() {
             @Override
             public void onResponse(Call<UserApi.User> call, Response<UserApi.User> response) {
                 if (response.code() == 401) {
