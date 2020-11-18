@@ -64,7 +64,8 @@ public class ProfileRepository {
     private User transformToUser(UserApi.User user) {
         return new User(
                 user.name,
-                user.age
+                user.age,
+                user.id
         );
     }
 }
