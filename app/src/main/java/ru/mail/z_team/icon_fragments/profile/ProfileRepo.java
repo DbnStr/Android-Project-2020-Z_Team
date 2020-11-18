@@ -15,6 +15,7 @@ import ru.mail.z_team.icon_fragments.profile.network.UserApi;
 public class ProfileRepo {
 
     private static final long ONE_MEGABYTE = 1024 * 1024;
+    private static final String LOG_TAG = "ProfileRepo";
     private final Context mContext;
     private static final MutableLiveData<String> data = new MutableLiveData<>();
 
@@ -30,35 +31,31 @@ public class ProfileRepo {
     }
 
     public void update(final String id) {
-//        FirebaseStorage storage = FirebaseStorage.getInstance();
-//        StorageReference storageReference = storage.getReference();
-//        StorageReference path = storageReference.child("Users/" + id + ".txt");
-//        path.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
-//            @Override
-//            public void onSuccess(byte[] bytes) {
-//                data.setValue(new String(bytes));
-//            }
-//        }).addOnFailureListener(new OnFailureListener() {
-//            @Override
-//            public void onFailure(@NonNull Exception exception) {
-//                Log.d("ProfileRepo", "FAIL");
-//            }
-//        });
-
         mUserApi.getUserById(1).enqueue(new Callback<UserApi.User>() {
             @Override
             public void onResponse(Call<UserApi.User> call,
                                    Response<UserApi.User> response) {
+                if (response.code() == 401) {
+                    errorLog("Problem with Auth", null);
+                }
+
                 if (response.isSuccessful() && response.body() != null) {
-                    Log.d("ProfileRepo", response.body().name);
                     data.setValue(response.body().name);
                 }
             }
 
             @Override
             public void onFailure(Call<UserApi.User> call, Throwable t) {
-                Log.d("ProfileRepo", "Failed to load", t);
+                errorLog("Failed to load", t);
             }
         });
+    }
+
+    private void errorLog(final String message, Throwable t) {
+        Log.e(LOG_TAG, message, t);
+    }
+
+    private void log(final String message) {
+        Log.d(LOG_TAG, message);
     }
 }
