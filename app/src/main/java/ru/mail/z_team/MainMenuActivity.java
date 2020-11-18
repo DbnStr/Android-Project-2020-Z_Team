@@ -1,15 +1,22 @@
 package ru.mail.z_team;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
-import ru.mail.z_team.icon_fragments.FriendsFragment;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+
+import ru.mail.z_team.icon_fragments.friends.FriendsFragment;
 import ru.mail.z_team.icon_fragments.GoOutFragment;
 import ru.mail.z_team.icon_fragments.NewsFragment;
 import ru.mail.z_team.icon_fragments.ProfileFragment;
@@ -23,11 +30,15 @@ public class MainMenuActivity extends AppCompatActivity {
     static private final String PROFILE_TAG = "PROFILE FRAGMENT";
     static private final String GO_OUT_TAG = "GO_OUT FRAGMENT";
 
+    FirebaseAuth mAuth;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d("MenuActivity", "onCreate: ");
         setContentView(R.layout.activity_main_menu);
+
+        mAuth = FirebaseAuth.getInstance();
 
         final FragmentManager fragmentManager = getSupportFragmentManager();
         final int container = R.id.current_menu_container;
@@ -51,6 +62,20 @@ public class MainMenuActivity extends AppCompatActivity {
                     .addToBackStack(null)
                     .commitAllowingStateLoss();
         }
+    }
+
+    private void checkUserStatus(){
+        FirebaseUser user = mAuth.getCurrentUser();
+        if (user == null){
+            startActivity(new Intent(MainMenuActivity.this, MainActivity.class));
+            finish();
+        }
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        checkUserStatus();
     }
 
     private class ClickOnMainIconHandler<T extends Fragment> {
@@ -85,5 +110,21 @@ public class MainMenuActivity extends AppCompatActivity {
                 }
             };
         }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.app_menu, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        int id = item.getItemId();
+        if (id == R.id.logout_action){
+            mAuth.signOut();
+            checkUserStatus();
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

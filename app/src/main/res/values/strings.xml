@@ -11,4 +11,17 @@
     <string name="profile">PROFILE</string>
     <string name="some_menu">SOME MENU</string>
     <string name="go_out">GO OUT</string>
+    <string name="register">Register</string>
+    <string name="log_in">Log In</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="sign_in">Sign In</string>
+    <string name="log_out">Log Out</string>
+    <string name="ON_PROGRESS">on_progress</string>
+    <string name="SUCCESS">sucess</string>
+    <string name="FAILED">failed</string>
+    <string name="ERROR">error</string>
+    <string name="NONE">none</string>
+    <string name="don_t_have_account_yet_sign_up_now">Don\'t have account yet? Sign up now.</string>
+    <string name="forgot_password_recover_with_email">Forgot password? Recover with email.</string>
 </resources>
