@@ -61,9 +61,9 @@ public class MainMenuActivity extends AppCompatActivity {
         }
     }
 
-    private void checkUserStatus(){
+    private void checkUserStatus() {
         FirebaseUser user = firebaseAuth.getCurrentUser();
-        if (user == null){
+        if (user == null) {
             startActivity(new Intent(MainMenuActivity.this, MainActivity.class));
             finish();
         }
@@ -77,35 +77,31 @@ public class MainMenuActivity extends AppCompatActivity {
 
     private class ClickOnMainIconHandler<T extends Fragment> {
 
-        final private T newFr;
+        final private T newFragment;
 
-        ClickOnMainIconHandler(T newFr) {
-            this.newFr = newFr;
+        ClickOnMainIconHandler(T newFragment) {
+            this.newFragment = newFragment;
         }
 
-        public View.OnClickListener getListener(final String tag, final FragmentManager fragmentManager,final int container) {
-            return new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    T fragment = (T) fragmentManager.findFragmentByTag(tag);
-                    if (fragment != null) {
-                        if (fragmentManager.findFragmentById(container) != fragment) {
-                            fragmentManager
-                                    .beginTransaction()
-                                    .replace(container, fragment, tag)
-                                    .addToBackStack(null)
-                                    .commitAllowingStateLoss();
-                        }
-                    }
-                    else {
-                        fragmentManager
-                                .beginTransaction()
-                                .replace(container, newFr, tag)
-                                .addToBackStack(null)
-                                .commitAllowingStateLoss();
-                    }
+        public View.OnClickListener getListener(final String tag, final FragmentManager fragmentManager, final int container) {
+            return v -> {
+                T fragment = (T) fragmentManager.findFragmentByTag(tag);
+                if (fragment == null) {
+                    replaceFragment(tag, fragmentManager, container, newFragment);
+                    return;
+                }
+                if (fragmentManager.findFragmentById(container) != fragment) {
+                    replaceFragment(tag, fragmentManager, container, fragment);
                 }
             };
+        }
+
+        private void replaceFragment(final String tag, final FragmentManager fragmentManager, final int container, final T fragment) {
+            fragmentManager
+                    .beginTransaction()
+                    .replace(container, fragment, tag)
+                    .addToBackStack(null)
+                    .commitAllowingStateLoss();
         }
     }
 }
