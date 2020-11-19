@@ -18,7 +18,7 @@
     <string name="sign_in">Sign In</string>
     <string name="log_out">Log Out</string>
     <string name="ON_PROGRESS">on_progress</string>
-    <string name="SUCCESS">sucess</string>
+    <string name="SUCCESS">success</string>
     <string name="FAILED">failed</string>
     <string name="ERROR">error</string>
     <string name="NONE">none</string>
