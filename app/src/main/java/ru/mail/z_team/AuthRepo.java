@@ -24,10 +24,10 @@ import ru.mail.z_team.network.UserApi;
 
 public class AuthRepo implements Executor{
 
-    private static final String TAG = "AuthRepo";
+    private static final String LOG_TAG = "AuthRepo";
     FirebaseAuth mAuth;
 
-    private Context context;
+    private MutableLiveData<Pair<AuthProgress, String>> mAuthProgress;
 
     public AuthRepo() {
         mAuth = FirebaseAuth.getInstance();
@@ -38,30 +38,16 @@ public class AuthRepo implements Executor{
         return ApplicationModified.from(context).getAuthRepo();
     }
 
-    private MutableLiveData<Pair<AuthProgress, String>> mAuthProgress;
-
     public LiveData<Pair<AuthProgress, String>> login(@NonNull String email, @NonNull String password) {
-        Log.d(TAG, "loginUser");
+        log("loginUser");
         mAuthProgress = new MutableLiveData<>(new Pair<>(AuthProgress.IN_PROGRESS, ""));
         mAuth = FirebaseAuth.getInstance();
         mAuth.signInWithEmailAndPassword(email, password)
-                .addOnCompleteListener((Executor) this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            // Sign in success, update UI with the signed-in user's information
-                            Log.d(TAG, "signInWithEmail:success");
-                            mAuthProgress.postValue(new Pair<>(AuthProgress.SUCCESS, mAuth.getCurrentUser().getEmail()));
-                        } else {
-                            // If sign in fails, display a message to the user.
-                            mAuthProgress.postValue(new Pair<>(AuthProgress.FAILED, task.getException().toString()));
-                            Log.w(TAG, "signInWithEmail:failure", task.getException());
-                        }
-                    }
-                })
+                .addOnCompleteListener((Executor) this, new OnCompleteAuthProgressListener())
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
+                        errorLog(e.getMessage(), null);
                         mAuthProgress.postValue(new Pair<>(AuthProgress.ERROR, e.getMessage()));
                     }
                 });
@@ -72,24 +58,11 @@ public class AuthRepo implements Executor{
         mAuthProgress = new MutableLiveData<>(new Pair<>(AuthProgress.IN_PROGRESS, ""));
         mAuth = FirebaseAuth.getInstance();
         mAuth.createUserWithEmailAndPassword(email, password)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            // Sign in success, update UI with the signed-in user's information
-                            Log.d(TAG, "createUserWithEmail:success");
-                            mAuthProgress.postValue(new Pair<>(AuthProgress.SUCCESS, mAuth.getCurrentUser().getEmail()));
-                        } else {
-                            // If sign in fails, display a message to the user.
-                            Log.w(TAG, "createUserWithEmail:failure", task.getException());
-                            mAuthProgress.postValue(new Pair<>(AuthProgress.FAILED, ""));
-                        }
-                    }
-                })
+                .addOnCompleteListener(this, new OnCompleteAuthProgressListener())
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        Log.e(TAG, e.getMessage());
+                        errorLog(e.getMessage(), null);
                         mAuthProgress.postValue(new Pair<>(AuthProgress.ERROR, e.getMessage()));
                     }
                 });
@@ -147,9 +120,34 @@ public class AuthRepo implements Executor{
         ERROR
     }
 
+    private class OnCompleteAuthProgressListener implements OnCompleteListener<AuthResult> {
+        @Override
+        public void onComplete(@NonNull Task<AuthResult> task) {
+            if (task.isSuccessful()) {
+                log("createUserWithEmail:success");
+                mAuthProgress.postValue(new Pair<>(AuthProgress.SUCCESS, mAuth.getCurrentUser().getEmail()));
+            } else {
+                warningLog("createUserWithEmail:failure", task.getException());
+                mAuthProgress.postValue(new Pair<>(AuthProgress.FAILED, ""));
+            }
+        }
+    }
+
+    private void log(String message) {
+        Log.d(LOG_TAG, message);
+    }
+
+    private void errorLog(String message, Throwable tr) {
+        Log.e(LOG_TAG, message, tr);
+    }
+
+    private void warningLog(String message, Throwable tr) {
+
+    }
+
     @Override
     public void execute(Runnable command) {
-        Log.d(TAG, "executing command ..." + command.toString());
+        log("executing command ..." + command.toString());
         Thread t = new Thread(command);
         t.start();
     }
