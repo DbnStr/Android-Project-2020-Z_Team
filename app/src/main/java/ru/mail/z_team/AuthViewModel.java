@@ -20,10 +20,12 @@ public class AuthViewModel extends AndroidViewModel{
     private final String failed = getApplication().getResources().getString(R.string.FAILED);
     private final MediatorLiveData<Pair<String, String>> mAuthState = new MediatorLiveData<>();
     private final MediatorLiveData<String> restoreState = new MediatorLiveData<>();
+    private final AuthRepo authRepository;
 
     public AuthViewModel(@NonNull Application application) {
         super(application);
         mAuthState.setValue(new Pair<>(none, ""));
+        authRepository = AuthRepo.getInstance(getApplication());
     }
 
     public LiveData<Pair<String, String>> getProgress() {
@@ -38,8 +40,7 @@ public class AuthViewModel extends AndroidViewModel{
         Log.d(TAG, "loginUser");
         mAuthState.postValue(new Pair<>(onProgress, ""));
 
-        final LiveData<Pair<AuthRepo.AuthProgress, String>> progressLiveData = AuthRepo.getInstance(getApplication())
-                .login(email, password);
+        final LiveData<Pair<AuthRepo.AuthProgress, String>> progressLiveData = authRepository.login(email, password);
         mAuthState.addSource(progressLiveData, authProgressStringPair -> {
             AuthRepo.AuthProgress authProgress = authProgressStringPair.first;
             if (authProgress == AuthRepo.AuthProgress.SUCCESS) {
@@ -55,11 +56,11 @@ public class AuthViewModel extends AndroidViewModel{
     public void registerUser(String email, String password) {
         Log.d(TAG, "registerUser");
         mAuthState.postValue(new Pair<>(onProgress, ""));
-        final LiveData<Pair<AuthRepo.AuthProgress, String>> progressLiveData = AuthRepo.getInstance(getApplication())
-                .register(email, password);
+        final LiveData<Pair<AuthRepo.AuthProgress, String>> progressLiveData = authRepository.register(email, password);
         mAuthState.addSource(progressLiveData, authProgressStringPair -> {
             AuthRepo.AuthProgress authProgress = authProgressStringPair.first;
             if (authProgress == AuthRepo.AuthProgress.SUCCESS) {
+                authRepository.addNewUser(getApplication());
                 changeAuthState(progressLiveData, authProgressStringPair, success);
             } else if (authProgress == AuthRepo.AuthProgress.FAILED) {
                 changeAuthState(progressLiveData, authProgressStringPair, failed);
@@ -70,8 +71,7 @@ public class AuthViewModel extends AndroidViewModel{
     }
 
     public void recoverPassword(String email) {
-        final LiveData<AuthRepo.RestoreProgress> progressLiveData = AuthRepo.getInstance(getApplication())
-                .restorePassword(email);
+        final LiveData<AuthRepo.RestoreProgress> progressLiveData = authRepository.restorePassword(email);
         restoreState.addSource(progressLiveData, restoreProgress -> {
             if (restoreProgress == AuthRepo.RestoreProgress.OK){
                 restoreState.postValue(success);

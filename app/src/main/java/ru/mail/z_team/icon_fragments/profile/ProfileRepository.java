@@ -9,8 +9,8 @@ import androidx.lifecycle.MutableLiveData;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import ru.mail.z_team.icon_fragments.profile.network.ApiRepository;
-import ru.mail.z_team.icon_fragments.profile.network.UserApi;
+import ru.mail.z_team.network.ApiRepository;
+import ru.mail.z_team.network.UserApi;
 
 public class ProfileRepository {
 

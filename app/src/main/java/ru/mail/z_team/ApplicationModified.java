@@ -3,7 +3,7 @@ package ru.mail.z_team;
 import android.app.Application;
 import android.content.Context;
 
-import ru.mail.z_team.icon_fragments.profile.network.ApiRepository;
+import ru.mail.z_team.network.ApiRepository;
 
 public class ApplicationModified extends Application {
 

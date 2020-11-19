@@ -16,10 +16,18 @@ import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.concurrent.Executor;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import ru.mail.z_team.network.ApiRepository;
+import ru.mail.z_team.network.UserApi;
+
 public class AuthRepo implements Executor{
 
     private static final String TAG = "AuthRepo";
     FirebaseAuth mAuth;
+
+    private Context context;
 
     public AuthRepo() {
         mAuth = FirebaseAuth.getInstance();
@@ -86,6 +94,22 @@ public class AuthRepo implements Executor{
                     }
                 });
         return mAuthProgress;
+    }
+
+    public void addNewUser(Context context) {
+        String id = FirebaseAuth.getInstance().getUid();
+        ApiRepository.from(context).getUserApi().addUser(id, new UserApi.User(id))
+                .enqueue(new Callback<UserApi.User>() {
+            @Override
+            public void onResponse(Call<UserApi.User> call, Response<UserApi.User> response) {
+
+            }
+
+            @Override
+            public void onFailure(Call<UserApi.User> call, Throwable t) {
+
+            }
+        });
     }
 
     public LiveData<RestoreProgress> restorePassword(String email) {

@@ -1,4 +1,4 @@
-package ru.mail.z_team.icon_fragments.profile.network;
+package ru.mail.z_team.network;
 
 import retrofit2.Call;
 import retrofit2.http.Body;
