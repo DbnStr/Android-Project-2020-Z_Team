@@ -25,6 +25,9 @@ import ru.mail.z_team.network.UserApi;
 public class AuthRepo implements Executor{
 
     private static final String LOG_TAG = "AuthRepo";
+    private static final int PROBLEM_WITH_AUTH_CODE = 401;
+    private static final int SUCCESS_CODE = 200;
+
     FirebaseAuth mAuth;
 
     private MutableLiveData<Pair<AuthProgress, String>> mAuthProgress;
@@ -75,12 +78,19 @@ public class AuthRepo implements Executor{
                 .enqueue(new Callback<UserApi.User>() {
             @Override
             public void onResponse(Call<UserApi.User> call, Response<UserApi.User> response) {
-
+                switch (response.code()) {
+                    case PROBLEM_WITH_AUTH_CODE:
+                        errorLog("Problem with Auth", null);
+                        break;
+                    case SUCCESS_CODE:
+                        log("User was successfully added to database");
+                        break;
+                }
             }
 
             @Override
             public void onFailure(Call<UserApi.User> call, Throwable t) {
-
+                errorLog("Fail with added player to database", t);
             }
         });
     }

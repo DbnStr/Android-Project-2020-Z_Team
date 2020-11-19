@@ -15,6 +15,8 @@ import ru.mail.z_team.network.UserApi;
 public class ProfileRepository {
 
     private static final String LOG_TAG = "ProfileRepository";
+    private static final int PROBLEM_WITH_AUTH_CODE = 401;
+
     private final Context context;
     private static final MutableLiveData<User> UserData = new MutableLiveData<>();
 
@@ -34,7 +36,7 @@ public class ProfileRepository {
         userApi.getUserById(id).enqueue(new Callback<UserApi.User>() {
             @Override
             public void onResponse(Call<UserApi.User> call, Response<UserApi.User> response) {
-                if (response.code() == 401) {
+                if (response.code() == PROBLEM_WITH_AUTH_CODE) {
                     errorLog("Problem with Auth", null);
                     return;
                 }
