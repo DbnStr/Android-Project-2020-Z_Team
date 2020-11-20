@@ -1,10 +1,17 @@
 package ru.mail.z_team.icon_fragments.profile;
 
+import android.annotation.SuppressLint;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.method.KeyListener;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -22,8 +29,8 @@ public class ProfileFragment extends Fragment {
     private static final String LOG_TAG = "ProfileFragment";
 
     private ProfileViewModel profileViewModel;
-    private TextView name;
-    private TextView age;
+    private EditText name;
+    private EditText age;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -43,6 +50,30 @@ public class ProfileFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         name = getActivity().findViewById(R.id.profile_name);
         age = getActivity().findViewById(R.id.profile_age);
+        disableEditAbility(name);
+        disableEditAbility(age);
+        Button editBtn = getActivity().findViewById(R.id.edit_btn);
+        editBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                enableEditAbility(name);
+                enableEditAbility(age);
+            }
+        });
+        Button saveChanges = getActivity().findViewById(R.id.save_changes_btn);
+        saveChanges.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String userId = FirebaseAuth.getInstance().getUid();
+                User currentUser = profileViewModel.getUserInfoById(userId).getValue();
+                currentUser.setName(name.getText().toString());
+                currentUser.setAge(Integer.parseInt(age.getText().toString()));
+                profileViewModel.changeUserInformation(userId, currentUser);
+                disableEditAbility(name);
+                disableEditAbility(age);
+            }
+        });
+
 
         Observer<User> observer = user -> {
             if (user != null) {
@@ -62,6 +93,19 @@ public class ProfileFragment extends Fragment {
         Log.d(LOG_TAG, message);
     }
 
+    private void disableEditAbility(EditText editText) {
+        editText.setEnabled(false);
+        editText.setCursorVisible(false);
+        editText.setBackgroundColor(Color.TRANSPARENT);
+    }
+
+    private void enableEditAbility(EditText editText) {
+        editText.setEnabled(true);
+        editText.setCursorVisible(true);
+        editText.setBackgroundColor(Color.LTGRAY);
+    }
+
+    @SuppressLint("SetTextI18n")
     private void setProfileData(@NonNull User user) {
         name.setText(user.getName());
         age.setText(String.valueOf(user.getAge()));

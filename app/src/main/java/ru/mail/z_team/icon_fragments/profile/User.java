@@ -1,10 +1,14 @@
 package ru.mail.z_team.icon_fragments.profile;
 
+import java.lang.reflect.Field;
+
+import ru.mail.z_team.network.UserApi;
+
 public class User {
 
-    private String name;
-    private int age;
-    private String id;
+    public String name;
+    public int age;
+    public String id;
 
     User(String name, int age, String id) {
         this.name = name;
@@ -34,5 +38,13 @@ public class User {
 
     public String getId() {
         return id;
+    }
+    
+    public UserApi.User getUserApiUser() {
+        UserApi.User result = new UserApi.User();
+        result.name = this.name;
+        result.age = this.age;
+        result.id = this.id;
+        return result;
     }
 }

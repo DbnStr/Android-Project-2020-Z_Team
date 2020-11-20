@@ -21,4 +21,8 @@ public class ProfileViewModel extends AndroidViewModel {
     public void update(final String id) {
         repository.update(id);
     }
+
+    public void changeUserInformation(final String id, User newInformation) {
+        repository.changeUserInformation(id, newInformation);
+    }
 }

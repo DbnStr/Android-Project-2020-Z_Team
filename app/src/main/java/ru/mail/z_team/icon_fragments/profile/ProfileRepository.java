@@ -18,7 +18,7 @@ public class ProfileRepository {
     private static final int PROBLEM_WITH_AUTH_CODE = 401;
 
     private final Context context;
-    private static final MutableLiveData<User> UserData = new MutableLiveData<>();
+    private final MutableLiveData<User> UserData = new MutableLiveData<>();
 
     private final UserApi userApi;
 
@@ -52,6 +52,20 @@ public class ProfileRepository {
             @Override
             public void onFailure(Call<UserApi.User> call, Throwable t) {
                 errorLog("Failed to load", t);
+            }
+        });
+    }
+
+    public void changeUserInformation(final String id, User newInformation) {
+        userApi.addUser(id, newInformation.getUserApiUser()).enqueue(new Callback<UserApi.User>() {
+            @Override
+            public void onResponse(Call<UserApi.User> call, Response<UserApi.User> response) {
+
+            }
+
+            @Override
+            public void onFailure(Call<UserApi.User> call, Throwable t) {
+
             }
         });
     }
