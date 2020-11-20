@@ -56,7 +56,7 @@ public class ProfileRepository {
     }
 
     public void changeUserInformation(final String id, User newInformation) {
-        userApi.addUser(id, newInformation.getUserApiUser()).enqueue(new Callback<UserApi.User>() {
+        userApi.changeUserInformation(id, newInformation.getUserApiUser()).enqueue(new Callback<UserApi.User>() {
             @Override
             public void onResponse(Call<UserApi.User> call, Response<UserApi.User> response) {
                 if (response.code() == PROBLEM_WITH_AUTH_CODE) {
