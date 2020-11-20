@@ -1,7 +1,5 @@
 package ru.mail.z_team.icon_fragments.profile;
 
-import java.lang.reflect.Field;
-
 import ru.mail.z_team.network.UserApi;
 
 public class User {
@@ -39,7 +37,7 @@ public class User {
     public String getId() {
         return id;
     }
-    
+
     public UserApi.User getUserApiUser() {
         UserApi.User result = new UserApi.User();
         result.name = this.name;

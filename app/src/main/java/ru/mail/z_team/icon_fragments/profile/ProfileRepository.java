@@ -18,7 +18,7 @@ public class ProfileRepository {
     private static final int PROBLEM_WITH_AUTH_CODE = 401;
 
     private final Context context;
-    private final MutableLiveData<User> UserData = new MutableLiveData<>();
+    private final MutableLiveData<User> userData = new MutableLiveData<>();
 
     private final UserApi userApi;
 
@@ -28,11 +28,10 @@ public class ProfileRepository {
     }
 
     public LiveData<User> getUserInfoById(final String id) {
-        return UserData;
+        return userData;
     }
 
     public void update(final String id) {
-        log(id);
         userApi.getUserById(id).enqueue(new Callback<UserApi.User>() {
             @Override
             public void onResponse(Call<UserApi.User> call, Response<UserApi.User> response) {
@@ -45,7 +44,7 @@ public class ProfileRepository {
                     return;
                 }
                 if (response.isSuccessful()) {
-                    UserData.postValue(transformToUser(response.body()));
+                    userData.postValue(transformToUser(response.body()));
                 }
             }
 
@@ -60,12 +59,18 @@ public class ProfileRepository {
         userApi.addUser(id, newInformation.getUserApiUser()).enqueue(new Callback<UserApi.User>() {
             @Override
             public void onResponse(Call<UserApi.User> call, Response<UserApi.User> response) {
-
+                if (response.code() == PROBLEM_WITH_AUTH_CODE) {
+                    errorLog("Problem with Auth", null);
+                    return;
+                }
+                if (response.isSuccessful()) {
+                    log("Change information about " + id);
+                }
             }
 
             @Override
             public void onFailure(Call<UserApi.User> call, Throwable t) {
-
+                errorLog("Failed to load", t);
             }
         });
     }

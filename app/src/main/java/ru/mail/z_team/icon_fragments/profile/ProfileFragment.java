@@ -3,16 +3,12 @@ package ru.mail.z_team.icon_fragments.profile;
 import android.annotation.SuppressLint;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.method.KeyListener;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -31,6 +27,8 @@ public class ProfileFragment extends Fragment {
     private ProfileViewModel profileViewModel;
     private EditText name;
     private EditText age;
+    private Button editBtn;
+    private Button saveChangesBtn;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -42,36 +40,28 @@ public class ProfileFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_profile, container, false);
+        View view = inflater.inflate(R.layout.fragment_profile, container, false);
+        name = view.findViewById(R.id.profile_name);
+        age = view.findViewById(R.id.profile_age);
+        editBtn = view.findViewById(R.id.edit_btn);
+        saveChangesBtn = view.findViewById(R.id.save_changes_btn);
+        return view;
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        name = getActivity().findViewById(R.id.profile_name);
-        age = getActivity().findViewById(R.id.profile_age);
-        disableEditAbility(name);
-        disableEditAbility(age);
-        Button editBtn = getActivity().findViewById(R.id.edit_btn);
-        editBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                enableEditAbility(name);
-                enableEditAbility(age);
-            }
-        });
-        Button saveChanges = getActivity().findViewById(R.id.save_changes_btn);
-        saveChanges.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String userId = FirebaseAuth.getInstance().getUid();
-                User currentUser = profileViewModel.getUserInfoById(userId).getValue();
-                currentUser.setName(name.getText().toString());
-                currentUser.setAge(Integer.parseInt(age.getText().toString()));
-                profileViewModel.changeUserInformation(userId, currentUser);
-                disableEditAbility(name);
-                disableEditAbility(age);
-            }
+
+        disableEditAbilityAll();
+
+        editBtn.setOnClickListener(v -> enableEditAbilityAll());
+        saveChangesBtn.setOnClickListener(v -> {
+            String userId = FirebaseAuth.getInstance().getUid();
+            User currentUser = profileViewModel.getUserInfoById(userId).getValue();
+            currentUser.setName(name.getText().toString());
+            currentUser.setAge(Integer.parseInt(age.getText().toString()));
+            profileViewModel.changeUserInformation(userId, currentUser);
+            disableEditAbilityAll();
         });
 
 
@@ -91,6 +81,16 @@ public class ProfileFragment extends Fragment {
 
     private void log(String message) {
         Log.d(LOG_TAG, message);
+    }
+
+    private void enableEditAbilityAll() {
+        enableEditAbility(name);
+        enableEditAbility(age);
+    }
+
+    private void disableEditAbilityAll() {
+        disableEditAbility(name);
+        disableEditAbility(age);
     }
 
     private void disableEditAbility(EditText editText) {
