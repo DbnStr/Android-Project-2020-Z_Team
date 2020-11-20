@@ -49,11 +49,11 @@ public class MainMenuActivity extends AppCompatActivity {
         final TextView goOut = findViewById(R.id.go_out_icon);
 
 
-        news.setOnClickListener(new ClickOnMainIconHandler<>(new NewsFragment()).getListener(NEWS_TAG, fragmentManager, container));
-        walks.setOnClickListener(new ClickOnMainIconHandler<>(new WalksFragment()).getListener(WALKS_TAG, fragmentManager, container));
-        friends.setOnClickListener(new ClickOnMainIconHandler<>(new FriendsFragment()).getListener(FRIENDS_TAG, fragmentManager, container));
-        profile.setOnClickListener(new ClickOnMainIconHandler<>(new ProfileFragment()).getListener(PROFILE_TAG, fragmentManager, container));
-        goOut.setOnClickListener(new ClickOnMainIconHandler<>(new GoOutFragment()).getListener(GO_OUT_TAG, fragmentManager, container));
+        news.setOnClickListener(new ClickOnIconHandler<>(new NewsFragment()).getListener(NEWS_TAG, fragmentManager, container));
+        walks.setOnClickListener(new ClickOnIconHandler<>(new WalksFragment()).getListener(WALKS_TAG, fragmentManager, container));
+        friends.setOnClickListener(new ClickOnIconHandler<>(new FriendsFragment()).getListener(FRIENDS_TAG, fragmentManager, container));
+        profile.setOnClickListener(new ClickOnIconHandler<>(new ProfileFragment()).getListener(PROFILE_TAG, fragmentManager, container));
+        goOut.setOnClickListener(new ClickOnIconHandler<>(new GoOutFragment()).getListener(GO_OUT_TAG, fragmentManager, container));
 
         if (getSupportFragmentManager().findFragmentById(container) == null) {
             getSupportFragmentManager()
@@ -64,25 +64,19 @@ public class MainMenuActivity extends AppCompatActivity {
         }
     }
 
-    private void checkUserStatus() {
-        FirebaseUser user = firebaseAuth.getCurrentUser();
-        if (user == null) {
-            startActivity(new Intent(MainMenuActivity.this, MainActivity.class));
-            finish();
-        }
-    }
-
     @Override
     protected void onStart() {
         super.onStart();
-        checkUserStatus();
+        if (!isUserAuth(firebaseAuth.getCurrentUser())) {
+            startMainActivityAndFinishThis();
+        }
     }
 
-    private class ClickOnMainIconHandler<T extends Fragment> {
+    private class ClickOnIconHandler<T extends Fragment> {
 
         final private T newFragment;
 
-        ClickOnMainIconHandler(T newFragment) {
+        ClickOnIconHandler(T newFragment) {
             this.newFragment = newFragment;
         }
 
@@ -119,8 +113,17 @@ public class MainMenuActivity extends AppCompatActivity {
         int id = item.getItemId();
         if (id == R.id.logout_action){
             firebaseAuth.signOut();
-            checkUserStatus();
+            startMainActivityAndFinishThis();
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private boolean isUserAuth(FirebaseUser user) {
+        return user != null;
+    }
+
+    private void startMainActivityAndFinishThis() {
+        startActivity(new Intent(MainMenuActivity.this, MainActivity.class));
+        finish();
     }
 }

@@ -24,6 +24,7 @@ public class ProfileFragment extends Fragment {
     private ProfileViewModel profileViewModel;
     private TextView name;
     private TextView age;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         log("OnCreate");
@@ -40,20 +41,20 @@ public class ProfileFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        String id = FirebaseAuth.getInstance().getUid();
         name = getActivity().findViewById(R.id.profile_name);
         age = getActivity().findViewById(R.id.profile_age);
+
         Observer<User> observer = user -> {
             if (user != null) {
-                setAll(user);
+                setProfileData(user);
             }
         };
-
-        profileViewModel= new ViewModelProvider(getActivity())
+        String userId = FirebaseAuth.getInstance().getUid();
+        profileViewModel = new ViewModelProvider(getActivity())
                 .get(ProfileViewModel.class);
-        profileViewModel.update(id);
+        profileViewModel.update(userId);
         profileViewModel
-                .getUserInfoById(id)
+                .getUserInfoById(userId)
                 .observe(getViewLifecycleOwner(), observer);
     }
 
@@ -61,7 +62,7 @@ public class ProfileFragment extends Fragment {
         Log.d(LOG_TAG, message);
     }
 
-    private void setAll(@NonNull User user) {
+    private void setProfileData(@NonNull User user) {
         name.setText(user.getName());
         age.setText(String.valueOf(user.getAge()));
     }
