@@ -19,7 +19,6 @@ import androidx.lifecycle.ViewModelProvider;
 import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.HashMap;
-import java.util.Map;
 
 import ru.mail.z_team.R;
 
