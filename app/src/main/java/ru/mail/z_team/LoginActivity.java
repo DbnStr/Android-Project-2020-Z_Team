@@ -27,7 +27,8 @@ import com.google.firebase.auth.FirebaseAuth;
 
 public class LoginActivity extends AppCompatActivity implements LifecycleOwner {
 
-    private static final String TAG = "LoginActivity";
+    private static final String LOG_TAG = "LoginActivity";
+
     Button signInBtn;
     TextView toRegistration, recoverPassword;
     EditText emailEt, passwordEt;
@@ -39,7 +40,7 @@ public class LoginActivity extends AppCompatActivity implements LifecycleOwner {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d(TAG, "startOnCreate");
+        Log.d(LOG_TAG, "startOnCreate");
         setContentView(R.layout.activity_login);
 
         ActionBar actionBar = getSupportActionBar();
@@ -78,7 +79,7 @@ public class LoginActivity extends AppCompatActivity implements LifecycleOwner {
                 if (authState == getString(R.string.ON_PROGRESS)) {
                     progressDialog.show();
                 } else if (authState == getString(R.string.SUCCESS)) {
-                    Log.d(TAG, "signInWithEmail:success");
+                    Log.d(LOG_TAG, "signInWithEmail:success");
                     progressDialog.dismiss();
                     Toast.makeText(LoginActivity.this, message + " signed in successfully",
                             Toast.LENGTH_SHORT).show();
@@ -162,7 +163,7 @@ public class LoginActivity extends AppCompatActivity implements LifecycleOwner {
     }
 
     private void loginUser(String email, String password) {
-        Log.d(TAG, "loginUser");
+        Log.d(LOG_TAG, "loginUser");
         authViewModel.loginUser(email, password);
     }
 

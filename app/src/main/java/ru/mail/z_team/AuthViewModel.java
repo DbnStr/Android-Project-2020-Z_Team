@@ -8,7 +8,6 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MediatorLiveData;
-import androidx.lifecycle.Observer;
 
 @SuppressWarnings("WeakerAccess")
 public class AuthViewModel extends AndroidViewModel{
@@ -21,10 +20,12 @@ public class AuthViewModel extends AndroidViewModel{
     private final String failed = getApplication().getResources().getString(R.string.FAILED);
     private final MediatorLiveData<Pair<String, String>> mAuthState = new MediatorLiveData<>();
     private final MediatorLiveData<String> restoreState = new MediatorLiveData<>();
+    private final AuthRepo authRepository;
 
     public AuthViewModel(@NonNull Application application) {
         super(application);
         mAuthState.setValue(new Pair<>(none, ""));
+        authRepository = AuthRepo.getInstance(getApplication());
     }
 
     public LiveData<Pair<String, String>> getProgress() {
@@ -39,23 +40,15 @@ public class AuthViewModel extends AndroidViewModel{
         Log.d(TAG, "loginUser");
         mAuthState.postValue(new Pair<>(onProgress, ""));
 
-        final LiveData<Pair<AuthRepo.AuthProgress, String>> progressLiveData = AuthRepo.getInstance(getApplication())
-                .login(email, password);
-        mAuthState.addSource(progressLiveData, new Observer<Pair<AuthRepo.AuthProgress, String>>() {
-            @Override
-            public void onChanged(Pair<AuthRepo.AuthProgress, String> authProgressStringPair) {
-                AuthRepo.AuthProgress authProgress = authProgressStringPair.first;
-                if (authProgress == AuthRepo.AuthProgress.SUCCESS) {
-                    mAuthState.postValue(new Pair<>(success, authProgressStringPair.second));
-                    mAuthState.removeSource(progressLiveData);
-                } else if (authProgress == AuthRepo.AuthProgress.FAILED) {
-                    mAuthState.postValue(new Pair<>(failed, authProgressStringPair.second));
-                    mAuthState.removeSource(progressLiveData);
-                }
-                else if (authProgress == AuthRepo.AuthProgress.ERROR) {
-                    mAuthState.postValue(new Pair<>(error, authProgressStringPair.second));
-                    mAuthState.removeSource(progressLiveData);
-                }
+        final LiveData<Pair<AuthRepo.AuthProgress, String>> progressLiveData = authRepository.login(email, password);
+        mAuthState.addSource(progressLiveData, authProgressStringPair -> {
+            AuthRepo.AuthProgress authProgress = authProgressStringPair.first;
+            if (authProgress == AuthRepo.AuthProgress.SUCCESS) {
+                changeAuthState(progressLiveData, authProgressStringPair, success);
+            } else if (authProgress == AuthRepo.AuthProgress.FAILED) {
+                changeAuthState(progressLiveData, authProgressStringPair, failed);
+            } else if (authProgress == AuthRepo.AuthProgress.ERROR) {
+                changeAuthState(progressLiveData, authProgressStringPair, error);
             }
         });
     }
@@ -63,45 +56,37 @@ public class AuthViewModel extends AndroidViewModel{
     public void registerUser(String email, String password) {
         Log.d(TAG, "registerUser");
         mAuthState.postValue(new Pair<>(onProgress, ""));
-
-        final LiveData<Pair<AuthRepo.AuthProgress, String>> progressLiveData = AuthRepo.getInstance(getApplication())
-                .register(email, password);
-        mAuthState.addSource(progressLiveData, new Observer<Pair<AuthRepo.AuthProgress, String>>() {
-            @Override
-            public void onChanged(Pair<AuthRepo.AuthProgress, String> authProgressStringPair) {
-                AuthRepo.AuthProgress authProgress = authProgressStringPair.first;
-                if (authProgress == AuthRepo.AuthProgress.SUCCESS) {
-                    mAuthState.postValue(new Pair<>(success, authProgressStringPair.second));
-                    mAuthState.removeSource(progressLiveData);
-                } else if (authProgress == AuthRepo.AuthProgress.FAILED) {
-                    mAuthState.postValue(new Pair<>(failed, authProgressStringPair.second));
-                    mAuthState.removeSource(progressLiveData);
-                }
-                else if (authProgress == AuthRepo.AuthProgress.ERROR) {
-                    mAuthState.postValue(new Pair<>(error, authProgressStringPair.second));
-                    mAuthState.removeSource(progressLiveData);
-                }
+        final LiveData<Pair<AuthRepo.AuthProgress, String>> progressLiveData = authRepository.register(email, password);
+        mAuthState.addSource(progressLiveData, authProgressStringPair -> {
+            AuthRepo.AuthProgress authProgress = authProgressStringPair.first;
+            if (authProgress == AuthRepo.AuthProgress.SUCCESS) {
+                authRepository.addNewUser(getApplication());
+                changeAuthState(progressLiveData, authProgressStringPair, success);
+            } else if (authProgress == AuthRepo.AuthProgress.FAILED) {
+                changeAuthState(progressLiveData, authProgressStringPair, failed);
+            } else if (authProgress == AuthRepo.AuthProgress.ERROR) {
+                changeAuthState(progressLiveData, authProgressStringPair, error);
             }
         });
     }
 
     public void recoverPassword(String email) {
-        final LiveData<AuthRepo.RestoreProgress> progressLiveData = AuthRepo.getInstance(getApplication())
-                .restorePassword(email);
-        restoreState.addSource(progressLiveData, new Observer<AuthRepo.RestoreProgress>() {
-            @Override
-            public void onChanged(AuthRepo.RestoreProgress restoreProgress) {
-                if (restoreProgress == AuthRepo.RestoreProgress.OK){
-                    restoreState.postValue(success);
-                }
-                else if (restoreProgress == AuthRepo.RestoreProgress.FAILED) {
-                    restoreState.postValue(failed);
-                }
-                else if (restoreProgress == AuthRepo.RestoreProgress.ERROR) {
-                    restoreState.postValue(error);
-                }
+        final LiveData<AuthRepo.RestoreProgress> progressLiveData = authRepository.restorePassword(email);
+        restoreState.addSource(progressLiveData, restoreProgress -> {
+            if (restoreProgress == AuthRepo.RestoreProgress.OK){
+                restoreState.postValue(success);
+            } else if (restoreProgress == AuthRepo.RestoreProgress.FAILED) {
+                restoreState.postValue(failed);
+            } else if (restoreProgress == AuthRepo.RestoreProgress.ERROR) {
+                restoreState.postValue(error);
             }
         });
+    }
 
+    public void changeAuthState(LiveData<Pair<AuthRepo.AuthProgress, String>> progressLiveData,
+                                Pair<AuthRepo.AuthProgress, String> authProgressStringPair,
+                                String status) {
+        mAuthState.postValue(new Pair<>(status, authProgressStringPair.second));
+        mAuthState.removeSource(progressLiveData);
     }
 }

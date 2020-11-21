@@ -3,18 +3,26 @@ package ru.mail.z_team;
 import android.app.Application;
 import android.content.Context;
 
+import ru.mail.z_team.network.ApiRepository;
+
 public class ApplicationModified extends Application {
 
-    private AuthRepo mAuthRepo;
+    private ApiRepository apiRepository;
+    private AuthRepo authRepo;
 
     @Override
     public void onCreate() {
         super.onCreate();
-        mAuthRepo = new AuthRepo();
+        apiRepository = new ApiRepository();
+        authRepo = new AuthRepo();
+    }
+
+    public ApiRepository getApis() {
+        return apiRepository;
     }
 
     public AuthRepo getAuthRepo() {
-        return mAuthRepo;
+        return authRepo;
     }
 
     public static ApplicationModified from(Context context) {
