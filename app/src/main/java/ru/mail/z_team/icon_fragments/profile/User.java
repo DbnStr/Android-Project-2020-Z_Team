@@ -1,6 +1,12 @@
 package ru.mail.z_team.icon_fragments.profile;
 
-import ru.mail.z_team.network.UserApi;
+import android.util.Log;
+
+import androidx.annotation.NonNull;
+
+import java.lang.reflect.Field;
+import java.util.HashMap;
+import java.util.Map;
 
 public class User {
 
@@ -38,11 +44,25 @@ public class User {
         return id;
     }
 
-    public UserApi.User getUserApiUser() {
-        UserApi.User result = new UserApi.User();
-        result.name = this.name;
-        result.age = this.age;
-        result.id = this.id;
-        return result;
+    public User updateUserInfo(HashMap<String, String> newInfo) {
+        Field[] fields = User.class.getFields();
+        for(Field field : fields) {
+            if (newInfo.containsKey(field.getName())) {
+                setFieldValue(field, newInfo.get(field.getName()));
+            }
+        }
+        return this;
+    }
+
+    private void setFieldValue(@NonNull final Field field, @NonNull String value) {
+        try {
+            if (field.getType().equals(int.class)) {
+                field.set(this, Integer.valueOf(value));
+            } else {
+                field.set(this, value);
+            }
+        } catch (IllegalAccessException exception) {
+            Log.e("User", exception.getMessage());
+        }
     }
 }

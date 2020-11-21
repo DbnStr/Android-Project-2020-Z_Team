@@ -18,6 +18,9 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.google.firebase.auth.FirebaseAuth;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import ru.mail.z_team.R;
 
 public class ProfileFragment extends Fragment {
@@ -57,10 +60,7 @@ public class ProfileFragment extends Fragment {
         editBtn.setOnClickListener(v -> enableEditAbilityAll());
         saveChangesBtn.setOnClickListener(v -> {
             String userId = FirebaseAuth.getInstance().getUid();
-            User currentUser = profileViewModel.getUserInfoById(userId).getValue();
-            currentUser.setName(name.getText().toString());
-            currentUser.setAge(Integer.parseInt(age.getText().toString()));
-            profileViewModel.changeUserInformation(userId, currentUser);
+            profileViewModel.changeUserInformation(userId, getProfileInfo());
             disableEditAbilityAll();
         });
 
@@ -103,6 +103,15 @@ public class ProfileFragment extends Fragment {
         editText.setEnabled(true);
         editText.setCursorVisible(true);
         editText.setBackgroundColor(Color.LTGRAY);
+    }
+
+    private HashMap<String, String> getProfileInfo() {
+        HashMap<String, String> info = new HashMap<>();
+        String nameText = name.getText().toString();
+        String ageText = age.getText().toString();
+        info.put("age", ageText);
+        info.put("name", nameText);
+        return info;
     }
 
     @SuppressLint("SetTextI18n")

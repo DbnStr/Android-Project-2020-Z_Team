@@ -56,7 +56,7 @@ public class ProfileRepository {
     }
 
     public void changeUserInformation(final String id, User newInformation) {
-        userApi.changeUserInformation(id, newInformation.getUserApiUser()).enqueue(new Callback<UserApi.User>() {
+        userApi.changeUserInformation(id, transformToUserApiUser(newInformation)).enqueue(new Callback<UserApi.User>() {
             @Override
             public void onResponse(Call<UserApi.User> call, Response<UserApi.User> response) {
                 if (response.code() == PROBLEM_WITH_AUTH_CODE) {
@@ -89,5 +89,13 @@ public class ProfileRepository {
                 user.age,
                 user.id
         );
+    }
+
+    private UserApi.User transformToUserApiUser(User user) {
+        UserApi.User result = new UserApi.User();
+        result.id = user.getId();
+        result.name = user.getName();
+        result.age = user.getAge();
+        return result;
     }
 }
