@@ -23,7 +23,6 @@ public interface UserApi {
             this.id = id;
             this.email = email;
             this.friends = new ArrayList<>();
-            friends.add(id);
         }
 
         public User(){}

@@ -8,6 +8,7 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.google.firebase.auth.FirebaseAuth;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import retrofit2.Call;
@@ -40,6 +41,7 @@ public class FriendsRepository {
                 }
                 if (response.body() == null) {
                     errorLog("File not found", null);
+                    userFriends.postValue(new ArrayList<>());
                     return;
                 }
                 if (response.isSuccessful()) {

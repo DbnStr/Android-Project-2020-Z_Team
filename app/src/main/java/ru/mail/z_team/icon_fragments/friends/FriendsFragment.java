@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -29,6 +30,7 @@ public class FriendsFragment extends Fragment {
     FriendsViewModel viewModel;
     Button addFriendBtn;
     EditText friendIdEt;
+    TextView noFriends;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -44,19 +46,24 @@ public class FriendsFragment extends Fragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
         adapter = new FriendAdapter();
-        recyclerView.setAdapter(adapter);
 
         String userId = FirebaseAuth.getInstance().getUid();
         viewModel = new ViewModelProvider(this).get(FriendsViewModel.class);
         viewModel.update(userId);
         viewModel.getUserFriendsById(userId)
                 .observe(getActivity(), (Observer<List<String>>) ids -> {
-                    Log.d(LOG_TAG, ids.toString());
-                    adapter.setFriends(ids);
+                    if (ids.isEmpty()){
+                        noFriends.setVisibility(View.VISIBLE);
+                    }
+                    else{
+                        noFriends.setVisibility(View.INVISIBLE);
+                        adapter.setFriends(ids);
+                    }
                 });
 
         addFriendBtn = view.findViewById(R.id.add_friend_by_id_btn);
         friendIdEt = view.findViewById(R.id.add_friend_by_id_et);
+        noFriends = view.findViewById(R.id.no_friend_tv);
 
         addFriendBtn.setOnClickListener(v -> {
             String id = friendIdEt.getText().toString().trim();
@@ -66,11 +73,13 @@ public class FriendsFragment extends Fragment {
             }
             else{
                 Log.d(LOG_TAG, "addFriendBtn");
+                noFriends.setVisibility(View.INVISIBLE);
                 adapter.addFriend(id);
                 viewModel.addFriend(id, adapter.getItemCount() - 1);
             }
         });
 
+        recyclerView.setAdapter(adapter);
 
         return view;
     }
