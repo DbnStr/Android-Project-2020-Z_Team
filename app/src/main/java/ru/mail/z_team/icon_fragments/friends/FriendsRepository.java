@@ -60,4 +60,8 @@ public class FriendsRepository {
     public LiveData<List<String>> getUserFriendsById(String id) {
         return userFriends;
     }
+
+    public void addFriend(String id) {
+
+    }
 }

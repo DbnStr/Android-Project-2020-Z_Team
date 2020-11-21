@@ -29,4 +29,8 @@ public class FriendsViewModel extends AndroidViewModel {
     private void errorLog(String message, Error error) {
         Log.e(LOG_TAG, message, error);
     }
+
+    public void addFriend(String id) {
+        repository.addFriend(id);
+    }
 }
