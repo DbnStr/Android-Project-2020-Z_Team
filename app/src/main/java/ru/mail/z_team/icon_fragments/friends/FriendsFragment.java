@@ -24,6 +24,7 @@ import ru.mail.z_team.R;
 
 public class FriendsFragment extends Fragment {
 
+    private static final String LOG_TAG = "FriendsFragment";
     private FriendAdapter adapter;
     FriendsViewModel viewModel;
     Button addFriendBtn;
@@ -50,6 +51,7 @@ public class FriendsFragment extends Fragment {
         viewModel.update(userId);
         viewModel.getUserFriendsById(userId)
                 .observe(getActivity(), (Observer<List<String>>) ids -> {
+                    Log.d(LOG_TAG, ids.toString());
                     adapter.setFriends(ids);
                 });
 
@@ -63,7 +65,9 @@ public class FriendsFragment extends Fragment {
                 friendIdEt.setFocusable(true);
             }
             else{
+                Log.d(LOG_TAG, "addFriendBtn");
                 adapter.addFriend(id);
+                viewModel.addFriend(id, adapter.getItemCount() - 1);
             }
         });
 

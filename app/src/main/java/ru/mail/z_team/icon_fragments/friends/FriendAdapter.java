@@ -1,6 +1,7 @@
 package ru.mail.z_team.icon_fragments.friends;
 
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,11 +16,11 @@ import ru.mail.z_team.R;
 
 public class FriendAdapter extends RecyclerView.Adapter<FriendViewHolder>{
 
+    private static final String LOG_TAG = "FriendAdapter";
     private final List<String> friends;
 
     public FriendAdapter(){
         friends = new ArrayList<>();
-
     }
 
     @NonNull
@@ -31,6 +32,7 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendViewHolder>{
 
     @Override
     public void onBindViewHolder(@NonNull FriendViewHolder holder, int position) {
+        Log.d(LOG_TAG, "OnBindViewHolderFriend " + position);
         holder.friend.setText(friends.get(position));
     }
 
@@ -41,11 +43,14 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendViewHolder>{
 
     public void addFriend(String id) {
         friends.add(id);
-        notifyDataSetChanged();
+        Log.d(LOG_TAG, "addFriend");
+        this.notifyItemInserted(friends.size() - 1);
     }
 
     public void setFriends(List<String> ids) {
         friends.addAll(ids);
-        notifyDataSetChanged();
+        Log.d(LOG_TAG, "addAllFriends");
+        Log.d(LOG_TAG, friends.toString());
+        this.notifyItemInserted(friends.size() - 1);
     }
 }

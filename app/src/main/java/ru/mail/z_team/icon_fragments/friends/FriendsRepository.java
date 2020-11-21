@@ -6,6 +6,8 @@ import android.util.Log;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import com.google.firebase.auth.FirebaseAuth;
+
 import java.util.List;
 
 import retrofit2.Call;
@@ -61,7 +63,18 @@ public class FriendsRepository {
         return userFriends;
     }
 
-    public void addFriend(String id) {
+    public void addFriend(String id, int num) {
+        Log.d(LOG_TAG, "addFriend");
+        userApi.addFriend(FirebaseAuth.getInstance().getUid(), Integer.toString(num), id).enqueue(new Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+                update(FirebaseAuth.getInstance().getUid());
+            }
 
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+                errorLog("Failed to add friend", t);
+            }
+        });
     }
 }

@@ -30,7 +30,8 @@ public class FriendsViewModel extends AndroidViewModel {
         Log.e(LOG_TAG, message, error);
     }
 
-    public void addFriend(String id) {
-        repository.addFriend(id);
+    public void addFriend(String id, int num) {
+        Log.d(LOG_TAG, "addFriend");
+        repository.addFriend(id, num);
     }
 }

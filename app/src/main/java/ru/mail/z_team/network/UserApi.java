@@ -38,6 +38,9 @@ public interface UserApi {
     @PUT("/Users/{id}.json")
     Call<User> addUser(@Path("id") String id, @Body User user);
 
+    @PUT("/Users/{id}/friends/{num}.json")
+    Call<String> addFriend(@Path("id") String id, @Path("num") String num, @Body String friendId);
+
     @PATCH("/Users/{id}.json")
     Call<User> changeUserInformation(@Path("id") String id, @Body User user);
 }
