@@ -19,12 +19,13 @@ import ru.mail.z_team.network.UserApi;
 
 public class UserRepository {
 
-    private static final String LOG_TAG = "ProfileRepository";
+    private static final String LOG_TAG = "UserRepository";
     private static final int FAILED_TO_READ_WRITE_DB_CODE = 401;
 
     private final Context context;
     private final MutableLiveData<User> userData = new MutableLiveData<>();
     private final MutableLiveData<List<String>> userFriends = new MutableLiveData<>();
+    private final MutableLiveData<Boolean> userExistence = new MutableLiveData<>();
 
     private final UserApi userApi;
 
@@ -125,26 +126,31 @@ public class UserRepository {
         });
     }
 
-    public boolean userExists(String id) {
+    public LiveData<Boolean> userExists(String id) {
         final boolean[] res = new boolean[1];
         userApi.getAllUsers().enqueue(new Callback<List<UserApi.User>>() {
             @Override
             public void onResponse(Call<List<UserApi.User>> call, Response<List<UserApi.User>> response) {
                 for (UserApi.User user : response.body()){
+                    Log.d(LOG_TAG, user.id + " vs " + id);
                     if (user.id == id){
+                        Log.d(LOG_TAG, "Friend with id found");
                         res[0] = true;
-                        return;
+                        break;
                     }
+                    res[0] = false;
                 }
-                res[0] = false;
+                userExistence.postValue(res[0]);
             }
 
             @Override
             public void onFailure(Call<List<UserApi.User>> call, Throwable t) {
                 errorLog("Failed to get all users", t);
+                /*res[0] = false;
+                userExistence.postValue(res[0]);*/
             }
         });
-        return res[0];
+        return userExistence;
     }
 
     private void errorLog(final String message, Throwable t) {

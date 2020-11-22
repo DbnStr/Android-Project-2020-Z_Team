@@ -36,7 +36,7 @@ public class UserViewModel extends AndroidViewModel {
         repository.addFriend(id, num);
     }
 
-    public boolean userExists(final String id){
+    public LiveData<Boolean> userExists(final String id){
         return repository.userExists(id);
     }
 

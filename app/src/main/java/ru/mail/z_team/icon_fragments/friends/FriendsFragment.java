@@ -18,6 +18,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.auth.FirebaseAuth;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import ru.mail.z_team.R;
 import ru.mail.z_team.user.UserViewModel;
 
@@ -54,6 +57,7 @@ public class FriendsFragment extends Fragment {
                         noFriends.setVisibility(View.VISIBLE);
                     }
                     else{
+                        List<String> names = getFriendsNames(ids);
                         noFriends.setVisibility(View.INVISIBLE);
                         adapter.setFriends(ids);
                     }
@@ -73,18 +77,28 @@ public class FriendsFragment extends Fragment {
                 Log.d(LOG_TAG, "addFriendBtn");
                 noFriends.setVisibility(View.INVISIBLE);
                 //adapter.addFriend(id);
-                if (viewModel.userExists(id)){
-                    viewModel.addFriend(id, adapter.getItemCount() - 1);
-                }
-                else{
-                    friendIdEt.setError("User with entered ID doesn't exist");
-                    friendIdEt.setFocusable(true);
-                }
+                viewModel.userExists(id).observe(getActivity(), existence -> {
+                    if (existence){
+                        viewModel.addFriend(id, adapter.getItemCount() - 1);
+                    }
+                    else{
+                        friendIdEt.setError("User with entered ID doesn't exist");
+                        friendIdEt.setFocusable(true);
+                    }
+                });
             }
         });
 
         recyclerView.setAdapter(adapter);
 
         return view;
+    }
+
+    private List<String> getFriendsNames(List<String> ids) {
+        List<String> names = new ArrayList<>();
+        for (String id: ids){
+            //
+        }
+        return names;
     }
 }
