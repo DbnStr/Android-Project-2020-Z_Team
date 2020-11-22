@@ -22,12 +22,13 @@ import java.util.HashMap;
 
 import ru.mail.z_team.R;
 import ru.mail.z_team.user.User;
+import ru.mail.z_team.user.UserViewModel;
 
 public class ProfileFragment extends Fragment {
 
     private static final String LOG_TAG = "ProfileFragment";
 
-    private ProfileViewModel profileViewModel;
+    private UserViewModel userViewModel;
     private EditText name;
     private EditText age;
     private Button editBtn;
@@ -60,7 +61,7 @@ public class ProfileFragment extends Fragment {
         editBtn.setOnClickListener(v -> enableEditAbilityAll());
         saveChangesBtn.setOnClickListener(v -> {
             String userId = FirebaseAuth.getInstance().getUid();
-            profileViewModel.changeUserInformation(userId, getProfileInfo());
+            userViewModel.changeUserInformation(userId, getProfileInfo());
             disableEditAbilityAll();
         });
 
@@ -71,10 +72,10 @@ public class ProfileFragment extends Fragment {
             }
         };
         String userId = FirebaseAuth.getInstance().getUid();
-        profileViewModel = new ViewModelProvider(getActivity())
-                .get(ProfileViewModel.class);
-        profileViewModel.update(userId);
-        profileViewModel
+        userViewModel = new ViewModelProvider(getActivity())
+                .get(UserViewModel.class);
+        userViewModel.update(userId);
+        userViewModel
                 .getUserInfoById(userId)
                 .observe(getViewLifecycleOwner(), observer);
     }

@@ -19,12 +19,13 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.firebase.auth.FirebaseAuth;
 
 import ru.mail.z_team.R;
+import ru.mail.z_team.user.UserViewModel;
 
 public class FriendsFragment extends Fragment {
 
     private static final String LOG_TAG = "FriendsFragment";
     private FriendAdapter adapter;
-    FriendsViewModel viewModel;
+    UserViewModel viewModel;
     Button addFriendBtn;
     EditText friendIdEt;
     TextView noFriends;
@@ -45,8 +46,8 @@ public class FriendsFragment extends Fragment {
         adapter = new FriendAdapter();
 
         String userId = FirebaseAuth.getInstance().getUid();
-        viewModel = new ViewModelProvider(this).get(FriendsViewModel.class);
-        viewModel.update(userId);
+        viewModel = new ViewModelProvider(this).get(UserViewModel.class);
+        viewModel.updateFriends(userId);
         viewModel.getUserFriendsById(userId)
                 .observe(getActivity(), ids -> {
                     if (ids.isEmpty()){
