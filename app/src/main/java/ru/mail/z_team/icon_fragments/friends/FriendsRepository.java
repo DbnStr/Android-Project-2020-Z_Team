@@ -67,16 +67,38 @@ public class FriendsRepository {
 
     public void addFriend(String id, int num) {
         Log.d(LOG_TAG, "addFriend");
-        userApi.addFriend(FirebaseAuth.getInstance().getUid(), Integer.toString(num), id).enqueue(new Callback<String>() {
+        String curUserId = FirebaseAuth.getInstance().getUid();
+        userApi.addFriend(curUserId, Integer.toString(num), id).enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
-                update(FirebaseAuth.getInstance().getUid());
+                update(curUserId);
             }
-
             @Override
             public void onFailure(Call<String> call, Throwable t) {
                 errorLog("Failed to add friend", t);
             }
         });
+    }
+
+    public boolean userExists(String id) {
+        final boolean[] res = new boolean[1];
+        userApi.getAllUsers().enqueue(new Callback<List<UserApi.User>>() {
+            @Override
+            public void onResponse(Call<List<UserApi.User>> call, Response<List<UserApi.User>> response) {
+                for (UserApi.User user : response.body()){
+                    if (user.id == id){
+                        res[0] = true;
+                        return;
+                    }
+                }
+                res[0] = false;
+            }
+
+            @Override
+            public void onFailure(Call<List<UserApi.User>> call, Throwable t) {
+                errorLog("Failed to get all users", t);
+            }
+        });
+        return res[0];
     }
 }

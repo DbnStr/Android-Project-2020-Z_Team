@@ -43,15 +43,11 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendViewHolder>{
 
     public void addFriend(String id) {
         friends.add(id);
-        Log.d(LOG_TAG, "addFriend");
         this.notifyItemInserted(friends.size() - 1);
     }
 
     public void setFriends(List<String> ids) {
         friends.addAll(ids);
-
-        Log.d(LOG_TAG, "addAllFriends");
-        Log.d(LOG_TAG, friends.toString());
         this.notifyItemInserted(friends.size() - 1);
     }
 }

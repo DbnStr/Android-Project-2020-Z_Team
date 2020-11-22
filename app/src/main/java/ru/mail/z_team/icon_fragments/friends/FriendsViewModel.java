@@ -22,6 +22,10 @@ public class FriendsViewModel extends AndroidViewModel {
         repository.update(id);
     }
 
+    public boolean userExists(final String id){
+        return repository.userExists(id);
+    }
+
     public LiveData<List<String>> getUserFriendsById(final String id) {
         return repository.getUserFriendsById(id);
     }

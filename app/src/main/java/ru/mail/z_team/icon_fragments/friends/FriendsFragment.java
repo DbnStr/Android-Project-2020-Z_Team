@@ -12,14 +12,11 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.auth.FirebaseAuth;
-
-import java.util.List;
 
 import ru.mail.z_team.R;
 
@@ -51,7 +48,7 @@ public class FriendsFragment extends Fragment {
         viewModel = new ViewModelProvider(this).get(FriendsViewModel.class);
         viewModel.update(userId);
         viewModel.getUserFriendsById(userId)
-                .observe(getActivity(), (Observer<List<String>>) ids -> {
+                .observe(getActivity(), ids -> {
                     if (ids.isEmpty()){
                         noFriends.setVisibility(View.VISIBLE);
                     }
@@ -74,8 +71,14 @@ public class FriendsFragment extends Fragment {
             else{
                 Log.d(LOG_TAG, "addFriendBtn");
                 noFriends.setVisibility(View.INVISIBLE);
-                adapter.addFriend(id);
-                viewModel.addFriend(id, adapter.getItemCount() - 1);
+                //adapter.addFriend(id);
+                if (viewModel.userExists(id)){
+                    viewModel.addFriend(id, adapter.getItemCount() - 1);
+                }
+                else{
+                    friendIdEt.setError("User with entered ID doesn't exist");
+                    friendIdEt.setFocusable(true);
+                }
             }
         });
 
