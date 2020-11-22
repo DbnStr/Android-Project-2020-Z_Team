@@ -9,7 +9,7 @@ import androidx.lifecycle.LiveData;
 
 import java.util.List;
 
-import ru.mail.z_team.icon_fragments.profile.UserRepository;
+import ru.mail.z_team.user.UserRepository;
 
 public class FriendsViewModel extends AndroidViewModel {
 

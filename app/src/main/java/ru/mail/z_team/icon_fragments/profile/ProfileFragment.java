@@ -21,6 +21,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import java.util.HashMap;
 
 import ru.mail.z_team.R;
+import ru.mail.z_team.user.User;
 
 public class ProfileFragment extends Fragment {
 

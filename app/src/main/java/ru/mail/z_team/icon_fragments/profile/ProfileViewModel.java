@@ -9,6 +9,9 @@ import androidx.lifecycle.LiveData;
 
 import java.util.HashMap;
 
+import ru.mail.z_team.user.User;
+import ru.mail.z_team.user.UserRepository;
+
 public class ProfileViewModel extends AndroidViewModel {
 
     private static final String LOG_TAG = "ProfileViewModel";

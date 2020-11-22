@@ -1,4 +1,4 @@
-package ru.mail.z_team.icon_fragments.profile;
+package ru.mail.z_team.user;
 
 import android.content.Context;
 import android.util.Log;
