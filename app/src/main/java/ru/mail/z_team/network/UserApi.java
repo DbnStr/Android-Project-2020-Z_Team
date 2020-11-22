@@ -15,9 +15,9 @@ public interface UserApi {
     class User {
         public String name;
         public int age;
-        public String id;
         public ArrayList<String> friends;
         public String email;
+        public String id;
 
         public User(String id, String email) {
             this.id = id;

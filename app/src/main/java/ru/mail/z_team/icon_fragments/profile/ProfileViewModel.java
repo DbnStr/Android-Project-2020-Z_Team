@@ -12,7 +12,7 @@ import java.util.HashMap;
 public class ProfileViewModel extends AndroidViewModel {
 
     private static final String LOG_TAG = "ProfileViewModel";
-    private final ProfileRepository repository = new ProfileRepository(getApplication());
+    private final UserRepository repository = new UserRepository(getApplication());
 
     public ProfileViewModel(@NonNull Application application) {
         super(application);

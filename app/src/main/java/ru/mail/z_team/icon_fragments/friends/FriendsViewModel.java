@@ -9,25 +9,27 @@ import androidx.lifecycle.LiveData;
 
 import java.util.List;
 
+import ru.mail.z_team.icon_fragments.profile.UserRepository;
+
 public class FriendsViewModel extends AndroidViewModel {
 
     private static final String LOG_TAG = "ProfileViewModel";
-    private final FriendsRepository repository = new FriendsRepository(getApplication());
+    private final UserRepository userRepository = new UserRepository(getApplication());
 
     public FriendsViewModel(@NonNull Application application) {
         super(application);
     }
 
     public void update(final String id) {
-        repository.update(id);
+        userRepository.updateFriends(id);
     }
 
     public boolean userExists(final String id){
-        return repository.userExists(id);
+        return userRepository.userExists(id);
     }
 
     public LiveData<List<String>> getUserFriendsById(final String id) {
-        return repository.getUserFriendsById(id);
+        return userRepository.getUserFriendsById(id);
     }
 
     private void errorLog(String message, Error error) {
@@ -36,6 +38,6 @@ public class FriendsViewModel extends AndroidViewModel {
 
     public void addFriend(String id, int num) {
         Log.d(LOG_TAG, "addFriend");
-        repository.addFriend(id, num);
+        userRepository.addFriend(id, num);
     }
 }
