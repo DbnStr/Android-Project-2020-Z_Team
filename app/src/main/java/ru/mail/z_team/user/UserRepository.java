@@ -139,7 +139,7 @@ public class UserRepository {
                     return;
                 }
                 if (response.isSuccessful()) {
-                    userExistence.postValue(false);
+                    userExistence.postValue(true);
                 }
             }
 
