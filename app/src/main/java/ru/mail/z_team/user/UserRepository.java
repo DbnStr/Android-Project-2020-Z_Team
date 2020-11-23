@@ -63,6 +63,7 @@ public class UserRepository {
     }
 
     public void updateFriends(final String id) {
+        Log.d(LOG_TAG, "updateFriends");
         userApi.getUserFriendsById(id).enqueue(new Callback<List<String>>() {
             @Override
             public void onResponse(Call<List<String>> call, Response<List<String>> response) {
@@ -97,7 +98,10 @@ public class UserRepository {
         userApi.addFriend(curUserId, Integer.toString(num), id).enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
-                updateFriends(curUserId);
+                //updateFriends(curUserId);
+                List<String> singleIdList = new ArrayList<>();
+                singleIdList.add(id);
+                userFriends.postValue(singleIdList);
             }
             @Override
             public void onFailure(Call<String> call, Throwable t) {
