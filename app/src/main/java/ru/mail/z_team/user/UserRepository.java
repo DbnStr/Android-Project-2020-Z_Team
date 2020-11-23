@@ -127,27 +127,25 @@ public class UserRepository {
     }
 
     public LiveData<Boolean> userExists(String id) {
-        final boolean[] res = new boolean[1];
-        userApi.getAllUsers().enqueue(new Callback<List<UserApi.User>>() {
+        userApi.getUserById(id).enqueue(new Callback<UserApi.User>() {
             @Override
-            public void onResponse(Call<List<UserApi.User>> call, Response<List<UserApi.User>> response) {
-                for (UserApi.User user : response.body()){
-                    Log.d(LOG_TAG, user.id + " vs " + id);
-                    if (user.id == id){
-                        Log.d(LOG_TAG, "Friend with id found");
-                        res[0] = true;
-                        break;
-                    }
-                    res[0] = false;
+            public void onResponse(Call<UserApi.User> call, Response<UserApi.User> response) {
+                if (response.code() == FAILED_TO_READ_WRITE_DB_CODE) {
+                    errorLog("Problem with Auth", null);
+                    return;
                 }
-                userExistence.postValue(res[0]);
+                if (response.body() == null) {
+                    userExistence.postValue(false);
+                    return;
+                }
+                if (response.isSuccessful()) {
+                    userExistence.postValue(false);
+                }
             }
 
             @Override
-            public void onFailure(Call<List<UserApi.User>> call, Throwable t) {
-                errorLog("Failed to get all users", t);
-                /*res[0] = false;
-                userExistence.postValue(res[0]);*/
+            public void onFailure(Call<UserApi.User> call, Throwable t) {
+                errorLog("Failed to load", t);
             }
         });
         return userExistence;
