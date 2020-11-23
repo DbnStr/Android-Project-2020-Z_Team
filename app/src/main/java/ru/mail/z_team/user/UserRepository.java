@@ -76,6 +76,7 @@ public class UserRepository {
         userApi.addFriend(curUserId, Integer.toString(num), id).enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
+                //updateFriends(curUserId);
                 List<String> singleIdList = new ArrayList<>();
                 singleIdList.add(id);
                 userFriends.postValue(singleIdList);

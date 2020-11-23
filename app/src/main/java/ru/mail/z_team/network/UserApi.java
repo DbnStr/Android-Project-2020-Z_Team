@@ -28,10 +28,6 @@ public interface UserApi {
         public User(){}
     }
 
-
-    @GET("Users.json")
-    Call<List<User>> getAllUsers();
-
     @GET("/Users/{id}.json")
     Call<User> getUserById(@Path("id") String id);
 

@@ -12,7 +12,7 @@ import java.util.List;
 
 public class UserViewModel extends AndroidViewModel {
 
-    private static final String LOG_TAG = "ProfileViewModel";
+    private static final String LOG_TAG = "UserViewModel";
     private final UserRepository repository = new UserRepository(getApplication());
 
     public UserViewModel(@NonNull Application application) {
@@ -28,6 +28,7 @@ public class UserViewModel extends AndroidViewModel {
     }
 
     public void updateFriends(final String id) {
+        Log.d(LOG_TAG, "updateFriend");
         repository.updateFriends(id);
     }
 

@@ -79,7 +79,7 @@ public class FriendsFragment extends Fragment {
                 //adapter.addFriend(id);
                 viewModel.userExists(id).observe(getActivity(), existence -> {
                     if (existence){
-                        viewModel.addFriend(id, adapter.getItemCount() - 1);
+                        viewModel.addFriend(id, adapter.getItemCount());
                     }
                     else{
                         friendIdEt.setError("User with entered ID doesn't exist");
