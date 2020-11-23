@@ -39,50 +39,29 @@ public class UserRepository {
     }
 
     public void update(final String id) {
-        userApi.getUserById(id).enqueue(new Callback<UserApi.User>() {
+        userApi.getUserById(id).enqueue(new DatabaseCallback<UserApi.User>() {
             @Override
-            public void onResponse(Call<UserApi.User> call, Response<UserApi.User> response) {
-                if (response.code() == FAILED_TO_READ_WRITE_DB_CODE) {
-                    errorLog("Problem with Auth", null);
-                    return;
-                }
-                if (response.body() == null) {
-                    errorLog("File not found", null);
-                    return;
-                }
-                if (response.isSuccessful()) {
-                    userData.postValue(transformToUser(response.body()));
-                }
+            void onNull(Response<UserApi.User> response) {
+                errorLog("Fail with update", null);
             }
 
             @Override
-            public void onFailure(Call<UserApi.User> call, Throwable t) {
-                errorLog("Failed to load", t);
+            void onSuccess(Response<UserApi.User> response) {
+                userData.postValue(transformToUser(response.body()));
             }
         });
     }
 
     public void updateFriends(final String id) {
-        userApi.getUserFriendsById(id).enqueue(new Callback<List<String>>() {
+        userApi.getUserFriendsById(id).enqueue(new DatabaseCallback<List<String>>() {
             @Override
-            public void onResponse(Call<List<String>> call, Response<List<String>> response) {
-                if (response.code() == FAILED_TO_READ_WRITE_DB_CODE) {
-                    errorLog("Problem with Auth", null);
-                    return;
-                }
-                if (response.body() == null) {
-                    errorLog("File not found", null);
-                    userFriends.postValue(new ArrayList<>());
-                    return;
-                }
-                if (response.isSuccessful()) {
-                    userFriends.postValue(response.body());
-                }
+            void onNull(Response<List<String>> response) {
+                userFriends.postValue(new ArrayList<>());
             }
 
             @Override
-            public void onFailure(Call<List<String>> call, Throwable t) {
-                errorLog("Failed to load", t);
+            void onSuccess(Response<List<String>> response) {
+                userFriends.postValue(response.body());
             }
         });
     }
@@ -97,8 +76,11 @@ public class UserRepository {
         userApi.addFriend(curUserId, Integer.toString(num), id).enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
-                updateFriends(curUserId);
+                List<String> singleIdList = new ArrayList<>();
+                singleIdList.add(id);
+                userFriends.postValue(singleIdList);
             }
+
             @Override
             public void onFailure(Call<String> call, Throwable t) {
                 errorLog("Failed to add friend", t);
@@ -107,45 +89,29 @@ public class UserRepository {
     }
 
     public void changeUserInformation(final String id, User newInformation) {
-        userApi.changeUserInformation(id, transformToUserApiUser(newInformation)).enqueue(new Callback<UserApi.User>() {
+        userApi.changeUserInformation(id, transformToUserApiUser(newInformation)).enqueue(new DatabaseCallback<UserApi.User>() {
             @Override
-            public void onResponse(Call<UserApi.User> call, Response<UserApi.User> response) {
-                if (response.code() == FAILED_TO_READ_WRITE_DB_CODE) {
-                    errorLog("Problem with Auth", null);
-                    return;
-                }
-                if (response.isSuccessful()) {
-                    log("Change information about " + id);
-                }
+            void onNull(Response<UserApi.User> response) {
+                errorLog("Failed with change information about" + id, null);
             }
 
             @Override
-            public void onFailure(Call<UserApi.User> call, Throwable t) {
-                errorLog("Failed to load", t);
+            void onSuccess(Response<UserApi.User> response) {
+                log("Change information about " + id);
             }
         });
     }
 
     public LiveData<Boolean> userExists(String id) {
-        userApi.getUserById(id).enqueue(new Callback<UserApi.User>() {
+        userApi.getUserById(id).enqueue(new DatabaseCallback<UserApi.User>() {
             @Override
-            public void onResponse(Call<UserApi.User> call, Response<UserApi.User> response) {
-                if (response.code() == FAILED_TO_READ_WRITE_DB_CODE) {
-                    errorLog("Problem with Auth", null);
-                    return;
-                }
-                if (response.body() == null) {
-                    userExistence.postValue(false);
-                    return;
-                }
-                if (response.isSuccessful()) {
-                    userExistence.postValue(true);
-                }
+            void onNull(Response<UserApi.User> response) {
+                userExistence.postValue(false);
             }
 
             @Override
-            public void onFailure(Call<UserApi.User> call, Throwable t) {
-                errorLog("Failed to load", t);
+            void onSuccess(Response<UserApi.User> response) {
+                userExistence.postValue(true);
             }
         });
         return userExistence;
@@ -173,5 +139,33 @@ public class UserRepository {
         result.name = user.getName();
         result.age = user.getAge();
         return result;
+    }
+
+    private abstract class DatabaseCallback<T> implements Callback<T> {
+
+        abstract void onNull(Response<T> response);
+
+        abstract void onSuccess(Response<T> response);
+
+        @Override
+        public void onResponse(Call<T> call, Response<T> response) {
+            if (response.code() == FAILED_TO_READ_WRITE_DB_CODE) {
+                errorLog("Problem with Auth", null);
+                return;
+            }
+            if (response.body() == null) {
+                errorLog("File not found", null);
+                onNull(response);
+                return;
+            }
+            if (response.isSuccessful()) {
+                onSuccess(response);
+            }
+        }
+
+        @Override
+        public void onFailure(Call<T> call, Throwable t) {
+            errorLog("Failed to load", t);
+        }
     }
 }
