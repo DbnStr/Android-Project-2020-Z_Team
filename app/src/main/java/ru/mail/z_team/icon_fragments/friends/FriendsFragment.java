@@ -12,6 +12,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -53,10 +54,9 @@ public class FriendsFragment extends Fragment {
         viewModel.updateFriends(userId);
         viewModel.getUserFriendsById(userId)
                 .observe(getActivity(), ids -> {
-                    if (ids.isEmpty()){
+                    if (ids.isEmpty()) {
                         noFriends.setVisibility(View.VISIBLE);
-                    }
-                    else{
+                    } else {
                         List<String> names = getFriendsNames(ids);
                         noFriends.setVisibility(View.INVISIBLE);
                         adapter.setFriends(ids);
@@ -69,23 +69,17 @@ public class FriendsFragment extends Fragment {
 
         addFriendBtn.setOnClickListener(v -> {
             String id = friendIdEt.getText().toString().trim();
-            if (id == ""){
+            if (id == "") {
                 friendIdEt.setError("Id can't be empty");
                 friendIdEt.setFocusable(true);
-            }
-            else{
+            } else {
                 Log.d(LOG_TAG, "addFriendBtn");
                 noFriends.setVisibility(View.INVISIBLE);
-                //adapter.addFriend(id);
-                viewModel.userExists(id).observe(getActivity(), existence -> {
-                    if (existence){
-                        viewModel.addFriend(id, adapter.getItemCount());
-                    }
-                    else{
-                        friendIdEt.setError("User with entered ID doesn't exist");
-                        friendIdEt.setFocusable(true);
-                    }
-                });
+                viewModel.checkUserExistence(id);
+
+                ExistenceObserver<Boolean> observer = new ExistenceObserver<>(id);
+                viewModel.userExists().observe(getActivity(), observer);
+                viewModel.userExists().removeObserver(observer);
             }
         });
 
@@ -96,9 +90,29 @@ public class FriendsFragment extends Fragment {
 
     private List<String> getFriendsNames(List<String> ids) {
         List<String> names = new ArrayList<>();
-        for (String id: ids){
+        for (String id : ids) {
             //
         }
         return names;
+    }
+
+    class ExistenceObserver<T extends Boolean> implements Observer<T> {
+
+        private final String id;
+
+        ExistenceObserver(String id){
+            this.id = id;
+        }
+
+        @Override
+        public void onChanged(T t) {
+            if (t.booleanValue()) {
+                Log.d(LOG_TAG, "FriendExisted");
+                viewModel.addFriend(id, adapter.getItemCount());
+            } else {
+                friendIdEt.setError("User with entered ID doesn't exist");
+                friendIdEt.setFocusable(true);
+            }
+        }
     }
 }

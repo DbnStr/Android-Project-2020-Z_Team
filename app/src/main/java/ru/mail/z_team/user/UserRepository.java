@@ -103,7 +103,7 @@ public class UserRepository {
         });
     }
 
-    public LiveData<Boolean> userExists(String id) {
+    public void checkUserExistence(String id) {
         userApi.getUserById(id).enqueue(new DatabaseCallback<UserApi.User>() {
             @Override
             void onNull(Response<UserApi.User> response) {
@@ -115,6 +115,9 @@ public class UserRepository {
                 userExistence.postValue(true);
             }
         });
+    }
+
+    public LiveData<Boolean> userExists() {
         return userExistence;
     }
 
