@@ -91,7 +91,6 @@ public class UserRepository {
 
             @Override
             void onSuccess(Response<UserApi.User> response) {
-                User user = transformToUser(response.body());
                 UserApi.Friend friend = transformToUserApiFriend(response.body());
                 userApi.addFriend(curUserId, Integer.toString(num), friend).enqueue(new DatabaseCallback<UserApi.Friend>() {
                     @Override
@@ -101,9 +100,7 @@ public class UserRepository {
 
                     @Override
                     void onSuccess(Response<UserApi.Friend> response) {
-                        List<User> singleFriendList = new ArrayList<>();
-                        singleFriendList.add(user);
-                        userFriends.postValue(singleFriendList);
+                        updateFriends(curUserId);
                     }
                 });
             }
