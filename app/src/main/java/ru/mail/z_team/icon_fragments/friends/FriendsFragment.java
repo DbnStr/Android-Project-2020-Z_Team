@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ru.mail.z_team.R;
+import ru.mail.z_team.user.User;
 import ru.mail.z_team.user.UserViewModel;
 
 public class FriendsFragment extends Fragment {
@@ -53,13 +54,22 @@ public class FriendsFragment extends Fragment {
         viewModel = new ViewModelProvider(this).get(UserViewModel.class);
         viewModel.updateFriends(userId);
         viewModel.getUserFriendsById(userId)
-                .observe(getActivity(), ids -> {
-                    if (ids.isEmpty()) {
+                .observe(getActivity(), users -> {
+                    Log.d(LOG_TAG, "get user friends... " + users.toString());
+                    if (users.isEmpty()) {
                         noFriends.setVisibility(View.VISIBLE);
                     } else {
-                        List<String> names = getFriendsNames(ids);
                         noFriends.setVisibility(View.INVISIBLE);
-                        adapter.setFriends(ids);
+                        List<String> names = new ArrayList<>();
+                        for (User user : users) {
+                            String name = user.getName();
+                            if (name.equals("")) {
+                                names.add("No Name");
+                            } else {
+                                names.add(name);
+                            }
+                        }
+                        adapter.setFriends(names);
                     }
                 });
 
@@ -88,19 +98,12 @@ public class FriendsFragment extends Fragment {
         return view;
     }
 
-    private List<String> getFriendsNames(List<String> ids) {
-        List<String> names = new ArrayList<>();
-        for (String id : ids) {
-            //
-        }
-        return names;
-    }
-
     class ExistenceObserver<T extends Boolean> implements Observer<T> {
 
         private final String id;
 
-        ExistenceObserver(String id){
+        ExistenceObserver(String id) {
+            Log.d(LOG_TAG, "ExistenceObserver");
             this.id = id;
         }
 

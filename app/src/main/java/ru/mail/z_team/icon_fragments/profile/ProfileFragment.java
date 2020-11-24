@@ -76,7 +76,7 @@ public class ProfileFragment extends Fragment {
                 .get(UserViewModel.class);
         userViewModel.update(userId);
         userViewModel
-                .getUserInfoById(userId)
+                .getUserInfo()
                 .observe(getViewLifecycleOwner(), observer);
     }
 

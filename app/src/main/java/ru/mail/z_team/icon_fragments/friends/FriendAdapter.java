@@ -17,7 +17,7 @@ import ru.mail.z_team.R;
 public class FriendAdapter extends RecyclerView.Adapter<FriendViewHolder>{
 
     private static final String LOG_TAG = "FriendAdapter";
-    private final List<String> friends;
+    private List<String> friends;
 
     public FriendAdapter(){
         friends = new ArrayList<>();
@@ -42,7 +42,7 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendViewHolder>{
     }
 
     public void setFriends(List<String> ids) {
-        friends.addAll(ids);
-        this.notifyItemInserted(friends.size() - 1);
+        friends = ids;
+        this.notifyItemRangeChanged(0, friends.size());
     }
 }

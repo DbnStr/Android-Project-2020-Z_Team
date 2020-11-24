@@ -24,7 +24,8 @@ public class UserRepository {
 
     private final Context context;
     private final MutableLiveData<User> userData = new MutableLiveData<>();
-    private final MutableLiveData<List<String>> userFriends = new MutableLiveData<>();
+    private final MutableLiveData<User> otherUserData = new MutableLiveData<>();
+    private final MutableLiveData<List<User>> userFriends = new MutableLiveData<>();
     private final MutableLiveData<Boolean> userExistence = new MutableLiveData<>();
 
     private final UserApi userApi;
@@ -34,11 +35,12 @@ public class UserRepository {
         userApi = ApiRepository.from(context).getUserApi();
     }
 
-    public LiveData<User> getUserInfoById(final String id) {
+    public LiveData<User> getUserInfo() {
         return userData;
     }
 
     public void update(final String id) {
+        Log.d(LOG_TAG, "update");
         userApi.getUserById(id).enqueue(new DatabaseCallback<UserApi.User>() {
             @Override
             void onNull(Response<UserApi.User> response) {
@@ -53,38 +55,58 @@ public class UserRepository {
     }
 
     public void updateFriends(final String id) {
-        userApi.getUserFriendsById(id).enqueue(new DatabaseCallback<List<String>>() {
+        Log.d(LOG_TAG, "updateFriends");
+        userApi.getUserFriendsById(id).enqueue(new DatabaseCallback<List<UserApi.Friend>>() {
             @Override
-            void onNull(Response<List<String>> response) {
+            void onNull(Response<List<UserApi.Friend>> response) {
                 userFriends.postValue(new ArrayList<>());
             }
 
             @Override
-            void onSuccess(Response<List<String>> response) {
-                userFriends.postValue(response.body());
+            void onSuccess(Response<List<UserApi.Friend>> response) {
+                List<User> res = new ArrayList<>();
+                for (UserApi.Friend friendApi : response.body()){
+                    res.add(friendTransformToUser(friendApi));
+                }
+                userFriends.postValue(null);
+                userFriends.postValue(res);
             }
         });
     }
 
-    public LiveData<List<String>> getUserFriendsById(String id) {
+    public LiveData<List<User>> getUserFriendsById(String id) {
+        Log.d(LOG_TAG, "getUserFriends");
         return userFriends;
     }
 
     public void addFriend(String id, int num) {
         Log.d(LOG_TAG, "addFriend");
         String curUserId = FirebaseAuth.getInstance().getUid();
-        userApi.addFriend(curUserId, Integer.toString(num), id).enqueue(new Callback<String>() {
+        final UserApi.Friend[] friend = new UserApi.Friend[1];
+        final User[] user = new User[1];
+        userApi.getUserById(id).enqueue(new DatabaseCallback<UserApi.User>() {
             @Override
-            public void onResponse(Call<String> call, Response<String> response) {
-                //updateFriends(curUserId);
-                List<String> singleIdList = new ArrayList<>();
-                singleIdList.add(id);
-                userFriends.postValue(singleIdList);
+            void onNull(Response<UserApi.User> response) {
+                errorLog("Failed to get " + id + " user", null);
             }
 
             @Override
-            public void onFailure(Call<String> call, Throwable t) {
-                errorLog("Failed to add friend", t);
+            void onSuccess(Response<UserApi.User> response) {
+                user[0] = transformToUser(response.body());
+                friend[0] = transformToUserApiFriend(response.body());
+            }
+        });
+        userApi.addFriend(curUserId, Integer.toString(num), friend[0]).enqueue(new DatabaseCallback<UserApi.Friend>() {
+            @Override
+            void onNull(Response<UserApi.Friend> response) {
+                errorLog("Failed to add friend " + id, null);
+            }
+
+            @Override
+            void onSuccess(Response<UserApi.Friend> response) {
+                List<User> singleFriendList = new ArrayList<>();
+                singleFriendList.add(user[0]);
+                userFriends.postValue(singleFriendList);
             }
         });
     }
@@ -93,7 +115,7 @@ public class UserRepository {
         userApi.changeUserInformation(id, transformToUserApiUser(newInformation)).enqueue(new DatabaseCallback<UserApi.User>() {
             @Override
             void onNull(Response<UserApi.User> response) {
-                errorLog("Failed with change information about" + id, null);
+                errorLog("Failed with change information about " + id, null);
             }
 
             @Override
@@ -104,6 +126,7 @@ public class UserRepository {
     }
 
     public void checkUserExistence(String id) {
+        Log.d(LOG_TAG, "checkUserExistence");
         userApi.getUserById(id).enqueue(new DatabaseCallback<UserApi.User>() {
             @Override
             void onNull(Response<UserApi.User> response) {
@@ -118,6 +141,7 @@ public class UserRepository {
     }
 
     public LiveData<Boolean> userExists() {
+        Log.d(LOG_TAG, "userExists");
         return userExistence;
     }
 
@@ -130,8 +154,24 @@ public class UserRepository {
     }
 
     private User transformToUser(UserApi.User user) {
+        String name = user.name;
+        if (name == null){
+            name = "";
+        }
         return new User(
-                user.name,
+                name,
+                user.age,
+                user.id
+        );
+    }
+
+    private User friendTransformToUser(UserApi.Friend user) {
+        String name = user.name;
+        if (name == null){
+            name = "";
+        }
+        return new User(
+                name,
                 user.age,
                 user.id
         );
@@ -143,6 +183,42 @@ public class UserRepository {
         result.name = user.getName();
         result.age = user.getAge();
         return result;
+    }
+
+    private UserApi.Friend transformToUserApiFriend(User user) {
+        UserApi.Friend result = new UserApi.Friend();
+        result.id = user.getId();
+        result.name = user.getName();
+        result.age = user.getAge();
+        return result;
+    }
+
+    private UserApi.Friend transformToUserApiFriend(UserApi.User user) {
+        UserApi.Friend result = new UserApi.Friend();
+        result.id = user.id;
+        result.name = user.name;
+        result.age = user.age;
+        result.email = user.email;
+        return result;
+    }
+
+    public LiveData<User> getOtherUserInfo() {
+        return otherUserData;
+    }
+
+    public void updateOtherUser(final String id) {
+        Log.d(LOG_TAG, "updateOtherUser");
+        userApi.getUserById(id).enqueue(new DatabaseCallback<UserApi.User>() {
+            @Override
+            void onNull(Response<UserApi.User> response) {
+                errorLog("Fail with update other user", null);
+            }
+
+            @Override
+            void onSuccess(Response<UserApi.User> response) {
+                otherUserData.postValue(transformToUser(response.body()));
+            }
+        });
     }
 
     private abstract class DatabaseCallback<T> implements Callback<T> {

@@ -5,22 +5,18 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 
 import java.lang.reflect.Field;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 public class User {
 
     public String name;
     public int age;
     public String id;
-    public List<String> friends;
 
     public User(String name, int age, String id) {
         this.name = name;
         this.age = age;
         this.id = id;
-        this.friends = new ArrayList<>();
     }
 
     public void setName(String name) {
@@ -33,10 +29,6 @@ public class User {
 
     public void setId(String id) {
         this.id = id;
-    }
-
-    public List<String> getFriends() {
-        return friends;
     }
 
     public String getName() {
