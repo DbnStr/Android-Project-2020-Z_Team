@@ -89,7 +89,6 @@ public class FriendsFragment extends Fragment {
 
                 ExistenceObserver<Boolean> observer = new ExistenceObserver<>(id);
                 viewModel.userExists().observe(getActivity(), observer);
-                viewModel.userExists().removeObserver(observer);
             }
         });
 
@@ -116,6 +115,7 @@ public class FriendsFragment extends Fragment {
                 friendIdEt.setError("User with entered ID doesn't exist");
                 friendIdEt.setFocusable(true);
             }
+            viewModel.userExists().removeObservers(getActivity());
         }
     }
 }

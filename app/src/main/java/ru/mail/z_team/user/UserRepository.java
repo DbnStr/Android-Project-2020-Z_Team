@@ -82,8 +82,7 @@ public class UserRepository {
     public void addFriend(String id, int num) {
         Log.d(LOG_TAG, "addFriend");
         String curUserId = FirebaseAuth.getInstance().getUid();
-        final UserApi.Friend[] friend = new UserApi.Friend[1];
-        final User[] user = new User[1];
+
         userApi.getUserById(id).enqueue(new DatabaseCallback<UserApi.User>() {
             @Override
             void onNull(Response<UserApi.User> response) {
@@ -92,21 +91,21 @@ public class UserRepository {
 
             @Override
             void onSuccess(Response<UserApi.User> response) {
-                user[0] = transformToUser(response.body());
-                friend[0] = transformToUserApiFriend(response.body());
-            }
-        });
-        userApi.addFriend(curUserId, Integer.toString(num), friend[0]).enqueue(new DatabaseCallback<UserApi.Friend>() {
-            @Override
-            void onNull(Response<UserApi.Friend> response) {
-                errorLog("Failed to add friend " + id, null);
-            }
+                User user = transformToUser(response.body());
+                UserApi.Friend friend = transformToUserApiFriend(response.body());
+                userApi.addFriend(curUserId, Integer.toString(num), friend).enqueue(new DatabaseCallback<UserApi.Friend>() {
+                    @Override
+                    void onNull(Response<UserApi.Friend> response) {
+                        errorLog("Failed to add friend " + id, null);
+                    }
 
-            @Override
-            void onSuccess(Response<UserApi.Friend> response) {
-                List<User> singleFriendList = new ArrayList<>();
-                singleFriendList.add(user[0]);
-                userFriends.postValue(singleFriendList);
+                    @Override
+                    void onSuccess(Response<UserApi.Friend> response) {
+                        List<User> singleFriendList = new ArrayList<>();
+                        singleFriendList.add(user);
+                        userFriends.postValue(singleFriendList);
+                    }
+                });
             }
         });
     }
@@ -130,6 +129,7 @@ public class UserRepository {
         userApi.getUserById(id).enqueue(new DatabaseCallback<UserApi.User>() {
             @Override
             void onNull(Response<UserApi.User> response) {
+                Log.d(LOG_TAG, "posted false");
                 userExistence.postValue(false);
             }
 
