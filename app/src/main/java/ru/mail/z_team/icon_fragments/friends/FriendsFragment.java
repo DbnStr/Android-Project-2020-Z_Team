@@ -19,7 +19,10 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.auth.FirebaseAuth;
 
+import java.util.ArrayList;
+
 import ru.mail.z_team.R;
+import ru.mail.z_team.user.Friend;
 import ru.mail.z_team.user.UserViewModel;
 
 public class FriendsFragment extends Fragment {
@@ -49,15 +52,15 @@ public class FriendsFragment extends Fragment {
         String userId = FirebaseAuth.getInstance().getUid();
         viewModel = new ViewModelProvider(this).get(UserViewModel.class);
         viewModel.updateCurrentUser(userId);
-        viewModel.updateCurrentUserFriends(userId);
-        viewModel.getUserFriendsById(userId)
-                .observe(getActivity(), users -> {
-                    Log.d(LOG_TAG, "get user friends... " + users.toString());
-                    if (users.isEmpty()) {
+        viewModel.getCurrentUser()
+                .observe(getActivity(), user -> {
+                    ArrayList<Friend> friends = user.getFriends();
+                    Log.d(LOG_TAG, "get user friends... " + friends.toString());
+                    if (friends.isEmpty()) {
                         noFriends.setVisibility(View.VISIBLE);
                     } else {
                         noFriends.setVisibility(View.INVISIBLE);
-                        adapter.setFriends(users);
+                        adapter.setFriends(friends);
                     }
                 });
 

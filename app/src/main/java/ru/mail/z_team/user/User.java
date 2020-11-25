@@ -42,6 +42,10 @@ public class User {
         return id;
     }
 
+    public ArrayList<Friend> getFriends() {
+        return friends;
+    }
+
     public User updateUserInfo(HashMap<String, String> newInfo) {
         Field[] fields = User.class.getFields();
         for(Field field : fields) {

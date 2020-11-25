@@ -12,8 +12,10 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 
+import ru.mail.z_team.MainMenuActivity;
 import ru.mail.z_team.R;
 import ru.mail.z_team.user.Friend;
+import ru.mail.z_team.user.User;
 
 public class FriendAdapter extends RecyclerView.Adapter<FriendViewHolder> {
 
@@ -41,11 +43,19 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendViewHolder> {
             name = "No Name";
         }
         holder.friend.setText(name);
-//        holder.friend.setOnClickListener(v -> {
-//            if (context instanceof MainMenuActivity){
-//                ((MainMenuActivity) context).openUserProfile(friends.get(position));
-//            }
-//        });
+        holder.friend.setOnClickListener(v -> {
+            Friend friend = friends.get(position);
+            if (context instanceof MainMenuActivity){
+                User user = new User(
+                        friend.name,
+                        14,
+                        friend.id,
+                        new ArrayList<>()
+                );
+                //TODO* pull the real user by means of ID
+                ((MainMenuActivity) context).openUserProfile(user);
+            }
+        });
     }
 
     @Override

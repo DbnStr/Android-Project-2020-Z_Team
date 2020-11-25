@@ -7,7 +7,6 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 
 public class UserViewModel extends AndroidViewModel {
@@ -27,11 +26,6 @@ public class UserViewModel extends AndroidViewModel {
         repository.updateCurrentUser(id);
     }
 
-    public void updateCurrentUserFriends(final String id) {
-        Log.d(LOG_TAG, "updateFriends");
-        repository.updateCurrentUserFriends(id);
-    }
-
     public void addFriend(String id, int num) {
         Log.d(LOG_TAG, "addFriend");
         User currentUser = repository.getCurrentUser().getValue();
@@ -45,10 +39,6 @@ public class UserViewModel extends AndroidViewModel {
     public LiveData<Boolean> userExists(){
         Log.d(LOG_TAG, "userExists");
         return repository.userExists();
-    }
-
-    public LiveData<ArrayList<Friend>> getUserFriendsById(final String id) {
-        return repository.getUserFriendsById(id);
     }
 
     public void changeUserInformation(final String id, HashMap<String, String> newInformation) {

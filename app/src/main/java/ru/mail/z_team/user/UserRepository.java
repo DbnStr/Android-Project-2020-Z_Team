@@ -9,7 +9,6 @@ import androidx.lifecycle.MutableLiveData;
 import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -25,7 +24,6 @@ public class UserRepository {
     private final Context context;
     private final MutableLiveData<User> currentUserData = new MutableLiveData<>();
     private final MutableLiveData<User> otherUserData = new MutableLiveData<>();
-    private final MutableLiveData<ArrayList<Friend>> userFriends = new MutableLiveData<>();
     private final MutableLiveData<Boolean> userExistence = new MutableLiveData<>();
 
     private final UserApi userApi;
@@ -54,11 +52,6 @@ public class UserRepository {
         });
     }
 
-    public LiveData<ArrayList<Friend>> getUserFriendsById(String id) {
-        log("getUserFriends");
-        return userFriends;
-    }
-
     public void addFriend(String id, int num) {
         log("addFriend");
         String curUserId = FirebaseAuth.getInstance().getUid();
@@ -80,29 +73,9 @@ public class UserRepository {
 
                     @Override
                     void onSuccess(Response<UserApi.Friend> response) {
-                        updateCurrentUserFriends(curUserId);
+                        updateCurrentUser(curUserId);
                     }
                 });
-            }
-        });
-    }
-
-    public void updateCurrentUserFriends(final String id) {
-        log("updateFriends");
-        userApi.getUserFriendsById(id).enqueue(new DatabaseCallback<List<UserApi.Friend>>() {
-            @Override
-            void onNull(Response<List<UserApi.Friend>> response) {
-                userFriends.postValue(new ArrayList<>());
-            }
-
-            @Override
-            void onSuccess(Response<List<UserApi.Friend>> response) {
-                ArrayList<Friend> res = new ArrayList<>();
-                for (UserApi.Friend friendApi : response.body()) {
-                    res.add(transformToFriend(friendApi));
-                }
-                currentUserData.getValue().setFriends(res);
-                userFriends.postValue(res);
             }
         });
     }
@@ -153,7 +126,7 @@ public class UserRepository {
     private User transformToUser(UserApi.User user) {
         String name = user.name;
         if (name == null){
-            name = "";
+            name = "Anonymous";
         }
         ArrayList<Friend> userFriends = new ArrayList<>();
         if (user.friends != null) {
