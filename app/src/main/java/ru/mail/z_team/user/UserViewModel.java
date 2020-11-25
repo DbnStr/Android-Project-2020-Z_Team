@@ -7,6 +7,7 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -34,7 +35,12 @@ public class UserViewModel extends AndroidViewModel {
 
     public void addFriend(String id, int num) {
         Log.d(LOG_TAG, "addFriend");
-        repository.addFriend(id, num);
+        User currentUser = repository.getUserInfo().getValue();
+        if (! currentUser.isThisFriendAdded(id)) {
+            repository.addFriend(id, num);
+        } else {
+            errorLog("Friend already added", null);
+        }
     }
 
     public LiveData<Boolean> userExists(){
@@ -42,7 +48,7 @@ public class UserViewModel extends AndroidViewModel {
         return repository.userExists();
     }
 
-    public LiveData<List<User>> getUserFriendsById(final String id) {
+    public LiveData<ArrayList<Friend>> getUserFriendsById(final String id) {
         return repository.getUserFriendsById(id);
     }
 

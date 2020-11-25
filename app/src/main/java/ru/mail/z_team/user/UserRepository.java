@@ -25,7 +25,7 @@ public class UserRepository {
     private final Context context;
     private final MutableLiveData<User> userData = new MutableLiveData<>();
     private final MutableLiveData<User> otherUserData = new MutableLiveData<>();
-    private final MutableLiveData<List<User>> userFriends = new MutableLiveData<>();
+    private final MutableLiveData<ArrayList<Friend>> userFriends = new MutableLiveData<>();
     private final MutableLiveData<Boolean> userExistence = new MutableLiveData<>();
 
     private final UserApi userApi;
@@ -40,7 +40,8 @@ public class UserRepository {
     }
 
     public void update(final String id) {
-        Log.d(LOG_TAG, "update");
+        log("update");
+        log(id);
         userApi.getUserById(id).enqueue(new DatabaseCallback<UserApi.User>() {
             @Override
             void onNull(Response<UserApi.User> response) {
@@ -55,7 +56,7 @@ public class UserRepository {
     }
 
     public void updateFriends(final String id) {
-        Log.d(LOG_TAG, "updateFriends");
+        log("updateFriends");
         userApi.getUserFriendsById(id).enqueue(new DatabaseCallback<List<UserApi.Friend>>() {
             @Override
             void onNull(Response<List<UserApi.Friend>> response) {
@@ -64,18 +65,18 @@ public class UserRepository {
 
             @Override
             void onSuccess(Response<List<UserApi.Friend>> response) {
-                List<User> res = new ArrayList<>();
-                for (UserApi.Friend friendApi : response.body()){
-                    res.add(friendTransformToUser(friendApi));
+                ArrayList<Friend> res = new ArrayList<>();
+                for (UserApi.Friend friendApi : response.body()) {
+                    res.add(transformToFriend(friendApi));
                 }
-                userFriends.postValue(null);
+                userData.getValue().setFriends(res);
                 userFriends.postValue(res);
             }
         });
     }
 
-    public LiveData<List<User>> getUserFriendsById(String id) {
-        Log.d(LOG_TAG, "getUserFriends");
+    public LiveData<ArrayList<Friend>> getUserFriendsById(String id) {
+        log("getUserFriends");
         return userFriends;
     }
 
@@ -155,23 +156,22 @@ public class UserRepository {
         if (name == null){
             name = "";
         }
-        return new User(
-                name,
-                user.age,
-                user.id
-        );
-    }
-
-    private User friendTransformToUser(UserApi.Friend user) {
-        String name = user.name;
-        if (name == null){
-            name = "";
+        ArrayList<Friend> userFriends = new ArrayList<>();
+        if (user.friends != null) {
+            for (UserApi.Friend friend : user.friends) {
+                userFriends.add(transformToFriend(friend));
+            }
         }
         return new User(
                 name,
                 user.age,
-                user.id
+                user.id,
+                userFriends
         );
+    }
+
+    private Friend transformToFriend(UserApi.Friend friend) {
+        return new Friend(friend.name, friend.id);
     }
 
     private UserApi.User transformToUserApiUser(User user) {
@@ -182,20 +182,10 @@ public class UserRepository {
         return result;
     }
 
-    private UserApi.Friend transformToUserApiFriend(User user) {
-        UserApi.Friend result = new UserApi.Friend();
-        result.id = user.getId();
-        result.name = user.getName();
-        result.age = user.getAge();
-        return result;
-    }
-
     private UserApi.Friend transformToUserApiFriend(UserApi.User user) {
         UserApi.Friend result = new UserApi.Friend();
         result.id = user.id;
         result.name = user.name;
-        result.age = user.age;
-        result.email = user.email;
         return result;
     }
 

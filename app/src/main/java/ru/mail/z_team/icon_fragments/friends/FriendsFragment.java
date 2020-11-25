@@ -48,6 +48,7 @@ public class FriendsFragment extends Fragment {
 
         String userId = FirebaseAuth.getInstance().getUid();
         viewModel = new ViewModelProvider(this).get(UserViewModel.class);
+        viewModel.update(userId);
         viewModel.updateFriends(userId);
         viewModel.getUserFriendsById(userId)
                 .observe(getActivity(), users -> {

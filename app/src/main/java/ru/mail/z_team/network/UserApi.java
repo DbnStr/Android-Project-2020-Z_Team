@@ -23,7 +23,6 @@ public interface UserApi {
             this.id = id;
             this.email = email;
             this.friends = new ArrayList<>();
-            friends.add(new Friend(name, id, email, age));
         }
 
         public User(){}
@@ -31,14 +30,10 @@ public interface UserApi {
 
     class Friend {
         public String name;
-        public int age;
-        public String email;
         public String id;
 
-        public Friend(String name, String id, String email, int age){
+        public Friend(String name, String id){
             this.name = name;
-            this.age = age;
-            this.email = email;
             this.id = id;
         }
 

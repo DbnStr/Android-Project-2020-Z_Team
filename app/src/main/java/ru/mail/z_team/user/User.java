@@ -4,7 +4,9 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
+import java.lang.reflect.Array;
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class User {
@@ -12,11 +14,13 @@ public class User {
     public String name;
     public int age;
     public String id;
+    public ArrayList<Friend> friends;
 
-    public User(String name, int age, String id) {
+    public User(String name, int age, String id, ArrayList<Friend> friends) {
         this.name = name;
         this.age = age;
         this.id = id;
+        this.friends = friends;
     }
 
     public void setName(String name) {
@@ -63,5 +67,22 @@ public class User {
         } catch (IllegalAccessException exception) {
             Log.e("User", exception.getMessage());
         }
+    }
+
+    public void addFriend(Friend friend) {
+        friends.add(friend);
+    }
+
+    public void setFriends(ArrayList<Friend> friends) {
+        this.friends = friends;
+    }
+
+    public boolean isThisFriendAdded(String id) {
+        for(int i = 0; i < friends.size(); i++) {
+            if (friends.get(i).id.equals(id)) {
+                return true;
+            }
+        }
+        return false;
     }
 }
