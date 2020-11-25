@@ -1,7 +1,5 @@
 package ru.mail.z_team.user;
 
-import java.util.ArrayList;
-
 public class Friend {
     public String name;
     public String id;

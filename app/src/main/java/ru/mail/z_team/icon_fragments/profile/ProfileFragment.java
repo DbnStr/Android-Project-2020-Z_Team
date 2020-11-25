@@ -74,19 +74,14 @@ public class ProfileFragment extends Fragment {
         String userId = FirebaseAuth.getInstance().getUid();
         userViewModel = new ViewModelProvider(getActivity())
                 .get(UserViewModel.class);
-        userViewModel.update(userId);
+        userViewModel.updateCurrentUser(userId);
         userViewModel
-                .getUserInfo()
+                .getCurrentUser()
                 .observe(getViewLifecycleOwner(), observer);
     }
 
     private void log(String message) {
         Log.d(LOG_TAG, message);
-    }
-
-    private void enableEditAbilityAll() {
-        enableEditAbility(name);
-        enableEditAbility(age);
     }
 
     private void disableEditAbilityAll() {
@@ -98,6 +93,11 @@ public class ProfileFragment extends Fragment {
         editText.setEnabled(false);
         editText.setCursorVisible(false);
         editText.setBackgroundColor(Color.TRANSPARENT);
+    }
+
+    private void enableEditAbilityAll() {
+        enableEditAbility(name);
+        enableEditAbility(age);
     }
 
     private void enableEditAbility(EditText editText) {

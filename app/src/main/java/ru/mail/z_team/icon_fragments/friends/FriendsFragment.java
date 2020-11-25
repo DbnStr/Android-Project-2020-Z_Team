@@ -28,7 +28,7 @@ public class FriendsFragment extends Fragment {
     private FriendAdapter adapter;
     UserViewModel viewModel;
     Button addFriendBtn;
-    EditText friendIdEt;
+    EditText fieldAddFriend;
     TextView noFriends;
 
     @Override
@@ -48,8 +48,8 @@ public class FriendsFragment extends Fragment {
 
         String userId = FirebaseAuth.getInstance().getUid();
         viewModel = new ViewModelProvider(this).get(UserViewModel.class);
-        viewModel.update(userId);
-        viewModel.updateFriends(userId);
+        viewModel.updateCurrentUser(userId);
+        viewModel.updateCurrentUserFriends(userId);
         viewModel.getUserFriendsById(userId)
                 .observe(getActivity(), users -> {
                     Log.d(LOG_TAG, "get user friends... " + users.toString());
@@ -62,14 +62,14 @@ public class FriendsFragment extends Fragment {
                 });
 
         addFriendBtn = view.findViewById(R.id.add_friend_by_id_btn);
-        friendIdEt = view.findViewById(R.id.add_friend_by_id_et);
+        fieldAddFriend = view.findViewById(R.id.add_friend_by_id_et);
         noFriends = view.findViewById(R.id.no_friend_tv);
 
         addFriendBtn.setOnClickListener(v -> {
-            String id = friendIdEt.getText().toString().trim();
-            if (id == "") {
-                friendIdEt.setError("Id can't be empty");
-                friendIdEt.setFocusable(true);
+            String id = fieldAddFriend.getText().toString().trim();
+            if (id.equals("")) {
+                fieldAddFriend.setError("Id can't be empty");
+                fieldAddFriend.setFocusable(true);
             } else {
                 Log.d(LOG_TAG, "addFriendBtn");
                 noFriends.setVisibility(View.INVISIBLE);
@@ -100,8 +100,8 @@ public class FriendsFragment extends Fragment {
                 Log.d(LOG_TAG, "FriendExisted");
                 viewModel.addFriend(id, adapter.getItemCount());
             } else {
-                friendIdEt.setError("User with entered ID doesn't exist");
-                friendIdEt.setFocusable(true);
+                fieldAddFriend.setError("User with entered ID doesn't exist");
+                fieldAddFriend.setFocusable(true);
             }
             viewModel.userExists().removeObservers(getActivity());
         }

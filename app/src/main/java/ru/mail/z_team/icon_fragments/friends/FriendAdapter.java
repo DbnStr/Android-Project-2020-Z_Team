@@ -11,20 +11,17 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
-import java.util.List;
 
-import ru.mail.z_team.MainMenuActivity;
 import ru.mail.z_team.R;
 import ru.mail.z_team.user.Friend;
-import ru.mail.z_team.user.User;
 
-public class FriendAdapter extends RecyclerView.Adapter<FriendViewHolder>{
+public class FriendAdapter extends RecyclerView.Adapter<FriendViewHolder> {
 
     private static final String LOG_TAG = "FriendAdapter";
     private ArrayList<Friend> friends;
     private final Context context;
 
-    public FriendAdapter(Context context){
+    public FriendAdapter(Context context) {
         this.context = context;
         this.friends = new ArrayList<>();
     }

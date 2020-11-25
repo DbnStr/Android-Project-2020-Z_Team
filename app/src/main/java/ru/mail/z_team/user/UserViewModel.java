@@ -9,7 +9,6 @@ import androidx.lifecycle.LiveData;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 public class UserViewModel extends AndroidViewModel {
 
@@ -20,22 +19,22 @@ public class UserViewModel extends AndroidViewModel {
         super(application);
     }
 
-    public LiveData<User> getUserInfo() {
-        return repository.getUserInfo();
+    public LiveData<User> getCurrentUser() {
+        return repository.getCurrentUser();
     }
 
-    public void update(final String id) {
-        repository.update(id);
+    public void updateCurrentUser(final String id) {
+        repository.updateCurrentUser(id);
     }
 
-    public void updateFriends(final String id) {
+    public void updateCurrentUserFriends(final String id) {
         Log.d(LOG_TAG, "updateFriends");
-        repository.updateFriends(id);
+        repository.updateCurrentUserFriends(id);
     }
 
     public void addFriend(String id, int num) {
         Log.d(LOG_TAG, "addFriend");
-        User currentUser = repository.getUserInfo().getValue();
+        User currentUser = repository.getCurrentUser().getValue();
         if (! currentUser.isThisFriendAdded(id)) {
             repository.addFriend(id, num);
         } else {
@@ -53,7 +52,7 @@ public class UserViewModel extends AndroidViewModel {
     }
 
     public void changeUserInformation(final String id, HashMap<String, String> newInformation) {
-        User user = getUserInfo().getValue();
+        User user = getCurrentUser().getValue();
         if (user == null) {
             errorLog("LiveData is empty", null);
         } else {

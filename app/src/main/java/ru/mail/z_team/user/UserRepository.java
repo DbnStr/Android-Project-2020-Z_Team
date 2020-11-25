@@ -23,7 +23,7 @@ public class UserRepository {
     private static final int FAILED_TO_READ_WRITE_DB_CODE = 401;
 
     private final Context context;
-    private final MutableLiveData<User> userData = new MutableLiveData<>();
+    private final MutableLiveData<User> currentUserData = new MutableLiveData<>();
     private final MutableLiveData<User> otherUserData = new MutableLiveData<>();
     private final MutableLiveData<ArrayList<Friend>> userFriends = new MutableLiveData<>();
     private final MutableLiveData<Boolean> userExistence = new MutableLiveData<>();
@@ -35,13 +35,12 @@ public class UserRepository {
         userApi = ApiRepository.from(context).getUserApi();
     }
 
-    public LiveData<User> getUserInfo() {
-        return userData;
+    public LiveData<User> getCurrentUser() {
+        return currentUserData;
     }
 
-    public void update(final String id) {
-        log("update");
-        log(id);
+    public void updateCurrentUser(final String id) {
+        log("update user - " + id);
         userApi.getUserById(id).enqueue(new DatabaseCallback<UserApi.User>() {
             @Override
             void onNull(Response<UserApi.User> response) {
@@ -50,27 +49,7 @@ public class UserRepository {
 
             @Override
             void onSuccess(Response<UserApi.User> response) {
-                userData.postValue(transformToUser(response.body()));
-            }
-        });
-    }
-
-    public void updateFriends(final String id) {
-        log("updateFriends");
-        userApi.getUserFriendsById(id).enqueue(new DatabaseCallback<List<UserApi.Friend>>() {
-            @Override
-            void onNull(Response<List<UserApi.Friend>> response) {
-                userFriends.postValue(new ArrayList<>());
-            }
-
-            @Override
-            void onSuccess(Response<List<UserApi.Friend>> response) {
-                ArrayList<Friend> res = new ArrayList<>();
-                for (UserApi.Friend friendApi : response.body()) {
-                    res.add(transformToFriend(friendApi));
-                }
-                userData.getValue().setFriends(res);
-                userFriends.postValue(res);
+                currentUserData.postValue(transformToUser(response.body()));
             }
         });
     }
@@ -81,7 +60,7 @@ public class UserRepository {
     }
 
     public void addFriend(String id, int num) {
-        Log.d(LOG_TAG, "addFriend");
+        log("addFriend");
         String curUserId = FirebaseAuth.getInstance().getUid();
 
         userApi.getUserById(id).enqueue(new DatabaseCallback<UserApi.User>() {
@@ -101,9 +80,29 @@ public class UserRepository {
 
                     @Override
                     void onSuccess(Response<UserApi.Friend> response) {
-                        updateFriends(curUserId);
+                        updateCurrentUserFriends(curUserId);
                     }
                 });
+            }
+        });
+    }
+
+    public void updateCurrentUserFriends(final String id) {
+        log("updateFriends");
+        userApi.getUserFriendsById(id).enqueue(new DatabaseCallback<List<UserApi.Friend>>() {
+            @Override
+            void onNull(Response<List<UserApi.Friend>> response) {
+                userFriends.postValue(new ArrayList<>());
+            }
+
+            @Override
+            void onSuccess(Response<List<UserApi.Friend>> response) {
+                ArrayList<Friend> res = new ArrayList<>();
+                for (UserApi.Friend friendApi : response.body()) {
+                    res.add(transformToFriend(friendApi));
+                }
+                currentUserData.getValue().setFriends(res);
+                userFriends.postValue(res);
             }
         });
     }
@@ -123,7 +122,7 @@ public class UserRepository {
     }
 
     public void checkUserExistence(String id) {
-        Log.d(LOG_TAG, "checkUserExistence");
+        log("checkUserExistence");
         userApi.getUserById(id).enqueue(new DatabaseCallback<UserApi.User>() {
             @Override
             void onNull(Response<UserApi.User> response) {
@@ -139,7 +138,7 @@ public class UserRepository {
     }
 
     public LiveData<Boolean> userExists() {
-        Log.d(LOG_TAG, "userExists");
+        log("userExists");
         return userExistence;
     }
 

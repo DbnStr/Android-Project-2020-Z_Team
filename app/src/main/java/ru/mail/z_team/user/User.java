@@ -4,7 +4,6 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
-import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -25,10 +24,6 @@ public class User {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public void setAge(int age) {
-        this.age = age;
     }
 
     public void setId(String id) {
@@ -67,10 +62,6 @@ public class User {
         } catch (IllegalAccessException exception) {
             Log.e("User", exception.getMessage());
         }
-    }
-
-    public void addFriend(Friend friend) {
-        friends.add(friend);
     }
 
     public void setFriends(ArrayList<Friend> friends) {
