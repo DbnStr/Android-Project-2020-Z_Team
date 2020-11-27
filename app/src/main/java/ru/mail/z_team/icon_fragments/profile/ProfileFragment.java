@@ -21,12 +21,14 @@ import com.google.firebase.auth.FirebaseAuth;
 import java.util.HashMap;
 
 import ru.mail.z_team.R;
+import ru.mail.z_team.user.User;
+import ru.mail.z_team.user.UserViewModel;
 
 public class ProfileFragment extends Fragment {
 
     private static final String LOG_TAG = "ProfileFragment";
 
-    private ProfileViewModel profileViewModel;
+    private UserViewModel userViewModel;
     private EditText name;
     private EditText age;
     private Button editBtn;
@@ -59,7 +61,7 @@ public class ProfileFragment extends Fragment {
         editBtn.setOnClickListener(v -> enableEditAbilityAll());
         saveChangesBtn.setOnClickListener(v -> {
             String userId = FirebaseAuth.getInstance().getUid();
-            profileViewModel.changeUserInformation(userId, getProfileInfo());
+            userViewModel.changeUserInformation(userId, getProfileInfo());
             disableEditAbilityAll();
         });
 
@@ -70,21 +72,16 @@ public class ProfileFragment extends Fragment {
             }
         };
         String userId = FirebaseAuth.getInstance().getUid();
-        profileViewModel = new ViewModelProvider(getActivity())
-                .get(ProfileViewModel.class);
-        profileViewModel.update(userId);
-        profileViewModel
-                .getUserInfoById(userId)
+        userViewModel = new ViewModelProvider(getActivity())
+                .get(UserViewModel.class);
+        userViewModel.updateCurrentUser(userId);
+        userViewModel
+                .getCurrentUser()
                 .observe(getViewLifecycleOwner(), observer);
     }
 
     private void log(String message) {
         Log.d(LOG_TAG, message);
-    }
-
-    private void enableEditAbilityAll() {
-        enableEditAbility(name);
-        enableEditAbility(age);
     }
 
     private void disableEditAbilityAll() {
@@ -96,6 +93,11 @@ public class ProfileFragment extends Fragment {
         editText.setEnabled(false);
         editText.setCursorVisible(false);
         editText.setBackgroundColor(Color.TRANSPARENT);
+    }
+
+    private void enableEditAbilityAll() {
+        enableEditAbility(name);
+        enableEditAbility(age);
     }
 
     private void enableEditAbility(EditText editText) {

@@ -1,15 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <TextView
+        android:id="@+id/no_friend_tv"
+        android:visibility="invisible"
+        android:text="Add your first friend"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/friends"
-        android:textSize="90sp"
-        android:textColor="@color/GREEN"
-        android:background="@color/BLUE"
-        android:gravity="center"/>
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@+id/add_friend_by_id_layout" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_friends"
+        android:layout_width="match_parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/add_friend_by_id_layout"
+        android:layout_height="0dp" />
+
+    <LinearLayout
+        android:id="@+id/add_friend_by_id_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <EditText
+            android:id="@+id/add_friend_by_id_et"
+            android:hint="Enter User ID"
+            android:layout_width="362dp"
+            android:layout_height="wrap_content" />
+        <Button
+            android:id="@+id/add_friend_by_id_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:background="@drawable/add_friend"/>
+
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
