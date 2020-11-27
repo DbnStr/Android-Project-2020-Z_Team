@@ -28,6 +28,8 @@ import ru.mail.z_team.user.UserViewModel;
 public class FriendsFragment extends Fragment {
 
     private static final String LOG_TAG = "FriendsFragment";
+
+
     private FriendAdapter adapter;
     UserViewModel viewModel;
     Button addFriendBtn;
@@ -36,7 +38,7 @@ public class FriendsFragment extends Fragment {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        Log.d("FriendsFragment", "OnCreate");
+        log("OnCreate");
         super.onCreate(savedInstanceState);
     }
 
@@ -55,7 +57,7 @@ public class FriendsFragment extends Fragment {
         viewModel.getCurrentUser()
                 .observe(getActivity(), user -> {
                     ArrayList<Friend> friends = user.getFriends();
-                    Log.d(LOG_TAG, "get user friends... " + friends.toString());
+                    log("get user friends... " + friends.toString());
                     if (friends.isEmpty()) {
                         noFriends.setVisibility(View.VISIBLE);
                     } else {
@@ -74,7 +76,7 @@ public class FriendsFragment extends Fragment {
                 fieldAddFriend.setError("Id can't be empty");
                 fieldAddFriend.setFocusable(true);
             } else {
-                Log.d(LOG_TAG, "addFriendBtn");
+                log("addFriendBtn");
                 noFriends.setVisibility(View.INVISIBLE);
                 viewModel.checkUserExistence(id);
 
@@ -88,19 +90,23 @@ public class FriendsFragment extends Fragment {
         return view;
     }
 
+    private void log(String message) {
+        Log.d(LOG_TAG, message);
+    }
+
     class ExistenceObserver<T extends Boolean> implements Observer<T> {
 
         private final String id;
 
         ExistenceObserver(String id) {
-            Log.d(LOG_TAG, "ExistenceObserver");
+            log("ExistenceObserver");
             this.id = id;
         }
 
         @Override
         public void onChanged(T t) {
             if (t.booleanValue()) {
-                Log.d(LOG_TAG, "FriendExisted");
+                log("FriendExisted");
                 viewModel.addFriend(id, adapter.getItemCount());
             } else {
                 fieldAddFriend.setError("User with entered ID doesn't exist");
