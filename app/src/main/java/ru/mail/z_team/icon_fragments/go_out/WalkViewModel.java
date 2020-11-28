@@ -1,11 +1,9 @@
 package ru.mail.z_team.icon_fragments.go_out;
 
 import android.app.Application;
-import android.os.Build;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MediatorLiveData;
@@ -26,7 +24,6 @@ public class WalkViewModel extends AndroidViewModel {
         super(application);
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.O)
     public void postWalk(String title) {
         Log.d(LOG_TAG, "postWalk");
         repository.postWalk(title);

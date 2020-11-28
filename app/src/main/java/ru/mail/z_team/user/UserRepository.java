@@ -31,6 +31,7 @@ public class UserRepository {
     private final Context context;
     private final MutableLiveData<User> currentUserData = new MutableLiveData<>();
     private final MutableLiveData<ArrayList<Walk>> currentUserWalks = new MutableLiveData<>();
+    private final MutableLiveData<ArrayList<Walk>> currentUserNews = new MutableLiveData<>();
     private final MutableLiveData<User> otherUserData = new MutableLiveData<>();
     private final MutableLiveData<Boolean> userExistence = new MutableLiveData<>();
     public final MutableLiveData<PostStatus> postStatus = new MutableLiveData<>();
@@ -63,6 +64,45 @@ public class UserRepository {
                 currentUserData.postValue(transformToUser(response.body()));
             }
         });
+    }
+
+    public void updateNews() {
+        String curId = FirebaseAuth.getInstance().getUid();
+        userApi.getUserFriendsById(curId).enqueue(new DatabaseCallback<List<UserApi.Friend>>() {
+            @Override
+            void onNull(Response<List<UserApi.Friend>> response) {
+                currentUserNews.postValue(new ArrayList<>());
+            }
+
+            @Override
+            void onSuccess(Response<List<UserApi.Friend>> response) {
+                ArrayList<String> ids = new ArrayList<>();
+                for (UserApi.Friend friend : response.body()){
+                    ids.add(friend.id);
+                }
+                compileNews(ids);
+            }
+        });
+    }
+
+    private void compileNews(ArrayList<String> ids) {
+        ArrayList<Walk> news = new ArrayList<>();
+        for (String id : ids){
+            userApi.getUserWalksById(id).enqueue(new DatabaseCallback<List<UserApi.Walk>>() {
+                @Override
+                void onNull(Response<List<UserApi.Walk>> response) {
+                    Log.d(LOG_TAG, id + " doesn't have walks");
+                }
+
+                @Override
+                void onSuccess(Response<List<UserApi.Walk>> response) {
+                    for (UserApi.Walk walk : response.body()){
+                        news.add(transformToWalk(walk));
+                    }
+                }
+            });
+        }
+        currentUserNews.postValue(news);
     }
 
     public void addFriend(String id, int num) {
@@ -226,6 +266,10 @@ public class UserRepository {
 
     public LiveData<ArrayList<Walk>> getCurrentUserWalks() {
         return currentUserWalks;
+    }
+
+    public LiveData<ArrayList<Walk>> getNew() {
+        return currentUserNews;
     }
 
     public enum PostStatus {
