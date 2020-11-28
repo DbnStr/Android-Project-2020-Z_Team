@@ -11,11 +11,12 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MediatorLiveData;
 
 import ru.mail.z_team.R;
+import ru.mail.z_team.user.UserRepository;
 
 public class WalkViewModel extends AndroidViewModel {
 
     private static final String LOG_TAG = "WalkViewModel";
-    WalkRepository repository = new WalkRepository(getApplication());
+    UserRepository repository = new UserRepository(getApplication());
     MediatorLiveData<String> postWalkStatus = new MediatorLiveData<>();
 
     public WalkViewModel(@NonNull Application application) {
@@ -27,10 +28,10 @@ public class WalkViewModel extends AndroidViewModel {
         Log.d(LOG_TAG, "postWalk");
         repository.postWalk(title);
         postWalkStatus.addSource(repository.postStatus, postStatus -> {
-            if (postStatus == WalkRepository.PostStatus.FAILED){
+            if (postStatus == UserRepository.PostStatus.FAILED){
                 postWalkStatus.postValue(getApplication().getString(R.string.FAILED));
             }
-            else if (postStatus == WalkRepository.PostStatus.OK){
+            else if (postStatus == UserRepository.PostStatus.OK){
                 postWalkStatus.postValue(getApplication().getString(R.string.SUCCESS));
             }
         });

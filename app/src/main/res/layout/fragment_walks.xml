@@ -3,13 +3,9 @@
     xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <TextView
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_walks"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/walks"
-        android:textSize="100sp"
-        android:textColor="@color/GREEN"
-        android:background="@color/BLUE"
-        android:gravity="center"/>
+        android:layout_height="match_parent"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
