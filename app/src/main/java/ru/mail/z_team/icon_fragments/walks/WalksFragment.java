@@ -14,13 +14,12 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.firebase.auth.FirebaseAuth;
-
 import ru.mail.z_team.R;
 import ru.mail.z_team.icon_fragments.go_out.WalkViewModel;
 
 public class WalksFragment extends Fragment {
 
+    private static final String LOG_TAG = "WalksFragment";
     WalkAdapter adapter;
     WalkViewModel viewModel;
     TextView noWalks;
@@ -43,10 +42,10 @@ public class WalksFragment extends Fragment {
 
         adapter = new WalkAdapter(getActivity());
 
-        String userId = FirebaseAuth.getInstance().getUid();
         viewModel = new ViewModelProvider(this).get(WalkViewModel.class);
         viewModel.update();
         viewModel.getCurrentUserWalks().observe(getActivity(), walks -> {
+            Log.d(LOG_TAG, "get walks... " + walks.size());
             if (walks.isEmpty()){
                 noWalks.setVisibility(View.VISIBLE);
             }

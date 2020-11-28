@@ -35,7 +35,7 @@ public class WalkAdapter extends RecyclerView.Adapter<WalksViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull WalksViewHolder holder, int position) {
-        Log.d(LOG_TAG, "OnBindViewHolderFriend " + position);
+        Log.d(LOG_TAG, "OnBindViewHolderWalk " + position);
         String title = walks.get(position).getTitle();
         Date date = walks.get(position).getDate();
         holder.walkTitle.setText(title);
@@ -50,8 +50,8 @@ public class WalkAdapter extends RecyclerView.Adapter<WalksViewHolder> {
         return walks.size();
     }
 
-    public void setWalks(ArrayList<Walk> users) {
-        walks = users;
-        this.notifyItemRangeChanged(0, walks.size());
+    public void setWalks(ArrayList<Walk> walks) {
+        this.walks = walks;
+        this.notifyItemRangeChanged(0, this.walks.size());
     }
 }
