@@ -11,14 +11,17 @@ import androidx.lifecycle.MutableLiveData;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.TimeZone;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import ru.mail.z_team.icon_fragments.walks.Walk;
 import ru.mail.z_team.network.ApiRepository;
 import ru.mail.z_team.network.UserApi;
 
@@ -29,14 +32,19 @@ public class UserRepository {
 
     private final Context context;
     private final MutableLiveData<User> currentUserData = new MutableLiveData<>();
+    private final MutableLiveData<ArrayList<Walk>> currentUserWalks = new MutableLiveData<>();
     private final MutableLiveData<User> otherUserData = new MutableLiveData<>();
     private final MutableLiveData<Boolean> userExistence = new MutableLiveData<>();
     public final MutableLiveData<PostStatus> postStatus = new MutableLiveData<>();
+
+    SimpleDateFormat sdf =
+            new SimpleDateFormat("EEE, MMM d, yyyy hh:mm:ss a z");
 
     private final UserApi userApi;
 
     public UserRepository(Context context) {
         this.context = context;
+        sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
         userApi = ApiRepository.from(context).getUserApi();
     }
 
@@ -149,16 +157,23 @@ public class UserRepository {
         );
     }
 
+    private Walk transformToWalk(UserApi.Walk walk){
+        Walk transformed = new Walk();
+        transformed.setTitle(walk.title);
+        try {
+            transformed.setDate(sdf.parse(walk.date));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return transformed;
+    }
+
     @RequiresApi(api = Build.VERSION_CODES.O)
-    public void postWalk(String title) {
+    public void postWalk(String title, int num) {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         Log.d(LOG_TAG, "postWalk");
         Date currentTime = new Date();
-        SimpleDateFormat sdf =
-                new SimpleDateFormat("EEE, MMM d, yyyy hh:mm:ss a z");
-        sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
-        userApi.addWalk(user.getUid(), sdf.format(currentTime),
-                new UserApi.Walk(title)).enqueue(new Callback<UserApi.User>() {
+        userApi.addWalk(user.getUid(), num, new UserApi.Walk(title, sdf.format(currentTime))).enqueue(new Callback<UserApi.User>() {
             @Override
             public void onResponse(Call<UserApi.User> call, Response<UserApi.User> response) {
                 if (response.isSuccessful()){
@@ -175,6 +190,30 @@ public class UserRepository {
                 postStatus.postValue(PostStatus.FAILED);
             }
         });
+    }
+
+    public void updateCurrentUserWalks() {
+        String id = FirebaseAuth.getInstance().getUid();
+        userApi.getUserWalksById(id).enqueue(new DatabaseCallback<List<UserApi.Walk>>() {
+            @Override
+            void onNull(Response<List<UserApi.Walk>> response) {
+                currentUserWalks.postValue(new ArrayList<>());
+                Log.d(LOG_TAG, "Walks was empty");
+            }
+
+            @Override
+            void onSuccess(Response<List<UserApi.Walk>> response) {
+                ArrayList<Walk> walks = new ArrayList<>();
+                for (UserApi.Walk walk : response.body()){
+                    walks.add(transformToWalk(walk));
+                }
+                currentUserWalks.postValue(walks);
+            }
+        });
+    }
+
+    public LiveData<ArrayList<Walk>> getCurrentUserWalks() {
+        return currentUserWalks;
     }
 
     public enum PostStatus {

@@ -42,9 +42,11 @@ public interface UserApi {
 
     class Walk {
         public String title;
+        public String date;
 
-        public Walk(String title) {
+        public Walk(String title, String date) {
             this.title = title;
+            this.date = date;
         }
     }
 
@@ -54,11 +56,14 @@ public interface UserApi {
     @GET("/Users/{id}/friends.json")
     Call<List<Friend>> getUserFriendsById(@Path("id") String id);
 
+    @GET("/Walks/{id}.json")
+    Call<List<Walk>> getUserWalksById(@Path("id") String id);
+
     @PUT("/Users/{id}.json")
     Call<User> addUser(@Path("id") String id, @Body User user);
 
-    @PUT("/Walks/{id}/{date}.json")
-    Call<User> addWalk(@Path("id") String id, @Path("date") String date, @Body Walk walk);
+    @PUT("/Walks/{id}/{num}.json")
+    Call<User> addWalk(@Path("id") String id, @Path("num") int num, @Body Walk walk);
 
     @PUT("/Users/{id}/friends/{num}.json")
     Call<Friend> addFriend(@Path("id") String id, @Path("num") String num, @Body Friend friend);

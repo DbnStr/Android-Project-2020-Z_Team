@@ -10,12 +10,16 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MediatorLiveData;
 
+import java.util.ArrayList;
+
 import ru.mail.z_team.R;
+import ru.mail.z_team.icon_fragments.walks.Walk;
 import ru.mail.z_team.user.UserRepository;
 
 public class WalkViewModel extends AndroidViewModel {
 
     private static final String LOG_TAG = "WalkViewModel";
+    private int walkCount = 0;
     UserRepository repository = new UserRepository(getApplication());
     MediatorLiveData<String> postWalkStatus = new MediatorLiveData<>();
 
@@ -26,7 +30,8 @@ public class WalkViewModel extends AndroidViewModel {
     @RequiresApi(api = Build.VERSION_CODES.O)
     public void postWalk(String title) {
         Log.d(LOG_TAG, "postWalk");
-        repository.postWalk(title);
+        repository.postWalk(title, walkCount);
+        walkCount++;
         postWalkStatus.addSource(repository.postStatus, postStatus -> {
             if (postStatus == UserRepository.PostStatus.FAILED){
                 postWalkStatus.postValue(getApplication().getString(R.string.FAILED));
@@ -39,5 +44,13 @@ public class WalkViewModel extends AndroidViewModel {
 
     public LiveData<String> getPostStatus(){
         return postWalkStatus;
+    }
+
+    public void update() {
+        repository.updateCurrentUserWalks();
+    }
+
+    public LiveData<ArrayList<Walk>> getCurrentUserWalks() {
+        return repository.getCurrentUserWalks();
     }
 }
