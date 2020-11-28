@@ -33,6 +33,8 @@ public class GoOutFragment extends Fragment {
         addWalk.setOnClickListener(v -> {
             startActivity(new Intent(getActivity(), AddWalkActivity.class));
         });
+
+
         return view;
     }
 }

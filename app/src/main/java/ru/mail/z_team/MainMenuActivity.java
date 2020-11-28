@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -36,6 +37,7 @@ public class MainMenuActivity extends AppCompatActivity {
     FirebaseAuth firebaseAuth;
     FragmentManager fragmentManager;
     int container;
+    ActionBar actionBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,6 +69,9 @@ public class MainMenuActivity extends AppCompatActivity {
                     .addToBackStack(null)
                     .commitAllowingStateLoss();
         }
+
+        actionBar = getSupportActionBar();
+        actionBar.setTitle("GO OUT!");
     }
 
     @Override
