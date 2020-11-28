@@ -14,7 +14,7 @@ public class ApplicationModified extends Application {
     public void onCreate() {
         super.onCreate();
         apiRepository = new ApiRepository();
-        authRepo = new AuthRepo();
+        authRepo = new AuthRepo(apiRepository);
     }
 
     public ApiRepository getApis() {
