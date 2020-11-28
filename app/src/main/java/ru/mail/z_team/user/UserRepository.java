@@ -33,7 +33,7 @@ public class UserRepository {
     private final MutableLiveData<ArrayList<Walk>> currentUserWalks = new MutableLiveData<>();
     private final MutableLiveData<User> otherUserData = new MutableLiveData<>();
     private final MutableLiveData<Boolean> userExistence = new MutableLiveData<>();
-    public final MutableLiveData<PostStatus> postStatus = new MutableLiveData<>();
+    private final MutableLiveData<PostStatus> postStatus = new MutableLiveData<>();
 
     SimpleDateFormat sdf =
             new SimpleDateFormat("EEE, MMM d, yyyy hh:mm:ss a z");
@@ -50,9 +50,12 @@ public class UserRepository {
         return currentUserData;
     }
 
-    public void updateCurrentUser(final String id) {
-        log("update user - " + id);
-        userApi.getUserById(id).enqueue(new DatabaseCallback<UserApi.User>() {
+    public void updateCurrentUser() {
+        String currentUserId = FirebaseAuth.getInstance().getUid();
+
+        log("update user - " + currentUserId);
+
+        userApi.getUserById(currentUserId).enqueue(new DatabaseCallback<UserApi.User>() {
             @Override
             void onNull(Response<UserApi.User> response) {
                 errorLog("Fail with update", null);
@@ -63,6 +66,25 @@ public class UserRepository {
                 currentUserData.postValue(transformToUser(response.body()));
             }
         });
+    }
+
+    private User transformToUser(UserApi.User user) {
+        String name = user.name;
+        if (name == null) {
+            name = "Anonymous";
+        }
+        ArrayList<Friend> userFriends = new ArrayList<>();
+        if (user.friends != null) {
+            for (UserApi.Friend friend : user.friends) {
+                userFriends.add(transformToFriend(friend));
+            }
+        }
+        return new User(
+                name,
+                user.age,
+                user.id,
+                userFriends
+        );
     }
 
     public void addFriend(String id, int num) {
@@ -86,11 +108,18 @@ public class UserRepository {
 
                     @Override
                     void onSuccess(Response<UserApi.Friend> response) {
-                        updateCurrentUser(curUserId);
+                        updateCurrentUser();
                     }
                 });
             }
         });
+    }
+
+    private UserApi.Friend transformToUserApiFriend(UserApi.User user) {
+        UserApi.Friend result = new UserApi.Friend();
+        result.id = user.id;
+        result.name = user.name;
+        return result;
     }
 
     public void changeUserInformation(final String id, User newInformation) {
@@ -105,6 +134,14 @@ public class UserRepository {
                 log("Change information about " + id);
             }
         });
+    }
+
+    private UserApi.User transformToUserApiUser(User user) {
+        UserApi.User result = new UserApi.User();
+        result.id = user.getId();
+        result.name = user.getName();
+        result.age = user.getAge();
+        return result;
     }
 
     public void checkUserExistence(String id) {
@@ -128,47 +165,8 @@ public class UserRepository {
         return userExistence;
     }
 
-    private void errorLog(final String message, Throwable t) {
-        Log.e(LOG_TAG, message, t);
-    }
-
-    private void log(final String message) {
-        Log.d(LOG_TAG, message);
-    }
-
-    private User transformToUser(UserApi.User user) {
-        String name = user.name;
-        if (name == null) {
-            name = "Anonymous";
-        }
-        ArrayList<Friend> userFriends = new ArrayList<>();
-        if (user.friends != null) {
-            for (UserApi.Friend friend : user.friends) {
-                userFriends.add(transformToFriend(friend));
-            }
-        }
-        return new User(
-                name,
-                user.age,
-                user.id,
-                userFriends
-        );
-    }
-
-    private Walk transformToWalk(UserApi.Walk walk) {
-        Walk transformed = new Walk();
-        transformed.setTitle(walk.title);
-        try {
-            transformed.setDate(sdf.parse(walk.date));
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        return transformed;
-    }
-
     public void postWalk(String title) {
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        String currentUserId = user.getUid();
+        String currentUserId = FirebaseAuth.getInstance().getUid();
 
         userApi.getUserWalksById(currentUserId).enqueue(new DatabaseCallback<List<UserApi.Walk>>() {
             @Override
@@ -224,6 +222,19 @@ public class UserRepository {
         });
     }
 
+    private Walk transformToWalk(UserApi.Walk walk) {
+        Walk transformed = new Walk();
+        transformed.setTitle(walk.title);
+        try {
+            transformed.setDate(sdf.parse(walk.date));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return transformed;
+    }
+
+    public MutableLiveData<PostStatus> getPostStatus() {return postStatus;}
+
     public LiveData<ArrayList<Walk>> getCurrentUserWalks() {
         return currentUserWalks;
     }
@@ -235,21 +246,6 @@ public class UserRepository {
 
     private Friend transformToFriend(UserApi.Friend friend) {
         return new Friend(friend.name, friend.id);
-    }
-
-    private UserApi.User transformToUserApiUser(User user) {
-        UserApi.User result = new UserApi.User();
-        result.id = user.getId();
-        result.name = user.getName();
-        result.age = user.getAge();
-        return result;
-    }
-
-    private UserApi.Friend transformToUserApiFriend(UserApi.User user) {
-        UserApi.Friend result = new UserApi.Friend();
-        result.id = user.id;
-        result.name = user.name;
-        return result;
     }
 
     public LiveData<User> getOtherUserInfo() {
@@ -269,6 +265,14 @@ public class UserRepository {
                 otherUserData.postValue(transformToUser(response.body()));
             }
         });
+    }
+
+    private void errorLog(final String message, Throwable t) {
+        Log.e(LOG_TAG, message, t);
+    }
+
+    private void log(final String message) {
+        Log.d(LOG_TAG, message);
     }
 
     private abstract class DatabaseCallback<T> implements Callback<T> {

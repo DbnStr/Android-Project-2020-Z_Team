@@ -30,7 +30,7 @@ public class WalkViewModel extends AndroidViewModel {
     public void postWalk(String title) {
         Log.d(LOG_TAG, "postWalk");
         repository.postWalk(title);
-        postWalkStatus.addSource(repository.postStatus, postStatus -> {
+        postWalkStatus.addSource(repository.getPostStatus(), postStatus -> {
             if (postStatus == UserRepository.PostStatus.FAILED){
                 postWalkStatus.postValue(getApplication().getString(R.string.FAILED));
             }

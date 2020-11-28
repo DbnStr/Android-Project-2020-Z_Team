@@ -71,7 +71,7 @@ public class AuthRepo implements Executor{
     public void addNewUser() {
         String id = FirebaseAuth.getInstance().getUid();
         String email = FirebaseAuth.getInstance().getCurrentUser().getEmail();
-        userApi.addUser(id, new UserApi.User(id, email))
+        userApi.addUser(id, new UserApi.User(id, email, ""))
                 .enqueue(new Callback<UserApi.User>() {
             @Override
             public void onResponse(Call<UserApi.User> call, Response<UserApi.User> response) {

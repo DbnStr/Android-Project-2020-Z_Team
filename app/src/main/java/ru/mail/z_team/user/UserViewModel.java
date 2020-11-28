@@ -22,8 +22,8 @@ public class UserViewModel extends AndroidViewModel {
         return repository.getCurrentUser();
     }
 
-    public void updateCurrentUser(final String id) {
-        repository.updateCurrentUser(id);
+    public void updateCurrentUser() {
+        repository.updateCurrentUser();
     }
 
     public void addFriend(String id, int num) {
