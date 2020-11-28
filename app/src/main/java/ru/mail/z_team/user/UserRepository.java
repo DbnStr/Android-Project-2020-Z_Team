@@ -138,7 +138,7 @@ public class UserRepository {
 
     private User transformToUser(UserApi.User user) {
         String name = user.name;
-        if (name == null){
+        if (name == null) {
             name = "Anonymous";
         }
         ArrayList<Friend> userFriends = new ArrayList<>();
@@ -155,7 +155,7 @@ public class UserRepository {
         );
     }
 
-    private Walk transformToWalk(UserApi.Walk walk){
+    private Walk transformToWalk(UserApi.Walk walk) {
         Walk transformed = new Walk();
         transformed.setTitle(walk.title);
         try {
@@ -168,35 +168,38 @@ public class UserRepository {
 
     public void postWalk(String title) {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        String currentUserId = user.getUid();
 
-        userApi.getUserWalksById(user.getUid()).enqueue(new DatabaseCallback<List<UserApi.Walk>>() {
+        userApi.getUserWalksById(currentUserId).enqueue(new DatabaseCallback<List<UserApi.Walk>>() {
             @Override
             void onNull(Response<List<UserApi.Walk>> response) {
-                Log.d(LOG_TAG, "walks are empty");
+                addWalkInDb(0, title, currentUserId);
             }
 
             @Override
             void onSuccess(Response<List<UserApi.Walk>> response) {
-                Log.d(LOG_TAG, "postWalk");
-                Date currentTime = new Date();
-                int num = response.body().size();
-                userApi.addWalk(user.getUid(), num, new UserApi.Walk(title, sdf.format(currentTime))).enqueue(new Callback<UserApi.User>() {
-                    @Override
-                    public void onResponse(Call<UserApi.User> call, Response<UserApi.User> response) {
-                        if (response.isSuccessful()){
-                            postStatus.postValue(PostStatus.OK);
-                        }
-                        else {
-                            postStatus.postValue(PostStatus.FAILED);
-                        }
-                    }
+                addWalkInDb(response.body().size(), title, currentUserId);
+            }
+        });
+    }
 
-                    @Override
-                    public void onFailure(Call<UserApi.User> call, Throwable t) {
-                        Log.e(LOG_TAG, t.getMessage(), null);
-                        postStatus.postValue(PostStatus.FAILED);
-                    }
-                });
+    private void addWalkInDb(int currentWalkNumber, String title, String id) {
+        Log.d(LOG_TAG, "postWalk");
+        Date currentTime = new Date();
+        userApi.addWalk(id, currentWalkNumber, new UserApi.Walk(title, sdf.format(currentTime))).enqueue(new Callback<UserApi.User>() {
+            @Override
+            public void onResponse(Call<UserApi.User> call, Response<UserApi.User> response) {
+                if (response.isSuccessful()) {
+                    postStatus.postValue(PostStatus.OK);
+                } else {
+                    postStatus.postValue(PostStatus.FAILED);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<UserApi.User> call, Throwable t) {
+                Log.e(LOG_TAG, t.getMessage(), null);
+                postStatus.postValue(PostStatus.FAILED);
             }
         });
     }
@@ -213,7 +216,7 @@ public class UserRepository {
             @Override
             void onSuccess(Response<List<UserApi.Walk>> response) {
                 ArrayList<Walk> walks = new ArrayList<>();
-                for (UserApi.Walk walk : response.body()){
+                for (UserApi.Walk walk : response.body()) {
                     walks.add(transformToWalk(walk));
                 }
                 currentUserWalks.postValue(walks);
