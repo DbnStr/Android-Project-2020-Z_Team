@@ -19,7 +19,8 @@ public interface UserApi {
         public String email;
         public String id;
 
-        public User(String id, String email) {
+        public User(String id, String email, String name) {
+            this.name = name;
             this.id = id;
             this.email = email;
             this.friends = new ArrayList<>();
