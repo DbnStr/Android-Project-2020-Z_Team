@@ -28,6 +28,6 @@ public class NewsViewModel extends AndroidViewModel {
 
     public LiveData<ArrayList<Walk>> getNews() {
         Log.d(LOG_TAG, "updateNews");
-        return repository.getNew();
+        return repository.getNews();
     }
 }
