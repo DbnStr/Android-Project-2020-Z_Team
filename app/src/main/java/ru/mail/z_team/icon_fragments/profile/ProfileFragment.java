@@ -74,7 +74,7 @@ public class ProfileFragment extends Fragment {
         String userId = FirebaseAuth.getInstance().getUid();
         userViewModel = new ViewModelProvider(getActivity())
                 .get(UserViewModel.class);
-        userViewModel.updateCurrentUser(userId);
+        userViewModel.updateCurrentUser();
         userViewModel
                 .getCurrentUser()
                 .observe(getViewLifecycleOwner(), observer);
