@@ -14,7 +14,7 @@ import ru.mail.z_team.user.UserRepository;
 
 public class NewsViewModel extends AndroidViewModel {
 
-    private static final String LOG_TAG = "WalkViewModel";
+    private static final String LOG_TAG = "NewsViewModel";
     UserRepository repository = new UserRepository(getApplication());
 
     public NewsViewModel(@NonNull Application application) {

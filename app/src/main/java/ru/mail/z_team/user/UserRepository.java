@@ -222,11 +222,13 @@ public class UserRepository {
         });
     }
     public void updateNews() {
+        Log.d(LOG_TAG, "updateNews");
         String curId = FirebaseAuth.getInstance().getUid();
         userApi.getUserFriendsById(curId).enqueue(new DatabaseCallback<List<UserApi.Friend>>() {
             @Override
             void onNull(Response<List<UserApi.Friend>> response) {
                 currentUserNews.postValue(new ArrayList<>());
+                Log.d(LOG_TAG, curId + " doesn't have friends");
             }
 
             @Override
@@ -235,6 +237,7 @@ public class UserRepository {
                 for (UserApi.Friend friend : response.body()){
                     ids.add(friend.id);
                 }
+                Log.d(LOG_TAG, curId + " have friends " + ids.size());
                 compileNews(ids);
             }
         });
@@ -242,7 +245,10 @@ public class UserRepository {
 
     private void compileNews(ArrayList<String> ids) {
         ArrayList<Walk> news = new ArrayList<>();
+
+        Log.d(LOG_TAG, "Compile news");
         for (String id : ids){
+            Log.d(LOG_TAG, "Compile news... " + ids.indexOf(id));
             userApi.getUserWalksById(id).enqueue(new DatabaseCallback<List<UserApi.Walk>>() {
                 @Override
                 void onNull(Response<List<UserApi.Walk>> response) {
@@ -251,13 +257,15 @@ public class UserRepository {
 
                 @Override
                 void onSuccess(Response<List<UserApi.Walk>> response) {
+                    Log.d(LOG_TAG, id + " have walks");
                     for (UserApi.Walk walk : response.body()){
                         news.add(transformToWalk(walk));
+                        //Log.d(LOG_TAG, "Compile news. Sum = " + news.size());
+                        currentUserNews.postValue(news);
                     }
                 }
             });
         }
-        currentUserNews.postValue(news);
     }
 
     private Walk transformToWalk(UserApi.Walk walk) {
@@ -272,6 +280,7 @@ public class UserRepository {
     }
 
     public LiveData<ArrayList<Walk>> getNews() {
+        Log.d(LOG_TAG, "get news " + currentUserNews.toString());
         return currentUserNews;
     }
 
