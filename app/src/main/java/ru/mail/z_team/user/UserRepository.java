@@ -100,7 +100,7 @@ public class UserRepository {
             @Override
             void onSuccess(Response<UserApi.User> response) {
                 UserApi.Friend friend = transformToUserApiFriend(response.body());
-                userApi.addFriend(curUserId, Integer.toString(num), friend).enqueue(new DatabaseCallback<UserApi.Friend>() {
+                userApi.addFriend(curUserId, num, friend).enqueue(new DatabaseCallback<UserApi.Friend>() {
                     @Override
                     void onNull(Response<UserApi.Friend> response) {
                         errorLog("Failed to add friend " + id, null);
@@ -109,6 +109,17 @@ public class UserRepository {
                     @Override
                     void onSuccess(Response<UserApi.Friend> response) {
                         updateCurrentUser();
+                    }
+                });
+                userApi.addFriendId(curUserId, num, friend.id).enqueue(new DatabaseCallback<String>() {
+                    @Override
+                    void onNull(Response<String> response) {
+                        log("failed to add friend id");
+                    }
+
+                    @Override
+                    void onSuccess(Response<String> response) {
+                        log("successfully add friend id");
                     }
                 });
             }
@@ -224,21 +235,17 @@ public class UserRepository {
     public void updateNews() {
         Log.d(LOG_TAG, "updateNews");
         String curId = FirebaseAuth.getInstance().getUid();
-        userApi.getUserFriendsById(curId).enqueue(new DatabaseCallback<List<UserApi.Friend>>() {
+        userApi.getUserFriendsIds(curId).enqueue(new DatabaseCallback<ArrayList<String>>() {
             @Override
-            void onNull(Response<List<UserApi.Friend>> response) {
+            void onNull(Response<ArrayList<String>> response) {
                 currentUserNews.postValue(new ArrayList<>());
                 Log.d(LOG_TAG, curId + " doesn't have friends");
             }
 
             @Override
-            void onSuccess(Response<List<UserApi.Friend>> response) {
-                ArrayList<String> ids = new ArrayList<>();
-                for (UserApi.Friend friend : response.body()){
-                    ids.add(friend.id);
-                }
-                Log.d(LOG_TAG, curId + " have friends " + ids.size());
-                compileNews(ids);
+            void onSuccess(Response<ArrayList<String>> response) {
+                Log.d(LOG_TAG, curId + " have friends " + response.body().size());
+                compileNews(response.body());
             }
         });
     }
@@ -260,7 +267,6 @@ public class UserRepository {
                     Log.d(LOG_TAG, id + " have walks");
                     for (UserApi.Walk walk : response.body()){
                         news.add(transformToWalk(walk));
-                        //Log.d(LOG_TAG, "Compile news. Sum = " + news.size());
                         currentUserNews.postValue(news);
                     }
                 }

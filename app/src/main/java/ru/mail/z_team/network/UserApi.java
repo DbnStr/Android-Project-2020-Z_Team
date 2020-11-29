@@ -60,14 +60,20 @@ public interface UserApi {
     @GET("/Walks/{id}.json")
     Call<List<Walk>> getUserWalksById(@Path("id") String id);
 
+    @GET("/FriendsIds/{id}.json")
+    Call<ArrayList<String>> getUserFriendsIds(@Path("id") String id);
+
     @PUT("/Users/{id}.json")
     Call<User> addUser(@Path("id") String id, @Body User user);
 
     @PUT("/Walks/{id}/{num}.json")
     Call<User> addWalk(@Path("id") String id, @Path("num") int num, @Body Walk walk);
 
+    @PUT("/FriendsIds/{id}/{num}.json")
+    Call<String> addFriendId(@Path("id") String id, @Path("num") int num, @Body String friendId);
+
     @PUT("/Users/{id}/friends/{num}.json")
-    Call<Friend> addFriend(@Path("id") String id, @Path("num") String num, @Body Friend friend);
+    Call<Friend> addFriend(@Path("id") String id, @Path("num") int num, @Body Friend friend);
 
     @PATCH("/Users/{id}.json")
     Call<User> changeUserInformation(@Path("id") String id, @Body User user);
