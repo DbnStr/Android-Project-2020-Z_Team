@@ -2,7 +2,7 @@ package ru.mail.z_team.icon_fragments.walks;
 
 import java.util.Date;
 
-public class Walk {
+public class Walk implements Comparable<Walk>{
     String title;
     Date date;
 
@@ -20,5 +20,10 @@ public class Walk {
 
     public String getTitle() {
         return title;
+    }
+
+    @Override
+    public int compareTo(Walk o) {
+        return date.compareTo(o.date);
     }
 }

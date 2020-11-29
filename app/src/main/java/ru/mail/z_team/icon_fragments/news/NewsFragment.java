@@ -14,6 +14,8 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.util.Collections;
+
 import ru.mail.z_team.R;
 
 public class NewsFragment extends Fragment {
@@ -51,6 +53,7 @@ public class NewsFragment extends Fragment {
             }
             else {
                 noNews.setVisibility(View.INVISIBLE);
+                Collections.sort(walks);
                 adapter.setWalks(walks);
             }
         });
