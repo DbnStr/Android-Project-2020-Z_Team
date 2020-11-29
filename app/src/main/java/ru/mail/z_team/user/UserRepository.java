@@ -20,7 +20,6 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import ru.mail.z_team.ApplicationModified;
-import ru.mail.z_team.AuthRepo;
 import ru.mail.z_team.icon_fragments.walks.Walk;
 import ru.mail.z_team.network.ApiRepository;
 import ru.mail.z_team.network.UserApi;

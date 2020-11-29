@@ -4,7 +4,6 @@ import android.app.Application;
 import android.content.Context;
 
 import ru.mail.z_team.network.ApiRepository;
-import ru.mail.z_team.user.User;
 import ru.mail.z_team.user.UserRepository;
 
 public class ApplicationModified extends Application {
