@@ -15,10 +15,11 @@ import ru.mail.z_team.user.UserRepository;
 public class NewsViewModel extends AndroidViewModel {
 
     private static final String LOG_TAG = "NewsViewModel";
-    UserRepository repository = new UserRepository(getApplication());
+    UserRepository repository;
 
     public NewsViewModel(@NonNull Application application) {
         super(application);
+        repository = UserRepository.getInstance(getApplication());
     }
 
     public void updateNews() {

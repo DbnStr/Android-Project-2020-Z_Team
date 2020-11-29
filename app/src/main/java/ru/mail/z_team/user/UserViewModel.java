@@ -12,10 +12,11 @@ import java.util.HashMap;
 public class UserViewModel extends AndroidViewModel {
 
     private static final String LOG_TAG = "UserViewModel";
-    private final UserRepository repository = new UserRepository(getApplication());
+    private final UserRepository repository;
 
     public UserViewModel(@NonNull Application application) {
         super(application);
+        repository = UserRepository.getInstance(getApplication());
     }
 
     public LiveData<User> getCurrentUser() {

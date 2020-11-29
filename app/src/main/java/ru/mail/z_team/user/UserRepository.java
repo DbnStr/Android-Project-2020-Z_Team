@@ -3,6 +3,7 @@ package ru.mail.z_team.user;
 import android.content.Context;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
@@ -18,6 +19,8 @@ import java.util.TimeZone;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import ru.mail.z_team.ApplicationModified;
+import ru.mail.z_team.AuthRepo;
 import ru.mail.z_team.icon_fragments.walks.Walk;
 import ru.mail.z_team.network.ApiRepository;
 import ru.mail.z_team.network.UserApi;
@@ -232,6 +235,7 @@ public class UserRepository {
             }
         });
     }
+
     public void updateNews() {
         Log.d(LOG_TAG, "updateNews");
         String curId = FirebaseAuth.getInstance().getUid();
@@ -322,6 +326,11 @@ public class UserRepository {
                 otherUserData.postValue(transformToUser(response.body()));
             }
         });
+    }
+
+    @NonNull
+    public static UserRepository getInstance(Context context) {
+        return ApplicationModified.from(context).getUserRepository();
     }
 
     private void errorLog(final String message, Throwable t) {

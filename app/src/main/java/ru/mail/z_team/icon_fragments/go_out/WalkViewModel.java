@@ -17,11 +17,12 @@ import ru.mail.z_team.user.UserRepository;
 public class WalkViewModel extends AndroidViewModel {
 
     private static final String LOG_TAG = "WalkViewModel";
-    UserRepository repository = new UserRepository(getApplication());
+    UserRepository repository;
     MediatorLiveData<String> postWalkStatus = new MediatorLiveData<>();
 
     public WalkViewModel(@NonNull Application application) {
         super(application);
+        repository = UserRepository.getInstance(getApplication());
     }
 
     public void postWalk(String title) {
