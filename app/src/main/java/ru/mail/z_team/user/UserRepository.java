@@ -90,6 +90,10 @@ public class UserRepository {
         );
     }
 
+    private Friend transformToFriend(UserApi.Friend friend) {
+        return new Friend(friend.name, friend.id);
+    }
+
     public void addFriend(String id, int num) {
         log("addFriend");
         String curUserId = FirebaseAuth.getInstance().getUid();
@@ -303,10 +307,6 @@ public class UserRepository {
     public enum PostStatus {
         OK,
         FAILED
-    }
-
-    private Friend transformToFriend(UserApi.Friend friend) {
-        return new Friend(friend.name, friend.id);
     }
 
     public LiveData<User> getOtherUserInfo() {

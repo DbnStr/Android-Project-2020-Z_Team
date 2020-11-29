@@ -13,14 +13,17 @@ public class UserViewModel extends AndroidViewModel {
 
     private static final String LOG_TAG = "UserViewModel";
     private final UserRepository repository;
+    private final LiveData<User> currentUserInfo;
 
     public UserViewModel(@NonNull Application application) {
         super(application);
         repository = UserRepository.getInstance(getApplication());
+        currentUserInfo = repository.getCurrentUser();
     }
 
     public LiveData<User> getCurrentUser() {
-        return repository.getCurrentUser();
+        log("getCurrentUser");
+        return currentUserInfo;
     }
 
     public void updateCurrentUser() {
@@ -66,5 +69,9 @@ public class UserViewModel extends AndroidViewModel {
 
     public void updateOtherUser(String id) {
         repository.updateOtherUser(id);
+    }
+
+    private void log(final String message) {
+        Log.d(LOG_TAG, message);
     }
 }

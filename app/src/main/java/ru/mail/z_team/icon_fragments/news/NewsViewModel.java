@@ -15,11 +15,13 @@ import ru.mail.z_team.user.UserRepository;
 public class NewsViewModel extends AndroidViewModel {
 
     private static final String LOG_TAG = "NewsViewModel";
-    UserRepository repository;
+    private final UserRepository repository;
+    private final LiveData<ArrayList<Walk>> currentUserNews;
 
     public NewsViewModel(@NonNull Application application) {
         super(application);
         repository = UserRepository.getInstance(getApplication());
+        currentUserNews = repository.getNews();
     }
 
     public void updateNews() {
@@ -28,7 +30,7 @@ public class NewsViewModel extends AndroidViewModel {
     }
 
     public LiveData<ArrayList<Walk>> getNews() {
-        Log.d(LOG_TAG, "updateNews");
-        return repository.getNews();
+        Log.d(LOG_TAG, "getNews");
+        return currentUserNews;
     }
 }
