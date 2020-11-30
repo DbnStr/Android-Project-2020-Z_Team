@@ -33,6 +33,6 @@ public class Walk implements Comparable<Walk>{
 
     @Override
     public int compareTo(Walk o) {
-        return date.compareTo(o.date);
+        return -date.compareTo(o.date);
     }
 }
