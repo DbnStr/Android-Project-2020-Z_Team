@@ -44,6 +44,8 @@ public class UserRepository {
     private String currentUserName;
     private final String currentUserId;
 
+    private int count;
+
     public UserRepository(Context context) {
         this.context = context;
         sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
@@ -120,6 +122,12 @@ public class UserRepository {
             @Override
             void onSuccess(Response<UserApi.User> response) {
                 UserApi.Friend friend = transformToUserApiFriend(response.body());
+                if (response.body().friends == null){
+                    count = 0;
+                }
+                else{
+                    count = response.body().friends.size();
+                }
                 userApi.addFriend(curUserId, num, friend).enqueue(new DatabaseCallback<UserApi.Friend>() {
                     @Override
                     void onNull(Response<UserApi.Friend> response) {
@@ -132,6 +140,39 @@ public class UserRepository {
                     }
                 });
                 userApi.addFriendId(curUserId, num, friend.id).enqueue(new DatabaseCallback<String>() {
+                    @Override
+                    void onNull(Response<String> response) {
+                        log("failed to add friend id");
+                    }
+
+                    @Override
+                    void onSuccess(Response<String> response) {
+                        log("successfully add friend id");
+                    }
+                });
+            }
+        });
+        userApi.getUserById(curUserId).enqueue(new DatabaseCallback<UserApi.User>() {
+            @Override
+            void onNull(Response<UserApi.User> response) {
+                errorLog("Failed to get " + curUserId + " user", null);
+            }
+
+            @Override
+            void onSuccess(Response<UserApi.User> response) {
+                UserApi.Friend friend = transformToUserApiFriend(response.body());
+                userApi.addFriend(id, count, friend).enqueue(new DatabaseCallback<UserApi.Friend>() {
+                    @Override
+                    void onNull(Response<UserApi.Friend> response) {
+                        errorLog("Failed to add friend " + curUserId, null);
+                    }
+
+                    @Override
+                    void onSuccess(Response<UserApi.Friend> response) {
+                        updateCurrentUser();
+                    }
+                });
+                userApi.addFriendId(id, count, friend.id).enqueue(new DatabaseCallback<String>() {
                     @Override
                     void onNull(Response<String> response) {
                         log("failed to add friend id");
