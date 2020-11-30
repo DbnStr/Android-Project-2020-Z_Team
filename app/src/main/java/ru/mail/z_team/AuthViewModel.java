@@ -60,7 +60,7 @@ public class AuthViewModel extends AndroidViewModel{
         mAuthState.addSource(progressLiveData, authProgressStringPair -> {
             AuthRepo.AuthProgress authProgress = authProgressStringPair.first;
             if (authProgress == AuthRepo.AuthProgress.SUCCESS) {
-                authRepository.addNewUser(getApplication());
+                authRepository.addNewUser();
                 changeAuthState(progressLiveData, authProgressStringPair, success);
             } else if (authProgress == AuthRepo.AuthProgress.FAILED) {
                 changeAuthState(progressLiveData, authProgressStringPair, failed);

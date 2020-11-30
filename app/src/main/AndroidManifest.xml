@@ -12,6 +12,7 @@
         android:theme="@style/AppTheme">
         <activity android:name=".MapActivity"></activity>
         <activity android:name=".MainActivity" />
+        <activity android:name=".AddWalkActivity"></activity>
         <activity android:name=".MainMenuActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

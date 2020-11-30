@@ -3,16 +3,24 @@ package ru.mail.z_team.user;
 import android.content.Context;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.google.firebase.auth.FirebaseAuth;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.TimeZone;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import ru.mail.z_team.ApplicationModified;
+import ru.mail.z_team.icon_fragments.walks.Walk;
 import ru.mail.z_team.network.ApiRepository;
 import ru.mail.z_team.network.UserApi;
 
@@ -23,13 +31,20 @@ public class UserRepository {
 
     private final Context context;
     private final MutableLiveData<User> currentUserData = new MutableLiveData<>();
+    private final MutableLiveData<ArrayList<Walk>> currentUserWalks = new MutableLiveData<>();
+    private final MutableLiveData<ArrayList<Walk>> currentUserNews = new MutableLiveData<>();
     private final MutableLiveData<User> otherUserData = new MutableLiveData<>();
     private final MutableLiveData<Boolean> userExistence = new MutableLiveData<>();
+    private final MutableLiveData<PostStatus> postStatus = new MutableLiveData<>();
+
+    SimpleDateFormat sdf =
+            new SimpleDateFormat("EEE, MMM d, yyyy hh:mm:ss a z");
 
     private final UserApi userApi;
 
     public UserRepository(Context context) {
         this.context = context;
+        sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
         userApi = ApiRepository.from(context).getUserApi();
     }
 
@@ -37,9 +52,12 @@ public class UserRepository {
         return currentUserData;
     }
 
-    public void updateCurrentUser(final String id) {
-        log("update user - " + id);
-        userApi.getUserById(id).enqueue(new DatabaseCallback<UserApi.User>() {
+    public void updateCurrentUser() {
+        String currentUserId = FirebaseAuth.getInstance().getUid();
+
+        log("update user - " + currentUserId);
+
+        userApi.getUserById(currentUserId).enqueue(new DatabaseCallback<UserApi.User>() {
             @Override
             void onNull(Response<UserApi.User> response) {
                 errorLog("Fail with update", null);
@@ -50,6 +68,29 @@ public class UserRepository {
                 currentUserData.postValue(transformToUser(response.body()));
             }
         });
+    }
+
+    private User transformToUser(UserApi.User user) {
+        String name = user.name;
+        if (name == null) {
+            name = "Anonymous";
+        }
+        ArrayList<Friend> userFriends = new ArrayList<>();
+        if (user.friends != null) {
+            for (UserApi.Friend friend : user.friends) {
+                userFriends.add(transformToFriend(friend));
+            }
+        }
+        return new User(
+                name,
+                user.age,
+                user.id,
+                userFriends
+        );
+    }
+
+    private Friend transformToFriend(UserApi.Friend friend) {
+        return new Friend(friend.name, friend.id);
     }
 
     public void addFriend(String id, int num) {
@@ -65,7 +106,7 @@ public class UserRepository {
             @Override
             void onSuccess(Response<UserApi.User> response) {
                 UserApi.Friend friend = transformToUserApiFriend(response.body());
-                userApi.addFriend(curUserId, Integer.toString(num), friend).enqueue(new DatabaseCallback<UserApi.Friend>() {
+                userApi.addFriend(curUserId, num, friend).enqueue(new DatabaseCallback<UserApi.Friend>() {
                     @Override
                     void onNull(Response<UserApi.Friend> response) {
                         errorLog("Failed to add friend " + id, null);
@@ -73,11 +114,29 @@ public class UserRepository {
 
                     @Override
                     void onSuccess(Response<UserApi.Friend> response) {
-                        updateCurrentUser(curUserId);
+                        updateCurrentUser();
+                    }
+                });
+                userApi.addFriendId(curUserId, num, friend.id).enqueue(new DatabaseCallback<String>() {
+                    @Override
+                    void onNull(Response<String> response) {
+                        log("failed to add friend id");
+                    }
+
+                    @Override
+                    void onSuccess(Response<String> response) {
+                        log("successfully add friend id");
                     }
                 });
             }
         });
+    }
+
+    private UserApi.Friend transformToUserApiFriend(UserApi.User user) {
+        UserApi.Friend result = new UserApi.Friend();
+        result.id = user.id;
+        result.name = user.name;
+        return result;
     }
 
     public void changeUserInformation(final String id, User newInformation) {
@@ -92,6 +151,14 @@ public class UserRepository {
                 log("Change information about " + id);
             }
         });
+    }
+
+    private UserApi.User transformToUserApiUser(User user) {
+        UserApi.User result = new UserApi.User();
+        result.id = user.getId();
+        result.name = user.getName();
+        result.age = user.getAge();
+        return result;
     }
 
     public void checkUserExistence(String id) {
@@ -115,50 +182,130 @@ public class UserRepository {
         return userExistence;
     }
 
-    private void errorLog(final String message, Throwable t) {
-        Log.e(LOG_TAG, message, t);
-    }
+    public void postWalk(String title) {
+        String currentUserId = FirebaseAuth.getInstance().getUid();
 
-    private void log(final String message) {
-        Log.d(LOG_TAG, message);
-    }
-
-    private User transformToUser(UserApi.User user) {
-        String name = user.name;
-        if (name == null){
-            name = "Anonymous";
-        }
-        ArrayList<Friend> userFriends = new ArrayList<>();
-        if (user.friends != null) {
-            for (UserApi.Friend friend : user.friends) {
-                userFriends.add(transformToFriend(friend));
+        userApi.getUserWalksById(currentUserId).enqueue(new DatabaseCallback<List<UserApi.Walk>>() {
+            @Override
+            void onNull(Response<List<UserApi.Walk>> response) {
+                addWalkInDb(0, title, currentUserId);
             }
+
+            @Override
+            void onSuccess(Response<List<UserApi.Walk>> response) {
+                addWalkInDb(response.body().size(), title, currentUserId);
+            }
+        });
+    }
+
+    private void addWalkInDb(int currentWalkNumber, String title, String id) {
+        Log.d(LOG_TAG, "postWalk");
+        Date currentTime = new Date();
+        userApi.addWalk(id, currentWalkNumber, new UserApi.Walk(title, sdf.format(currentTime))).enqueue(new Callback<UserApi.User>() {
+            @Override
+            public void onResponse(Call<UserApi.User> call, Response<UserApi.User> response) {
+                if (response.isSuccessful()) {
+                    postStatus.postValue(PostStatus.OK);
+                } else {
+                    postStatus.postValue(PostStatus.FAILED);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<UserApi.User> call, Throwable t) {
+                Log.e(LOG_TAG, t.getMessage(), null);
+                postStatus.postValue(PostStatus.FAILED);
+            }
+        });
+    }
+
+    public void updateCurrentUserWalks() {
+        String id = FirebaseAuth.getInstance().getUid();
+        userApi.getUserWalksById(id).enqueue(new DatabaseCallback<List<UserApi.Walk>>() {
+            @Override
+            void onNull(Response<List<UserApi.Walk>> response) {
+                currentUserWalks.postValue(new ArrayList<>());
+                Log.d(LOG_TAG, "Walks was empty");
+            }
+
+            @Override
+            void onSuccess(Response<List<UserApi.Walk>> response) {
+                ArrayList<Walk> walks = new ArrayList<>();
+                for (UserApi.Walk walk : response.body()) {
+                    walks.add(transformToWalk(walk));
+                }
+                currentUserWalks.postValue(walks);
+            }
+        });
+    }
+
+    public void updateNews() {
+        Log.d(LOG_TAG, "updateNews");
+        String curId = FirebaseAuth.getInstance().getUid();
+        userApi.getUserFriendsIds(curId).enqueue(new DatabaseCallback<ArrayList<String>>() {
+            @Override
+            void onNull(Response<ArrayList<String>> response) {
+                currentUserNews.postValue(new ArrayList<>());
+                Log.d(LOG_TAG, curId + " doesn't have friends");
+            }
+
+            @Override
+            void onSuccess(Response<ArrayList<String>> response) {
+                Log.d(LOG_TAG, curId + " have friends " + response.body().size());
+                compileNews(response.body());
+            }
+        });
+    }
+
+    private void compileNews(ArrayList<String> ids) {
+        ArrayList<Walk> news = new ArrayList<>();
+
+        Log.d(LOG_TAG, "Compile news");
+        for (String id : ids){
+            Log.d(LOG_TAG, "Compile news... " + ids.indexOf(id));
+            userApi.getUserWalksById(id).enqueue(new DatabaseCallback<List<UserApi.Walk>>() {
+                @Override
+                void onNull(Response<List<UserApi.Walk>> response) {
+                    Log.d(LOG_TAG, id + " doesn't have walks");
+                }
+
+                @Override
+                void onSuccess(Response<List<UserApi.Walk>> response) {
+                    Log.d(LOG_TAG, id + " have walks");
+                    for (UserApi.Walk walk : response.body()){
+                        news.add(transformToWalk(walk));
+                        currentUserNews.postValue(news);
+                    }
+                }
+            });
         }
-        return new User(
-                name,
-                user.age,
-                user.id,
-                userFriends
-        );
     }
 
-    private Friend transformToFriend(UserApi.Friend friend) {
-        return new Friend(friend.name, friend.id);
+    private Walk transformToWalk(UserApi.Walk walk) {
+        Walk transformed = new Walk();
+        transformed.setTitle(walk.title);
+        try {
+            transformed.setDate(sdf.parse(walk.date));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return transformed;
     }
 
-    private UserApi.User transformToUserApiUser(User user) {
-        UserApi.User result = new UserApi.User();
-        result.id = user.getId();
-        result.name = user.getName();
-        result.age = user.getAge();
-        return result;
+    public LiveData<ArrayList<Walk>> getNews() {
+        Log.d(LOG_TAG, "get news " + currentUserNews.toString());
+        return currentUserNews;
     }
 
-    private UserApi.Friend transformToUserApiFriend(UserApi.User user) {
-        UserApi.Friend result = new UserApi.Friend();
-        result.id = user.id;
-        result.name = user.name;
-        return result;
+    public MutableLiveData<PostStatus> getPostStatus() {return postStatus;}
+
+    public LiveData<ArrayList<Walk>> getCurrentUserWalks() {
+        return currentUserWalks;
+    }
+
+    public enum PostStatus {
+        OK,
+        FAILED
     }
 
     public LiveData<User> getOtherUserInfo() {
@@ -178,6 +325,19 @@ public class UserRepository {
                 otherUserData.postValue(transformToUser(response.body()));
             }
         });
+    }
+
+    @NonNull
+    public static UserRepository getInstance(Context context) {
+        return ApplicationModified.from(context).getUserRepository();
+    }
+
+    private void errorLog(final String message, Throwable t) {
+        Log.e(LOG_TAG, message, t);
+    }
+
+    private void log(final String message) {
+        Log.d(LOG_TAG, message);
     }
 
     private abstract class DatabaseCallback<T> implements Callback<T> {
