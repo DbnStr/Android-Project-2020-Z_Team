@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import ru.mail.z_team.R;
+import ru.mail.z_team.WrapContentLayoutManager;
 import ru.mail.z_team.icon_fragments.go_out.WalkViewModel;
 
 public class WalksFragment extends Fragment {
@@ -38,7 +39,7 @@ public class WalksFragment extends Fragment {
         noWalks = view.findViewById(R.id.no_walks_tv);
 
         final RecyclerView recyclerView = view.findViewById(R.id.recycler_walks);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        recyclerView.setLayoutManager(new WrapContentLayoutManager(getActivity()));
 
         adapter = new WalkAdapter(getActivity());
 
