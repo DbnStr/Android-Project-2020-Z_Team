@@ -1,11 +1,14 @@
 package ru.mail.z_team.icon_fragments.profile;
 
+import android.annotation.SuppressLint;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
+import android.widget.Button;
+import android.widget.EditText;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -15,15 +18,21 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.google.firebase.auth.FirebaseAuth;
 
+import java.util.HashMap;
+
 import ru.mail.z_team.R;
+import ru.mail.z_team.user.User;
+import ru.mail.z_team.user.UserViewModel;
 
 public class ProfileFragment extends Fragment {
 
     private static final String LOG_TAG = "ProfileFragment";
 
-    private ProfileViewModel profileViewModel;
-    private TextView name;
-    private TextView age;
+    private UserViewModel userViewModel;
+    private EditText name;
+    private EditText age;
+    private Button editBtn;
+    private Button saveChangesBtn;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -35,14 +44,27 @@ public class ProfileFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_profile, container, false);
+        View view = inflater.inflate(R.layout.fragment_profile, container, false);
+        name = view.findViewById(R.id.profile_name);
+        age = view.findViewById(R.id.profile_age);
+        editBtn = view.findViewById(R.id.edit_btn);
+        saveChangesBtn = view.findViewById(R.id.save_changes_btn);
+        return view;
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        name = getActivity().findViewById(R.id.profile_name);
-        age = getActivity().findViewById(R.id.profile_age);
+
+        disableEditAbilityAll();
+
+        editBtn.setOnClickListener(v -> enableEditAbilityAll());
+        saveChangesBtn.setOnClickListener(v -> {
+            String userId = FirebaseAuth.getInstance().getUid();
+            userViewModel.changeUserInformation(userId, getProfileInfo());
+            disableEditAbilityAll();
+        });
+
 
         Observer<User> observer = user -> {
             if (user != null) {
@@ -50,11 +72,11 @@ public class ProfileFragment extends Fragment {
             }
         };
         String userId = FirebaseAuth.getInstance().getUid();
-        profileViewModel = new ViewModelProvider(getActivity())
-                .get(ProfileViewModel.class);
-        profileViewModel.update(userId);
-        profileViewModel
-                .getUserInfoById(userId)
+        userViewModel = new ViewModelProvider(getActivity())
+                .get(UserViewModel.class);
+        userViewModel.updateCurrentUser(userId);
+        userViewModel
+                .getCurrentUser()
                 .observe(getViewLifecycleOwner(), observer);
     }
 
@@ -62,6 +84,38 @@ public class ProfileFragment extends Fragment {
         Log.d(LOG_TAG, message);
     }
 
+    private void disableEditAbilityAll() {
+        disableEditAbility(name);
+        disableEditAbility(age);
+    }
+
+    private void disableEditAbility(EditText editText) {
+        editText.setEnabled(false);
+        editText.setCursorVisible(false);
+        editText.setBackgroundColor(Color.TRANSPARENT);
+    }
+
+    private void enableEditAbilityAll() {
+        enableEditAbility(name);
+        enableEditAbility(age);
+    }
+
+    private void enableEditAbility(EditText editText) {
+        editText.setEnabled(true);
+        editText.setCursorVisible(true);
+        editText.setBackgroundColor(Color.LTGRAY);
+    }
+
+    private HashMap<String, String> getProfileInfo() {
+        HashMap<String, String> info = new HashMap<>();
+        String nameText = name.getText().toString();
+        String ageText = age.getText().toString();
+        info.put("age", ageText);
+        info.put("name", nameText);
+        return info;
+    }
+
+    @SuppressLint("SetTextI18n")
     private void setProfileData(@NonNull User user) {
         name.setText(user.getName());
         age.setText(String.valueOf(user.getAge()));

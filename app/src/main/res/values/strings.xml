@@ -25,4 +25,8 @@
     <string name="NONE">none</string>
     <string name="don_t_have_account_yet_sign_up_now">Don\'t have account yet? Sign up now.</string>
     <string name="forgot_password_recover_with_email">Forgot password? Recover with email.</string>
+    <string name="edit">edit</string>
+    <string name="name_text">NAME</string>
+    <string name="age_text">AGE</string>
+    <string name="save_changes">SAVE CHANGES</string>
 </resources>
