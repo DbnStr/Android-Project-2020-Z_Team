@@ -41,11 +41,25 @@ public class UserRepository {
             new SimpleDateFormat("EEE, MMM d, yyyy hh:mm:ss a z");
 
     private final UserApi userApi;
+    private String currentUserName;
+    private final String currentUserId;
 
     public UserRepository(Context context) {
         this.context = context;
         sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
         userApi = ApiRepository.from(context).getUserApi();
+        currentUserId = FirebaseAuth.getInstance().getUid();
+        userApi.getUserById(currentUserId).enqueue(new DatabaseCallback<UserApi.User>() {
+            @Override
+            void onNull(Response<UserApi.User> response) {
+                errorLog("Fail with update", null);
+            }
+
+            @Override
+            void onSuccess(Response<UserApi.User> response) {
+                currentUserName = response.body().name;
+            }
+        });
     }
 
     public LiveData<User> getCurrentUser() {
@@ -188,20 +202,22 @@ public class UserRepository {
         userApi.getUserWalksById(currentUserId).enqueue(new DatabaseCallback<List<UserApi.Walk>>() {
             @Override
             void onNull(Response<List<UserApi.Walk>> response) {
-                addWalkInDb(0, title, currentUserId);
+                addWalkInDb(0, title, currentUserId, currentUserName);
             }
 
             @Override
             void onSuccess(Response<List<UserApi.Walk>> response) {
-                addWalkInDb(response.body().size(), title, currentUserId);
+                int count = response.body().size();
+                addWalkInDb(count, title, currentUserId, currentUserName);
             }
         });
     }
 
-    private void addWalkInDb(int currentWalkNumber, String title, String id) {
+    private void addWalkInDb(int currentWalkNumber, String title, String id, String name) {
         Log.d(LOG_TAG, "postWalk");
         Date currentTime = new Date();
-        userApi.addWalk(id, currentWalkNumber, new UserApi.Walk(title, sdf.format(currentTime))).enqueue(new Callback<UserApi.User>() {
+        Log.d(LOG_TAG, "postWalk named  - " + name);
+        userApi.addWalk(id, currentWalkNumber, new UserApi.Walk(title, sdf.format(currentTime), name)).enqueue(new Callback<UserApi.User>() {
             @Override
             public void onResponse(Call<UserApi.User> call, Response<UserApi.User> response) {
                 if (response.isSuccessful()) {
@@ -284,6 +300,7 @@ public class UserRepository {
     private Walk transformToWalk(UserApi.Walk walk) {
         Walk transformed = new Walk();
         transformed.setTitle(walk.title);
+        transformed.setAuthor(walk.author);
         try {
             transformed.setDate(sdf.parse(walk.date));
         } catch (ParseException e) {
