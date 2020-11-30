@@ -42,7 +42,6 @@ public class UserRepository {
 
     private final UserApi userApi;
     private String currentUserName;
-    private final String currentUserId;
 
     private int count;
 
@@ -50,7 +49,7 @@ public class UserRepository {
         this.context = context;
         sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
         userApi = ApiRepository.from(context).getUserApi();
-        currentUserId = FirebaseAuth.getInstance().getUid();
+        String currentUserId = FirebaseAuth.getInstance().getUid();
         userApi.getUserById(currentUserId).enqueue(new DatabaseCallback<UserApi.User>() {
             @Override
             void onNull(Response<UserApi.User> response) {
@@ -240,6 +239,7 @@ public class UserRepository {
     public void postWalk(String title) {
         String currentUserId = FirebaseAuth.getInstance().getUid();
 
+        updateCurrentUserName();
         userApi.getUserWalksById(currentUserId).enqueue(new DatabaseCallback<List<UserApi.Walk>>() {
             @Override
             void onNull(Response<List<UserApi.Walk>> response) {
@@ -250,6 +250,24 @@ public class UserRepository {
             void onSuccess(Response<List<UserApi.Walk>> response) {
                 int count = response.body().size();
                 addWalkInDb(count, title, currentUserId, currentUserName);
+            }
+        });
+    }
+
+    private void updateCurrentUserName() {
+        String currentUserId = FirebaseAuth.getInstance().getUid();
+
+        log("update user - " + currentUserId);
+
+        userApi.getUserById(currentUserId).enqueue(new DatabaseCallback<UserApi.User>() {
+            @Override
+            void onNull(Response<UserApi.User> response) {
+                errorLog("Fail with update", null);
+            }
+
+            @Override
+            void onSuccess(Response<UserApi.User> response) {
+                currentUserName = response.body().name;
             }
         });
     }
