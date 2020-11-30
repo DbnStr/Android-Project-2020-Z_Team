@@ -25,15 +25,17 @@ import ru.mail.z_team.network.UserApi;
 public class AuthRepo implements Executor{
 
     private static final String LOG_TAG = "AuthRepo";
-    private static final int PROBLEM_WITH_AUTH_CODE = 401;
+    private static final int FAILED_WRITE_DB_CODE = 401;
     private static final int SUCCESS_CODE = 200;
+    private final UserApi userApi;
 
     FirebaseAuth mAuth;
 
     private MutableLiveData<Pair<AuthProgress, String>> mAuthProgress;
 
-    public AuthRepo() {
+    public AuthRepo(ApiRepository apiRepository) {
         mAuth = FirebaseAuth.getInstance();
+        userApi = apiRepository.getUserApi();
     }
 
     @NonNull
@@ -47,12 +49,9 @@ public class AuthRepo implements Executor{
         mAuth = FirebaseAuth.getInstance();
         mAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener((Executor) this, new OnCompleteAuthProgressListener())
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        errorLog(e.getMessage(), null);
-                        mAuthProgress.postValue(new Pair<>(AuthProgress.ERROR, e.getMessage()));
-                    }
+                .addOnFailureListener((OnFailureListener) e -> {
+                    errorLog(e.getMessage(), null);
+                    mAuthProgress.postValue(new Pair<>(AuthProgress.ERROR, e.getMessage()));
                 });
         return mAuthProgress;
     }
@@ -62,24 +61,22 @@ public class AuthRepo implements Executor{
         mAuth = FirebaseAuth.getInstance();
         mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteAuthProgressListener())
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        errorLog(e.getMessage(), null);
-                        mAuthProgress.postValue(new Pair<>(AuthProgress.ERROR, e.getMessage()));
-                    }
+                .addOnFailureListener(e -> {
+                    errorLog(e.getMessage(), null);
+                    mAuthProgress.postValue(new Pair<>(AuthProgress.ERROR, e.getMessage()));
                 });
         return mAuthProgress;
     }
 
-    public void addNewUser(Context context) {
+    public void addNewUser() {
         String id = FirebaseAuth.getInstance().getUid();
-        ApiRepository.from(context).getUserApi().addUser(id, new UserApi.User(id))
+        String email = FirebaseAuth.getInstance().getCurrentUser().getEmail();
+        userApi.addUser(id, new UserApi.User(id, email, ""))
                 .enqueue(new Callback<UserApi.User>() {
             @Override
             public void onResponse(Call<UserApi.User> call, Response<UserApi.User> response) {
                 switch (response.code()) {
-                    case PROBLEM_WITH_AUTH_CODE:
+                    case FAILED_WRITE_DB_CODE:
                         errorLog("Problem with Auth", null);
                         break;
                     case SUCCESS_CODE:

@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -19,8 +20,10 @@ import com.google.firebase.auth.FirebaseUser;
 import ru.mail.z_team.icon_fragments.friends.FriendsFragment;
 import ru.mail.z_team.icon_fragments.go_out.GoOutFragment;
 import ru.mail.z_team.icon_fragments.news.NewsFragment;
-import ru.mail.z_team.icon_fragments.walks.WalksFragment;
 import ru.mail.z_team.icon_fragments.profile.ProfileFragment;
+import ru.mail.z_team.icon_fragments.walks.WalksFragment;
+import ru.mail.z_team.user.User;
+import ru.mail.z_team.user.UserFragment;
 
 public class MainMenuActivity extends AppCompatActivity {
 
@@ -28,9 +31,13 @@ public class MainMenuActivity extends AppCompatActivity {
     static private final String WALKS_TAG = "WALKS FRAGMENT";
     static private final String FRIENDS_TAG = "FRIENDS FRAGMENT";
     static private final String PROFILE_TAG = "PROFILE FRAGMENT";
+    static private final String USER_TAG = "USER FRAGMENT";
     static private final String GO_OUT_TAG = "GO_OUT FRAGMENT";
 
     FirebaseAuth firebaseAuth;
+    FragmentManager fragmentManager;
+    int container;
+    ActionBar actionBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,8 +47,8 @@ public class MainMenuActivity extends AppCompatActivity {
 
         firebaseAuth = FirebaseAuth.getInstance();
 
-        final FragmentManager fragmentManager = getSupportFragmentManager();
-        final int container = R.id.current_menu_container;
+        fragmentManager = getSupportFragmentManager();
+        container = R.id.current_menu_container;
         final TextView news = findViewById(R.id.news_feed_icon);
         final TextView walks = findViewById(R.id.walks_icon);
         final TextView friends = findViewById(R.id.friends_icon);
@@ -49,11 +56,11 @@ public class MainMenuActivity extends AppCompatActivity {
         final TextView goOut = findViewById(R.id.go_out_icon);
 
 
-        news.setOnClickListener(new ClickOnIconHandler<>(new NewsFragment()).getListener(NEWS_TAG, fragmentManager, container));
-        walks.setOnClickListener(new ClickOnIconHandler<>(new WalksFragment()).getListener(WALKS_TAG, fragmentManager, container));
-        friends.setOnClickListener(new ClickOnIconHandler<>(new FriendsFragment()).getListener(FRIENDS_TAG, fragmentManager, container));
-        profile.setOnClickListener(new ClickOnIconHandler<>(new ProfileFragment()).getListener(PROFILE_TAG, fragmentManager, container));
-        goOut.setOnClickListener(new ClickOnIconHandler<>(new GoOutFragment()).getListener(GO_OUT_TAG, fragmentManager, container));
+        news.setOnClickListener(new ClickOnIconHandler<>(new NewsFragment()).getListener(NEWS_TAG));
+        walks.setOnClickListener(new ClickOnIconHandler<>(new WalksFragment()).getListener(WALKS_TAG));
+        friends.setOnClickListener(new ClickOnIconHandler<>(new FriendsFragment()).getListener(FRIENDS_TAG));
+        profile.setOnClickListener(new ClickOnIconHandler<>(new ProfileFragment()).getListener(PROFILE_TAG));
+        goOut.setOnClickListener(new ClickOnIconHandler<>(new GoOutFragment()).getListener(GO_OUT_TAG));
 
         if (getSupportFragmentManager().findFragmentById(container) == null) {
             getSupportFragmentManager()
@@ -62,6 +69,9 @@ public class MainMenuActivity extends AppCompatActivity {
                     .addToBackStack(null)
                     .commitAllowingStateLoss();
         }
+
+        actionBar = getSupportActionBar();
+        actionBar.setTitle("GO OUT!");
     }
 
     @Override
@@ -72,6 +82,14 @@ public class MainMenuActivity extends AppCompatActivity {
         }
     }
 
+    public void openUserProfile(User user){
+        fragmentManager
+                .beginTransaction()
+                .replace(container, new UserFragment(user), USER_TAG)
+                .addToBackStack(null)
+                .commitAllowingStateLoss();
+    }
+
     private class ClickOnIconHandler<T extends Fragment> {
 
         final private T newFragment;
@@ -80,7 +98,7 @@ public class MainMenuActivity extends AppCompatActivity {
             this.newFragment = newFragment;
         }
 
-        public View.OnClickListener getListener(final String tag, final FragmentManager fragmentManager, final int container) {
+        public View.OnClickListener getListener(final String tag) {
             return v -> {
                 T fragment = (T) fragmentManager.findFragmentByTag(tag);
                 if (fragment == null) {
