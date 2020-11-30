@@ -4,7 +4,12 @@ import java.util.Date;
 
 public class Walk implements Comparable<Walk>{
     String title;
+    String author;
     Date date;
+
+    public void setAuthor(String author) {
+        this.author = author;
+    }
 
     public void setTitle(String title) {
         this.title = title;
@@ -12,6 +17,10 @@ public class Walk implements Comparable<Walk>{
 
     public void setDate(Date date) {
         this.date = date;
+    }
+
+    public String getAuthor() {
+        return author;
     }
 
     public Date getDate() {
@@ -24,6 +33,6 @@ public class Walk implements Comparable<Walk>{
 
     @Override
     public int compareTo(Walk o) {
-        return date.compareTo(o.date);
+        return -date.compareTo(o.date);
     }
 }

@@ -41,11 +41,26 @@ public class UserRepository {
             new SimpleDateFormat("EEE, MMM d, yyyy hh:mm:ss a z");
 
     private final UserApi userApi;
+    private String currentUserName;
+
+    private int count;
 
     public UserRepository(Context context) {
         this.context = context;
         sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
         userApi = ApiRepository.from(context).getUserApi();
+        String currentUserId = FirebaseAuth.getInstance().getUid();
+        userApi.getUserById(currentUserId).enqueue(new DatabaseCallback<UserApi.User>() {
+            @Override
+            void onNull(Response<UserApi.User> response) {
+                errorLog("Fail with update", null);
+            }
+
+            @Override
+            void onSuccess(Response<UserApi.User> response) {
+                currentUserName = response.body().name;
+            }
+        });
     }
 
     public LiveData<User> getCurrentUser() {
@@ -106,6 +121,12 @@ public class UserRepository {
             @Override
             void onSuccess(Response<UserApi.User> response) {
                 UserApi.Friend friend = transformToUserApiFriend(response.body());
+                if (response.body().friends == null){
+                    count = 0;
+                }
+                else{
+                    count = response.body().friends.size();
+                }
                 userApi.addFriend(curUserId, num, friend).enqueue(new DatabaseCallback<UserApi.Friend>() {
                     @Override
                     void onNull(Response<UserApi.Friend> response) {
@@ -118,6 +139,39 @@ public class UserRepository {
                     }
                 });
                 userApi.addFriendId(curUserId, num, friend.id).enqueue(new DatabaseCallback<String>() {
+                    @Override
+                    void onNull(Response<String> response) {
+                        log("failed to add friend id");
+                    }
+
+                    @Override
+                    void onSuccess(Response<String> response) {
+                        log("successfully add friend id");
+                    }
+                });
+            }
+        });
+        userApi.getUserById(curUserId).enqueue(new DatabaseCallback<UserApi.User>() {
+            @Override
+            void onNull(Response<UserApi.User> response) {
+                errorLog("Failed to get " + curUserId + " user", null);
+            }
+
+            @Override
+            void onSuccess(Response<UserApi.User> response) {
+                UserApi.Friend friend = transformToUserApiFriend(response.body());
+                userApi.addFriend(id, count, friend).enqueue(new DatabaseCallback<UserApi.Friend>() {
+                    @Override
+                    void onNull(Response<UserApi.Friend> response) {
+                        errorLog("Failed to add friend " + curUserId, null);
+                    }
+
+                    @Override
+                    void onSuccess(Response<UserApi.Friend> response) {
+                        updateCurrentUser();
+                    }
+                });
+                userApi.addFriendId(id, count, friend.id).enqueue(new DatabaseCallback<String>() {
                     @Override
                     void onNull(Response<String> response) {
                         log("failed to add friend id");
@@ -185,23 +239,44 @@ public class UserRepository {
     public void postWalk(String title) {
         String currentUserId = FirebaseAuth.getInstance().getUid();
 
+        updateCurrentUserName();
         userApi.getUserWalksById(currentUserId).enqueue(new DatabaseCallback<List<UserApi.Walk>>() {
             @Override
             void onNull(Response<List<UserApi.Walk>> response) {
-                addWalkInDb(0, title, currentUserId);
+                addWalkInDb(0, title, currentUserId, currentUserName);
             }
 
             @Override
             void onSuccess(Response<List<UserApi.Walk>> response) {
-                addWalkInDb(response.body().size(), title, currentUserId);
+                int count = response.body().size();
+                addWalkInDb(count, title, currentUserId, currentUserName);
             }
         });
     }
 
-    private void addWalkInDb(int currentWalkNumber, String title, String id) {
+    private void updateCurrentUserName() {
+        String currentUserId = FirebaseAuth.getInstance().getUid();
+
+        log("update user - " + currentUserId);
+
+        userApi.getUserById(currentUserId).enqueue(new DatabaseCallback<UserApi.User>() {
+            @Override
+            void onNull(Response<UserApi.User> response) {
+                errorLog("Fail with update", null);
+            }
+
+            @Override
+            void onSuccess(Response<UserApi.User> response) {
+                currentUserName = response.body().name;
+            }
+        });
+    }
+
+    private void addWalkInDb(int currentWalkNumber, String title, String id, String name) {
         Log.d(LOG_TAG, "postWalk");
         Date currentTime = new Date();
-        userApi.addWalk(id, currentWalkNumber, new UserApi.Walk(title, sdf.format(currentTime))).enqueue(new Callback<UserApi.User>() {
+        Log.d(LOG_TAG, "postWalk named  - " + name);
+        userApi.addWalk(id, currentWalkNumber, new UserApi.Walk(title, sdf.format(currentTime), name)).enqueue(new Callback<UserApi.User>() {
             @Override
             public void onResponse(Call<UserApi.User> call, Response<UserApi.User> response) {
                 if (response.isSuccessful()) {
@@ -284,6 +359,7 @@ public class UserRepository {
     private Walk transformToWalk(UserApi.Walk walk) {
         Walk transformed = new Walk();
         transformed.setTitle(walk.title);
+        transformed.setAuthor(walk.author);
         try {
             transformed.setDate(sdf.parse(walk.date));
         } catch (ParseException e) {
