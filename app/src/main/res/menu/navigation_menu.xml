@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/nav_news"
+        android:title="News"/>
+    <item
+        android:id="@+id/nav_walks"
+        android:title="Walks"/>
+    <item
+        android:id="@+id/nav_go_out"
+        android:title="Go Out"/>
+    <item
+        android:id="@+id/friends"
+        android:title="Friends"/>
+    <item
+        android:id="@+id/nav_profile"
+        android:title="Profile"/>
+</menu>

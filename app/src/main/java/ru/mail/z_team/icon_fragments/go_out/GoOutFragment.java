@@ -13,11 +13,14 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import ru.mail.z_team.AddWalkActivity;
+import ru.mail.z_team.MapActivity;
 import ru.mail.z_team.R;
 
 public class GoOutFragment extends Fragment {
 
     Button addWalk;
+
+    Button toMapBtn;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -32,6 +35,13 @@ public class GoOutFragment extends Fragment {
         addWalk = view.findViewById(R.id.create_walk_btn);
         addWalk.setOnClickListener(v -> {
             startActivity(new Intent(getActivity(), AddWalkActivity.class));
+        });
+        toMapBtn = view.findViewById(R.id.map_activity_btn);
+        toMapBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(requireActivity(), MapActivity.class));
+            }
         });
 
 

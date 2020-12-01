@@ -43,11 +43,13 @@ public interface UserApi {
 
     class Walk {
         public String title;
+        public String author;
         public String date;
 
-        public Walk(String title, String date) {
+        public Walk(String title, String date, String author) {
             this.title = title;
             this.date = date;
+            this.author = author;
         }
     }
 

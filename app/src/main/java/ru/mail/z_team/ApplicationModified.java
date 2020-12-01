@@ -35,4 +35,8 @@ public class ApplicationModified extends Application {
     public static ApplicationModified from(Context context) {
         return (ApplicationModified) context.getApplicationContext();
     }
+
+    public void setNewRepository() {
+        userRepository = new UserRepository(getApplicationContext());
+    }
 }
