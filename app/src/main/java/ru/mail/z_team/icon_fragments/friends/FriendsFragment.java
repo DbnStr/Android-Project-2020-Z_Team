@@ -46,6 +46,11 @@ public class FriendsFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_friends, container, false);
+
+        addFriendBtn = view.findViewById(R.id.add_friend_by_id_btn);
+        fieldAddFriend = view.findViewById(R.id.add_friend_by_id_et);
+        noFriends = view.findViewById(R.id.no_friend_tv);
+
         final RecyclerView recyclerView = view.findViewById(R.id.recycler_friends);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
@@ -53,7 +58,7 @@ public class FriendsFragment extends Fragment {
 
         String userId = FirebaseAuth.getInstance().getUid();
         viewModel = new ViewModelProvider(this).get(UserViewModel.class);
-        viewModel.updateCurrentUser(userId);
+        viewModel.updateCurrentUser();
         viewModel.getCurrentUser()
                 .observe(getActivity(), user -> {
                     ArrayList<Friend> friends = user.getFriends();
@@ -65,10 +70,6 @@ public class FriendsFragment extends Fragment {
                         adapter.setFriends(friends);
                     }
                 });
-
-        addFriendBtn = view.findViewById(R.id.add_friend_by_id_btn);
-        fieldAddFriend = view.findViewById(R.id.add_friend_by_id_et);
-        noFriends = view.findViewById(R.id.no_friend_tv);
 
         addFriendBtn.setOnClickListener(v -> {
             String id = fieldAddFriend.getText().toString().trim();

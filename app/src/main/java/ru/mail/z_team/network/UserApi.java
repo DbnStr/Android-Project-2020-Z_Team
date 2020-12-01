@@ -19,7 +19,8 @@ public interface UserApi {
         public String email;
         public String id;
 
-        public User(String id, String email) {
+        public User(String id, String email, String name) {
+            this.name = name;
             this.id = id;
             this.email = email;
             this.friends = new ArrayList<>();
@@ -40,17 +41,41 @@ public interface UserApi {
         public Friend(){}
     }
 
+    class Walk {
+        public String title;
+        public String author;
+        public String date;
+
+        public Walk(String title, String date, String author) {
+            this.title = title;
+            this.date = date;
+            this.author = author;
+        }
+    }
+
     @GET("/Users/{id}.json")
     Call<User> getUserById(@Path("id") String id);
 
     @GET("/Users/{id}/friends.json")
     Call<List<Friend>> getUserFriendsById(@Path("id") String id);
 
+    @GET("/Walks/{id}.json")
+    Call<List<Walk>> getUserWalksById(@Path("id") String id);
+
+    @GET("/FriendsIds/{id}.json")
+    Call<ArrayList<String>> getUserFriendsIds(@Path("id") String id);
+
     @PUT("/Users/{id}.json")
     Call<User> addUser(@Path("id") String id, @Body User user);
 
+    @PUT("/Walks/{id}/{num}.json")
+    Call<User> addWalk(@Path("id") String id, @Path("num") int num, @Body Walk walk);
+
+    @PUT("/FriendsIds/{id}/{num}.json")
+    Call<String> addFriendId(@Path("id") String id, @Path("num") int num, @Body String friendId);
+
     @PUT("/Users/{id}/friends/{num}.json")
-    Call<Friend> addFriend(@Path("id") String id, @Path("num") String num, @Body Friend friend);
+    Call<Friend> addFriend(@Path("id") String id, @Path("num") int num, @Body Friend friend);
 
     @PATCH("/Users/{id}.json")
     Call<User> changeUserInformation(@Path("id") String id, @Body User user);

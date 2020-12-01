@@ -32,6 +32,7 @@ public class RegisterActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        ApplicationModified.from(getApplicationContext()).setNewRepository();
         Log.d(TAG, "startOnCreate");
         setContentView(R.layout.activity_register);
 

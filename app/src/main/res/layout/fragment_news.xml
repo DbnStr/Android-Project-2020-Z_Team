@@ -4,12 +4,15 @@
     android:layout_height="match_parent">
 
     <TextView
+        android:id="@+id/no_news_tv"
+        android:visibility="invisible"
+        android:text="You don't have any friend to watch their news"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/news"
-        android:textSize="100sp"
-        android:textColor="@color/GREEN"
-        android:background="@color/BLUE"
-        android:gravity="center"/>
+        android:layout_height="60dp"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_news"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
 
 </FrameLayout>
