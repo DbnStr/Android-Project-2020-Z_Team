@@ -22,7 +22,6 @@ import java.util.HashMap;
 
 import ru.mail.z_team.R;
 import ru.mail.z_team.user.User;
-import ru.mail.z_team.user.UserViewModel;
 
 public class ProfileFragment extends Fragment {
 

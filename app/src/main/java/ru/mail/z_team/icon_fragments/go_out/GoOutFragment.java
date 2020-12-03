@@ -12,7 +12,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-import ru.mail.z_team.AddWalkActivity;
 import ru.mail.z_team.MapActivity;
 import ru.mail.z_team.R;
 
@@ -33,16 +32,9 @@ public class GoOutFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_go_out, container, false);
         addWalk = view.findViewById(R.id.create_walk_btn);
-        addWalk.setOnClickListener(v -> {
-            startActivity(new Intent(getActivity(), AddWalkActivity.class));
-        });
+        addWalk.setOnClickListener(v -> startActivity(new Intent(getActivity(), AddWalkActivity.class)));
         toMapBtn = view.findViewById(R.id.map_activity_btn);
-        toMapBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(requireActivity(), MapActivity.class));
-            }
-        });
+        toMapBtn.setOnClickListener(v -> startActivity(new Intent(requireActivity(), MapActivity.class)));
 
 
         return view;

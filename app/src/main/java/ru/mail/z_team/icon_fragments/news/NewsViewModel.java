@@ -10,7 +10,6 @@ import androidx.lifecycle.LiveData;
 import java.util.ArrayList;
 
 import ru.mail.z_team.icon_fragments.walks.Walk;
-import ru.mail.z_team.user.UserRepository;
 
 public class NewsViewModel extends AndroidViewModel {
 

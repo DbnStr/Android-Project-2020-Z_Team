@@ -11,18 +11,16 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import ru.mail.z_team.R;
 import ru.mail.z_team.WrapContentLayoutManager;
-import ru.mail.z_team.icon_fragments.go_out.WalkViewModel;
 
 public class WalksFragment extends Fragment {
 
     private static final String LOG_TAG = "WalksFragment";
     WalkAdapter adapter;
-    WalkViewModel viewModel;
+    private WalksViewModel viewModel;
     TextView noWalks;
 
     @Override
@@ -43,14 +41,13 @@ public class WalksFragment extends Fragment {
 
         adapter = new WalkAdapter(getActivity());
 
-        viewModel = new ViewModelProvider(this).get(WalkViewModel.class);
-        viewModel.update();
+        viewModel = new ViewModelProvider(this).get(WalksViewModel.class);
+        viewModel.updateCurrentUserWalks();
         viewModel.getCurrentUserWalks().observe(getActivity(), walks -> {
             Log.d(LOG_TAG, "get walks... " + walks.size());
-            if (walks.isEmpty()){
+            if (walks.isEmpty()) {
                 noWalks.setVisibility(View.VISIBLE);
-            }
-            else {
+            } else {
                 noWalks.setVisibility(View.INVISIBLE);
                 adapter.setWalks(walks);
             }

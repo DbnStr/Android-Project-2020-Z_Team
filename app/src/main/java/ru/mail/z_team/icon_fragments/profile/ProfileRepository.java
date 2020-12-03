@@ -16,7 +16,6 @@ import ru.mail.z_team.network.ApiRepository;
 import ru.mail.z_team.network.UserApi;
 import ru.mail.z_team.user.Friend;
 import ru.mail.z_team.user.User;
-import ru.mail.z_team.user.UserRepository;
 
 public class ProfileRepository {
 
