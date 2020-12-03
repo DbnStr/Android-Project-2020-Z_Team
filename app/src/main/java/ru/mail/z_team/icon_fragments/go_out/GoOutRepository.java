@@ -17,7 +17,6 @@ import retrofit2.Response;
 import ru.mail.z_team.icon_fragments.DatabaseCallback;
 import ru.mail.z_team.network.ApiRepository;
 import ru.mail.z_team.network.UserApi;
-import ru.mail.z_team.user.UserRepository;
 
 public class GoOutRepository {
 
@@ -25,7 +24,7 @@ public class GoOutRepository {
 
     private final UserApi userApi;
 
-    private final MutableLiveData<UserRepository.PostStatus> postStatus = new MutableLiveData<>();
+    private final MutableLiveData<GoOutRepository.PostStatus> postStatus = new MutableLiveData<>();
 
     SimpleDateFormat sdf =
             new SimpleDateFormat("EEE, MMM d, yyyy hh:mm:ss a z");
@@ -62,16 +61,16 @@ public class GoOutRepository {
             @Override
             public void onResponse(Call<UserApi.User> call, Response<UserApi.User> response) {
                 if (response.isSuccessful()) {
-                    postStatus.postValue(UserRepository.PostStatus.OK);
+                    postStatus.postValue(PostStatus.OK);
                 } else {
-                    postStatus.postValue(UserRepository.PostStatus.FAILED);
+                    postStatus.postValue(PostStatus.FAILED);
                 }
             }
 
             @Override
             public void onFailure(Call<UserApi.User> call, Throwable t) {
                 Log.e(LOG_TAG, t.getMessage(), null);
-                postStatus.postValue(UserRepository.PostStatus.FAILED);
+                postStatus.postValue(PostStatus.FAILED);
             }
         });
     }
@@ -94,6 +93,13 @@ public class GoOutRepository {
         });
     }
 
+    public MutableLiveData<PostStatus> getPostStatus() {return postStatus;}
+
+    public enum PostStatus {
+        OK,
+        FAILED
+    }
+
     private void log(final String message) {
         Log.d(LOG_TAG, message);
     }
@@ -101,6 +107,4 @@ public class GoOutRepository {
     private void errorLog(final String message, Throwable t) {
         Log.e(LOG_TAG, message, t);
     }
-
-    public MutableLiveData<UserRepository.PostStatus> getPostStatus() {return postStatus;}
 }

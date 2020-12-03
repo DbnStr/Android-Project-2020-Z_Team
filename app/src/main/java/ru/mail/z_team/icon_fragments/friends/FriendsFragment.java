@@ -17,13 +17,10 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.firebase.auth.FirebaseAuth;
-
 import java.util.ArrayList;
 
 import ru.mail.z_team.R;
 import ru.mail.z_team.user.Friend;
-import ru.mail.z_team.user.UserViewModel;
 
 public class FriendsFragment extends Fragment {
 
@@ -31,7 +28,8 @@ public class FriendsFragment extends Fragment {
 
 
     private FriendAdapter adapter;
-    UserViewModel viewModel;
+    FriendsViewModel viewModel;
+
     Button addFriendBtn;
     EditText fieldAddFriend;
     TextView noFriends;
@@ -56,8 +54,7 @@ public class FriendsFragment extends Fragment {
 
         adapter = new FriendAdapter(getActivity());
 
-        String userId = FirebaseAuth.getInstance().getUid();
-        viewModel = new ViewModelProvider(this).get(UserViewModel.class);
+        viewModel = new ViewModelProvider(this).get(FriendsViewModel.class);
         viewModel.updateCurrentUser();
         viewModel.getCurrentUser()
                 .observe(getActivity(), user -> {

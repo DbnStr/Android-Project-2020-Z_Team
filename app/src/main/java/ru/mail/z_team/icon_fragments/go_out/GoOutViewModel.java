@@ -9,7 +9,6 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MediatorLiveData;
 
 import ru.mail.z_team.R;
-import ru.mail.z_team.user.UserRepository;
 
 public class GoOutViewModel extends AndroidViewModel {
 
@@ -26,10 +25,10 @@ public class GoOutViewModel extends AndroidViewModel {
         log("postWalk");
         repository.postWalk(title);
         postWalkStatus.addSource(repository.getPostStatus(), postStatus -> {
-            if (postStatus == UserRepository.PostStatus.FAILED){
+            if (postStatus == GoOutRepository.PostStatus.FAILED){
                 postWalkStatus.postValue(getApplication().getString(R.string.FAILED));
             }
-            else if (postStatus == UserRepository.PostStatus.OK){
+            else if (postStatus == GoOutRepository.PostStatus.OK){
                 postWalkStatus.postValue(getApplication().getString(R.string.SUCCESS));
             }
         });
