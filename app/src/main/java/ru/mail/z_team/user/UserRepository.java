@@ -124,7 +124,7 @@ public class UserRepository {
                 if (response.body().friends == null){
                     count = 0;
                 }
-                else{
+                else {
                     count = response.body().friends.size();
                 }
                 userApi.addFriend(curUserId, num, friend).enqueue(new DatabaseCallback<UserApi.Friend>() {

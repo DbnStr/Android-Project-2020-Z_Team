@@ -28,7 +28,7 @@ public class ProfileFragment extends Fragment {
 
     private static final String LOG_TAG = "ProfileFragment";
 
-    private UserViewModel userViewModel;
+    private ProfileViewModel profileViewModel;
     private EditText name;
     private EditText age;
     private Button editBtn;
@@ -61,7 +61,7 @@ public class ProfileFragment extends Fragment {
         editBtn.setOnClickListener(v -> enableEditAbilityAll());
         saveChangesBtn.setOnClickListener(v -> {
             String userId = FirebaseAuth.getInstance().getUid();
-            userViewModel.changeUserInformation(userId, getProfileInfo());
+            profileViewModel.changeUserInformation(userId, getProfileInfo());
             disableEditAbilityAll();
         });
 
@@ -71,11 +71,10 @@ public class ProfileFragment extends Fragment {
                 setProfileData(user);
             }
         };
-        String userId = FirebaseAuth.getInstance().getUid();
-        userViewModel = new ViewModelProvider(getActivity())
-                .get(UserViewModel.class);
-        userViewModel.updateCurrentUser();
-        userViewModel
+        profileViewModel = new ViewModelProvider(getActivity())
+                .get(ProfileViewModel.class);
+        profileViewModel.updateCurrentUser();
+        profileViewModel
                 .getCurrentUser()
                 .observe(getViewLifecycleOwner(), observer);
     }
