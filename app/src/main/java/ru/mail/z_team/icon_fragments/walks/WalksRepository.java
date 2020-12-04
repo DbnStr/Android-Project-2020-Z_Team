@@ -42,19 +42,24 @@ public class WalksRepository {
         userApi.getUserWalksById(id).enqueue(new DatabaseCallback<ArrayList<UserApi.Walk>>(LOG_TAG) {
             @Override
             public void onNullResponse(Response<ArrayList<UserApi.Walk>> response) {
+                log("Walks was empty");
                 currentUserWalks.postValue(new ArrayList<>());
-                Log.d(LOG_TAG, "Walks was empty");
             }
 
             @Override
             public void onSuccessResponse(Response<ArrayList<UserApi.Walk>> response) {
-                ArrayList<Walk> walks = new ArrayList<>();
-                for (UserApi.Walk walk : response.body()) {
-                    walks.add(transformToWalk(walk));
-                }
-                currentUserWalks.postValue(walks);
+                log("Successful update current user walks");
+                currentUserWalks.postValue(transformToWalkAll(response.body()));
             }
         });
+    }
+
+    private ArrayList<Walk> transformToWalkAll(ArrayList<UserApi.Walk> walks) {
+        ArrayList<Walk> result = new ArrayList<>();
+        for (UserApi.Walk walk : walks) {
+            result.add(transformToWalk(walk));
+        }
+        return result;
     }
 
     private Walk transformToWalk(UserApi.Walk walk) {
@@ -67,5 +72,9 @@ public class WalksRepository {
             e.printStackTrace();
         }
         return transformed;
+    }
+
+    private void log(final String message) {
+        Log.d(LOG_TAG, message);
     }
 }

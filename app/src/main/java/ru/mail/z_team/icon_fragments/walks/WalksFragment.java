@@ -36,15 +36,23 @@ public class WalksFragment extends Fragment {
 
         noWalks = view.findViewById(R.id.no_walks_tv);
 
+        return view;
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
         final RecyclerView recyclerView = view.findViewById(R.id.recycler_walks);
         recyclerView.setLayoutManager(new WrapContentLayoutManager(getActivity()));
 
         adapter = new WalkAdapter(getActivity());
+        recyclerView.setAdapter(adapter);
 
         viewModel = new ViewModelProvider(this).get(WalksViewModel.class);
         viewModel.updateCurrentUserWalks();
         viewModel.getCurrentUserWalks().observe(getActivity(), walks -> {
-            Log.d(LOG_TAG, "get walks... " + walks.size());
+            log("get walks... " + walks.size());
             if (walks.isEmpty()) {
                 noWalks.setVisibility(View.VISIBLE);
             } else {
@@ -52,9 +60,9 @@ public class WalksFragment extends Fragment {
                 adapter.setWalks(walks);
             }
         });
+    }
 
-        recyclerView.setAdapter(adapter);
-
-        return view;
+    private void log(final String message) {
+        Log.d(LOG_TAG, message);
     }
 }

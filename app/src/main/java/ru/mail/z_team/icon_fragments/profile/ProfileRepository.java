@@ -70,16 +70,17 @@ public class ProfileRepository {
         );
     }
 
-    public void changeUserInformation(final String id, User newInformation) {
-        userApi.changeUserInformation(id, transformToUserApiUser(newInformation)).enqueue(new DatabaseCallback<UserApi.User>(LOG_TAG) {
+    public void changeCurrentUserInformation(User newInformation) {
+        String currentUserId = FirebaseAuth.getInstance().getUid();
+        userApi.changeUserInformation(currentUserId, transformToUserApiUser(newInformation)).enqueue(new DatabaseCallback<UserApi.User>(LOG_TAG) {
             @Override
             public void onNullResponse(Response<UserApi.User> response) {
-                errorLog("Failed with change information about " + id, null);
+                errorLog("Failed with change information about " + currentUserId, null);
             }
 
             @Override
             public void onSuccessResponse(Response<UserApi.User> response) {
-                log("Change information about " + id);
+                log("Change information about " + currentUserId);
             }
         });
     }

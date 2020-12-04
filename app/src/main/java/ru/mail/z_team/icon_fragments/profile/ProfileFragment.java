@@ -44,10 +44,12 @@ public class ProfileFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_profile, container, false);
+
         name = view.findViewById(R.id.profile_name);
         age = view.findViewById(R.id.profile_age);
         editBtn = view.findViewById(R.id.edit_btn);
         saveChangesBtn = view.findViewById(R.id.save_changes_btn);
+
         return view;
     }
 
@@ -59,11 +61,9 @@ public class ProfileFragment extends Fragment {
 
         editBtn.setOnClickListener(v -> enableEditAbilityAll());
         saveChangesBtn.setOnClickListener(v -> {
-            String userId = FirebaseAuth.getInstance().getUid();
-            profileViewModel.changeUserInformation(userId, getProfileInfo());
+            profileViewModel.changeCurrentUserInformation(getProfileInfo());
             disableEditAbilityAll();
         });
-
 
         Observer<User> observer = user -> {
             if (user != null) {

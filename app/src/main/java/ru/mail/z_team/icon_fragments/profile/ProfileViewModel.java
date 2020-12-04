@@ -32,12 +32,12 @@ public class ProfileViewModel extends AndroidViewModel {
         repository.updateCurrentUser();
     }
 
-    public void changeUserInformation(final String id, HashMap<String, String> newInformation) {
+    public void changeCurrentUserInformation(HashMap<String, String> newInformation) {
         User user = getCurrentUser().getValue();
         if (user == null) {
             errorLog("LiveData is empty", null);
         } else {
-            repository.changeUserInformation(id, user.updateUserInfo(newInformation));
+            repository.changeCurrentUserInformation(user.updateUserInfo(newInformation));
         }
     }
 
