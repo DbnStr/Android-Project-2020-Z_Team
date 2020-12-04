@@ -48,7 +48,7 @@ public class FriendsRepository {
             }
 
             @Override
-            public void onSuccess(Response<UserApi.User> response) {
+            public void onSuccessResponse(Response<UserApi.User> response) {
                 currentUserData.postValue(transformToUser(response.body()));
             }
         });
@@ -87,7 +87,7 @@ public class FriendsRepository {
             }
 
             @Override
-            public void onSuccess(Response<UserApi.User> response) {
+            public void onSuccessResponse(Response<UserApi.User> response) {
                 userExistence.postValue(true);
             }
         });
@@ -98,7 +98,7 @@ public class FriendsRepository {
         return userExistence;
     }
 
-    public void addFriend(String id, int num) {
+    public void addFriendToCurrentUser(String id, int num) {
         log("addFriend");
         String curUserId = FirebaseAuth.getInstance().getUid();
 
@@ -109,36 +109,17 @@ public class FriendsRepository {
             }
 
             @Override
-            public void onSuccess(Response<UserApi.User> response) {
+            public void onSuccessResponse(Response<UserApi.User> response) {
                 UserApi.Friend friend = transformToUserApiFriend(response.body());
-                if (response.body().friends == null){
+                if (response.body().friends == null) {
                     count = 0;
-                }
-                else {
+                } else {
                     count = response.body().friends.size();
                 }
-                userApi.addFriend(curUserId, num, friend).enqueue(new DatabaseCallback<UserApi.Friend>(LOG_TAG) {
-                    @Override
-                    public void onNull(Response<UserApi.Friend> response) {
-                        errorLog("Failed to add friend " + id, null);
-                    }
 
-                    @Override
-                    public void onSuccess(Response<UserApi.Friend> response) {
-                        updateCurrentUser();
-                    }
-                });
-                userApi.addFriendId(curUserId, num, friend.id).enqueue(new DatabaseCallback<String>(LOG_TAG) {
-                    @Override
-                    public void onNull(Response<String> response) {
-                        log("failed to add friend id");
-                    }
+                addFriendToUser(curUserId, num, friend);
 
-                    @Override
-                    public void onSuccess(Response<String> response) {
-                        log("successfully add friend id");
-                    }
-                });
+                addFriendIdToFriendsIdsList(curUserId, num, friend.id);
             }
         });
         userApi.getUserById(curUserId).enqueue(new DatabaseCallback<UserApi.User>(LOG_TAG) {
@@ -148,30 +129,12 @@ public class FriendsRepository {
             }
 
             @Override
-            public void onSuccess(Response<UserApi.User> response) {
+            public void onSuccessResponse(Response<UserApi.User> response) {
                 UserApi.Friend friend = transformToUserApiFriend(response.body());
-                userApi.addFriend(id, count, friend).enqueue(new DatabaseCallback<UserApi.Friend>(LOG_TAG) {
-                    @Override
-                    public void onNull(Response<UserApi.Friend> response) {
-                        errorLog("Failed to add friend " + curUserId, null);
-                    }
 
-                    @Override
-                    public void onSuccess(Response<UserApi.Friend> response) {
-                        updateCurrentUser();
-                    }
-                });
-                userApi.addFriendId(id, count, friend.id).enqueue(new DatabaseCallback<String>(LOG_TAG) {
-                    @Override
-                    public void onNull(Response<String> response) {
-                        log("failed to add friend id");
-                    }
+                addFriendToUser(id, count, friend);
 
-                    @Override
-                    public void onSuccess(Response<String> response) {
-                        log("successfully add friend id");
-                    }
-                });
+                addFriendIdToFriendsIdsList(id, count, friend.id);
             }
         });
     }
@@ -181,6 +144,34 @@ public class FriendsRepository {
         result.id = user.id;
         result.name = user.name;
         return result;
+    }
+
+    private void addFriendIdToFriendsIdsList(final String user, final int number, final String friendId) {
+        userApi.addFriendId(user, number, friendId).enqueue(new DatabaseCallback<String>(LOG_TAG) {
+            @Override
+            public void onNull(Response<String> response) {
+                log("failed to add friend id");
+            }
+
+            @Override
+            public void onSuccessResponse(Response<String> response) {
+                log("successfully add friend id");
+            }
+        });
+    }
+
+    private void addFriendToUser(final String userId, final int number, final UserApi.Friend friend) {
+        userApi.addFriend(userId, number, friend).enqueue(new DatabaseCallback<UserApi.Friend>(LOG_TAG) {
+            @Override
+            public void onNull(Response<UserApi.Friend> response) {
+                errorLog("Failed to add friend " + friend.id, null);
+            }
+
+            @Override
+            public void onSuccessResponse(Response<UserApi.Friend> response) {
+                updateCurrentUser();
+            }
+        });
     }
 
     private void log(final String message) {

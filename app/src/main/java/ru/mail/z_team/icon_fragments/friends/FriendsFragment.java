@@ -105,7 +105,7 @@ public class FriendsFragment extends Fragment {
         public void onChanged(T t) {
             if (t.booleanValue()) {
                 log("FriendExisted");
-                viewModel.addFriend(id, adapter.getItemCount());
+                viewModel.addFriendToCurrentUser(id);
             } else {
                 fieldAddFriend.setError("User with entered ID doesn't exist");
                 fieldAddFriend.setFocusable(true);

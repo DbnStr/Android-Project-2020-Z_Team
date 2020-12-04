@@ -45,7 +45,7 @@ public class ProfileRepository {
             }
 
             @Override
-            public void onSuccess(Response<UserApi.User> response) {
+            public void onSuccessResponse(Response<UserApi.User> response) {
                 currentUserData.postValue(transformToUser(response.body()));
             }
         });
@@ -78,7 +78,7 @@ public class ProfileRepository {
             }
 
             @Override
-            public void onSuccess(Response<UserApi.User> response) {
+            public void onSuccessResponse(Response<UserApi.User> response) {
                 log("Change information about " + id);
             }
         });

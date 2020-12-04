@@ -73,11 +73,15 @@ public class User {
     }
 
     public boolean isThisFriendAdded(String id) {
-        for(int i = 0; i < friends.size(); i++) {
+        for (int i = 0; i < friends.size(); i++) {
             if (friends.get(i).id.equals(id)) {
                 return true;
             }
         }
         return false;
+    }
+
+    public int getFriendsListSize() {
+        return friends.size();
     }
 }

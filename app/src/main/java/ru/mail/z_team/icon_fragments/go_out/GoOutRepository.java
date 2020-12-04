@@ -46,7 +46,7 @@ public class GoOutRepository {
             }
 
             @Override
-            public void onSuccess(Response<List<UserApi.Walk>> response) {
+            public void onSuccessResponse(Response<List<UserApi.Walk>> response) {
                 int count = response.body().size();
                 addWalkInDb(count, title, currentUserId, currentUserName);
             }
@@ -87,7 +87,7 @@ public class GoOutRepository {
             }
 
             @Override
-            public void onSuccess(Response<UserApi.User> response) {
+            public void onSuccessResponse(Response<UserApi.User> response) {
                 currentUserName = response.body().name;
             }
         });

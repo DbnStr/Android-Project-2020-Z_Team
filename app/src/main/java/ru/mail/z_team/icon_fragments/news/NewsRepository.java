@@ -50,7 +50,7 @@ public class NewsRepository {
             }
 
             @Override
-            public void onSuccess(Response<ArrayList<String>> response) {
+            public void onSuccessResponse(Response<ArrayList<String>> response) {
                 log(curId + " have friends " + response.body().size());
                 compileNews(response.body());
             }
@@ -70,7 +70,7 @@ public class NewsRepository {
                 }
 
                 @Override
-                public void onSuccess(Response<List<UserApi.Walk>> response) {
+                public void onSuccessResponse(Response<List<UserApi.Walk>> response) {
                     log(id + " have walks");
                     for (UserApi.Walk walk : response.body()){
                         news.add(transformToWalk(walk));

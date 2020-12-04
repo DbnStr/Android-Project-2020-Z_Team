@@ -41,11 +41,11 @@ public class FriendsViewModel extends AndroidViewModel {
         return repository.userExists();
     }
 
-    public void addFriend(String id, int num) {
+    public void addFriendToCurrentUser(String id) {
         Log.d(LOG_TAG, "addFriend");
-        User currentUser = repository.getCurrentUser().getValue();
+        User currentUser = currentUserData.getValue();
         if (! currentUser.isThisFriendAdded(id)) {
-            repository.addFriend(id, num);
+            repository.addFriendToCurrentUser(id, currentUser.getFriendsListSize());
         } else {
             errorLog("Friend already added", null);
         }

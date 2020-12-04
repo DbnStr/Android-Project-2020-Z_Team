@@ -13,7 +13,7 @@ public abstract class DatabaseCallback<T> implements Callback<T> {
 
     public abstract void onNull(Response<T> response);
 
-    public abstract void onSuccess(Response<T> response);
+    public abstract void onSuccessResponse(Response<T> response);
 
     protected DatabaseCallback(final String log_tag) {
         this.log_tag = log_tag;
@@ -31,7 +31,7 @@ public abstract class DatabaseCallback<T> implements Callback<T> {
             return;
         }
         if (response.isSuccessful()) {
-            onSuccess(response);
+            onSuccessResponse(response);
         }
     }
 

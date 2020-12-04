@@ -47,7 +47,7 @@ public class WalksRepository {
             }
 
             @Override
-            public void onSuccess(Response<List<UserApi.Walk>> response) {
+            public void onSuccessResponse(Response<List<UserApi.Walk>> response) {
                 ArrayList<Walk> walks = new ArrayList<>();
                 for (UserApi.Walk walk : response.body()) {
                     walks.add(transformToWalk(walk));
