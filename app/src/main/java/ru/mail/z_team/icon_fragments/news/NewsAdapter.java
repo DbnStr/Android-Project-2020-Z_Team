@@ -39,10 +39,8 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsViewHolder> {
         Log.d(LOG_TAG, "OnBindViewHolderWalk " + position);
         String title = walks.get(position).getTitle();
         String author = walks.get(position).getAuthor();
-//        if (author.equals("")){
-//            author = "Anonymous";
-//        }
         Date date = walks.get(position).getDate();
+
         holder.newsTitle.setText(title);
         holder.newsAuthor.setText(author);
         SimpleDateFormat sdf =

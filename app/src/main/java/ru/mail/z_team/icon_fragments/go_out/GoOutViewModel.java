@@ -8,31 +8,27 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MediatorLiveData;
 
-import java.util.ArrayList;
-
 import ru.mail.z_team.R;
-import ru.mail.z_team.icon_fragments.walks.Walk;
-import ru.mail.z_team.user.UserRepository;
 
-public class WalkViewModel extends AndroidViewModel {
+public class GoOutViewModel extends AndroidViewModel {
 
     private static final String LOG_TAG = "WalkViewModel";
-    UserRepository repository;
+    private final GoOutRepository repository;
     MediatorLiveData<String> postWalkStatus = new MediatorLiveData<>();
 
-    public WalkViewModel(@NonNull Application application) {
+    public GoOutViewModel(@NonNull Application application) {
         super(application);
-        repository = UserRepository.getInstance(getApplication());
+        repository = new GoOutRepository(getApplication());
     }
 
     public void postWalk(String title) {
-        Log.d(LOG_TAG, "postWalk");
+        log("postWalk");
         repository.postWalk(title);
         postWalkStatus.addSource(repository.getPostStatus(), postStatus -> {
-            if (postStatus == UserRepository.PostStatus.FAILED){
+            if (postStatus == GoOutRepository.PostStatus.FAILED){
                 postWalkStatus.postValue(getApplication().getString(R.string.FAILED));
             }
-            else if (postStatus == UserRepository.PostStatus.OK){
+            else if (postStatus == GoOutRepository.PostStatus.OK){
                 postWalkStatus.postValue(getApplication().getString(R.string.SUCCESS));
             }
         });
@@ -42,11 +38,11 @@ public class WalkViewModel extends AndroidViewModel {
         return postWalkStatus;
     }
 
-    public void update() {
-        repository.updateCurrentUserWalks();
+    private void log(final String message) {
+        Log.d(LOG_TAG, message);
     }
 
-    public LiveData<ArrayList<Walk>> getCurrentUserWalks() {
-        return repository.getCurrentUserWalks();
+    private void errorLog(final String message, Throwable t) {
+        Log.e(LOG_TAG, message, t);
     }
 }
