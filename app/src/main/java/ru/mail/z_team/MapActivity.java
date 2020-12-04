@@ -94,7 +94,7 @@ public class MapActivity extends AppCompatActivity {
         loadedMapStyle.addLayerBelow(
                 new LineLayer(
                         DIRECTIONS_LAYER_ID, ROUTE_SOURCE_ID).withProperties(
-                        lineWidth(4.5f),
+                        lineWidth(4f),
                         lineColor(Color.BLACK)
                 ), LAYER_BELOW_ID);
     }
@@ -122,6 +122,7 @@ public class MapActivity extends AppCompatActivity {
                         GeoJsonSource source = style.getSourceAs(ROUTE_SOURCE_ID);
 
                         if (source != null) {
+                            log("routes count = " + routes.size());
                             source.setGeoJson(LineString.fromPolyline(routes.get(0).geometry(), PRECISION_6));
                         }
                     });
@@ -151,7 +152,6 @@ public class MapActivity extends AppCompatActivity {
     @Override
     protected void onStop() {
         super.onStop();
-
         mapView.onStop();
     }
 
