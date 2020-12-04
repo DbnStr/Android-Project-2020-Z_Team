@@ -22,7 +22,7 @@ import retrofit2.Response;
 import ru.mail.z_team.network.ApiRepository;
 import ru.mail.z_team.network.UserApi;
 
-public class AuthRepo implements Executor{
+public class AuthRepository implements Executor{
 
     private static final String LOG_TAG = "AuthRepo";
     private static final int FAILED_WRITE_DB_CODE = 401;
@@ -33,14 +33,14 @@ public class AuthRepo implements Executor{
 
     private MutableLiveData<Pair<AuthProgress, String>> mAuthProgress;
 
-    public AuthRepo(ApiRepository apiRepository) {
+    public AuthRepository(ApiRepository apiRepository) {
         mAuth = FirebaseAuth.getInstance();
         userApi = apiRepository.getUserApi();
     }
 
     @NonNull
-    public static AuthRepo getInstance(Context context) {
-        return ApplicationModified.from(context).getAuthRepo();
+    public static AuthRepository getInstance(Context context) {
+        return ApplicationModified.from(context).getAuthRepository();
     }
 
     public LiveData<Pair<AuthProgress, String>> login(@NonNull String email, @NonNull String password) {
