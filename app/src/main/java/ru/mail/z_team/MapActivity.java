@@ -3,12 +3,13 @@ package ru.mail.z_team;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.Button;
+import android.view.View;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.mapbox.api.directions.v5.MapboxDirections;
 import com.mapbox.api.directions.v5.models.DirectionsResponse;
 import com.mapbox.api.directions.v5.models.DirectionsRoute;
@@ -30,6 +31,7 @@ import java.util.ArrayList;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import ru.mail.z_team.icon_fragments.go_out.SavingWalkFragment;
 
 import static com.mapbox.core.constants.Constants.PRECISION_6;
 import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.lineColor;
@@ -42,11 +44,12 @@ public class MapActivity extends AppCompatActivity {
     private static final String LOG_TAG = "MapActivity";
     private static final String LAYER_BELOW_ID = "layer-below-id";
     private static final String DIRECTIONS_LAYER_ID = "directions-layer-id";
+    private static final String SAVE_TAG = "save-walk";
     private MapView mapView;
     private Point startPos = null, destinationPos = null;
     private final ArrayList<DirectionsRoute> routes = new ArrayList<>();
 
-    private Button saveMapButton;
+    private FloatingActionButton saveMapButton;
 
     public MapActivity() {
     }
@@ -83,12 +86,16 @@ public class MapActivity extends AppCompatActivity {
                 }
                 return true;
             });
+            saveMapButton = findViewById(R.id.save_map_btn);
+            saveMapButton.setOnClickListener(v -> {
+                mapView.setVisibility(View.GONE);
+                getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.map_container, new SavingWalkFragment(), SAVE_TAG)
+                        .addToBackStack(null)
+                        .commitAllowingStateLoss();
+            });
         }));
-
-        saveMapButton = findViewById(R.id.save_map_btn);
-        saveMapButton.setOnClickListener(v -> {
-
-        });
     }
 
     private void addMarker(MapboxMap mapboxMap, LatLng point) {
