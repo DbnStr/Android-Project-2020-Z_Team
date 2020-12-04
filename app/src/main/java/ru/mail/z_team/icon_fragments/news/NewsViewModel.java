@@ -24,7 +24,7 @@ public class NewsViewModel extends AndroidViewModel {
     }
 
     public void updateCurrentUserNews() {
-        Log.d(LOG_TAG, "updateNews");
+        log("updateNews");
         repository.updateCurrentUserNews();
     }
 

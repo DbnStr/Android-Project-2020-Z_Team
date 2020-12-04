@@ -30,6 +30,14 @@ public class User {
         this.id = id;
     }
 
+    public void setFriends(ArrayList<Friend> friends) {
+        this.friends = friends;
+    }
+
+    public int getFriendsListSize() {
+        return friends.size();
+    }
+
     public String getName() {
         return name;
     }
@@ -68,10 +76,6 @@ public class User {
         }
     }
 
-    public void setFriends(ArrayList<Friend> friends) {
-        this.friends = friends;
-    }
-
     public boolean isThisFriendAdded(String id) {
         for (int i = 0; i < friends.size(); i++) {
             if (friends.get(i).id.equals(id)) {
@@ -79,9 +83,5 @@ public class User {
             }
         }
         return false;
-    }
-
-    public int getFriendsListSize() {
-        return friends.size();
     }
 }

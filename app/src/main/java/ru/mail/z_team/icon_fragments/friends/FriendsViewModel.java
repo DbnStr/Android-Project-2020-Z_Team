@@ -42,7 +42,7 @@ public class FriendsViewModel extends AndroidViewModel {
     }
 
     public void addFriendToCurrentUser(String id) {
-        Log.d(LOG_TAG, "addFriend");
+        log("addFriend");
         User currentUser = currentUserData.getValue();
         if (! currentUser.isThisFriendAdded(id)) {
             repository.addFriendToCurrentUser(id, currentUser.getFriendsListSize());

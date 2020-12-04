@@ -48,11 +48,19 @@ public class FriendsFragment extends Fragment {
         addFriendBtn = view.findViewById(R.id.add_friend_by_id_btn);
         fieldAddFriend = view.findViewById(R.id.add_friend_by_id_et);
         noFriends = view.findViewById(R.id.no_friend_tv);
-
         final RecyclerView recyclerView = view.findViewById(R.id.recycler_friends);
+
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
         adapter = new FriendAdapter(getActivity());
+        recyclerView.setAdapter(adapter);
+
+        return view;
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
 
         viewModel = new ViewModelProvider(this).get(FriendsViewModel.class);
         viewModel.updateCurrentUser();
@@ -82,10 +90,6 @@ public class FriendsFragment extends Fragment {
                 viewModel.userExists().observe(getActivity(), observer);
             }
         });
-
-        recyclerView.setAdapter(adapter);
-
-        return view;
     }
 
     private void log(String message) {
