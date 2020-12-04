@@ -69,7 +69,7 @@ public class UserRepository {
 
     public void updateCurrentUser() {
         String currentUserId = FirebaseAuth.getInstance().getUid();
-
+        
         log("update user - " + currentUserId);
 
         userApi.getUserById(currentUserId).enqueue(new DatabaseCallback<UserApi.User>() {
