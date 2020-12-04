@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".AddWalkActivity">
+    tools:context=".icon_fragments.go_out.AddWalkActivity">
 
     <EditText
         android:id="@+id/walk_title_et"

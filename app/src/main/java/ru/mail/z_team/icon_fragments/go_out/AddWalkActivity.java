@@ -1,4 +1,4 @@
-package ru.mail.z_team;
+package ru.mail.z_team.icon_fragments.go_out;
 
 import android.os.Build;
 import android.os.Bundle;
@@ -10,7 +10,7 @@ import android.widget.Toast;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
-import ru.mail.z_team.icon_fragments.go_out.WalkViewModel;
+import ru.mail.z_team.R;
 
 public class AddWalkActivity extends AppCompatActivity {
 
@@ -18,7 +18,7 @@ public class AddWalkActivity extends AppCompatActivity {
     Button addWalk;
     EditText walkTitle;
     String title;
-    WalkViewModel viewModel;
+    GoOutViewModel viewModel;
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
@@ -27,6 +27,7 @@ public class AddWalkActivity extends AppCompatActivity {
         setContentView(R.layout.activity_add_walk);
         addWalk = findViewById(R.id.add_walk_btn);
         walkTitle = findViewById(R.id.walk_title_et);
+
         addWalk.setOnClickListener(v -> {
             title = walkTitle.getText().toString().trim();
             if (title.equals("")) {
@@ -38,7 +39,7 @@ public class AddWalkActivity extends AppCompatActivity {
             }
         });
 
-        viewModel = new WalkViewModel(getApplication());
+        viewModel = new GoOutViewModel(getApplication());
     }
 
     private void postWalk() {
