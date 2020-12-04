@@ -8,6 +8,7 @@ import androidx.lifecycle.MutableLiveData;
 import com.google.firebase.auth.FirebaseAuth;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -39,14 +40,14 @@ public class GoOutRepository {
         String currentUserId = FirebaseAuth.getInstance().getUid();
 
         updateCurrentUserName();
-        userApi.getUserWalksById(currentUserId).enqueue(new DatabaseCallback<List<UserApi.Walk>>(LOG_TAG) {
+        userApi.getUserWalksById(currentUserId).enqueue(new DatabaseCallback<ArrayList<UserApi.Walk>>(LOG_TAG) {
             @Override
-            public void onNull(Response<List<UserApi.Walk>> response) {
+            public void onNullResponse(Response<ArrayList<UserApi.Walk>> response) {
                 addWalkInDb(0, title, currentUserId, currentUserName);
             }
 
             @Override
-            public void onSuccessResponse(Response<List<UserApi.Walk>> response) {
+            public void onSuccessResponse(Response<ArrayList<UserApi.Walk>> response) {
                 int count = response.body().size();
                 addWalkInDb(count, title, currentUserId, currentUserName);
             }
@@ -82,7 +83,7 @@ public class GoOutRepository {
 
         userApi.getUserById(currentUserId).enqueue(new DatabaseCallback<UserApi.User>(LOG_TAG) {
             @Override
-            public void onNull(Response<UserApi.User> response) {
+            public void onNullResponse(Response<UserApi.User> response) {
                 errorLog("Fail with update", null);
             }
 
@@ -93,7 +94,9 @@ public class GoOutRepository {
         });
     }
 
-    public MutableLiveData<PostStatus> getPostStatus() {return postStatus;}
+    public MutableLiveData<PostStatus> getPostStatus() {
+        return postStatus;
+    }
 
     public enum PostStatus {
         OK,

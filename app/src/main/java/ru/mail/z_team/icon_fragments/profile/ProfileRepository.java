@@ -40,7 +40,7 @@ public class ProfileRepository {
 
         userApi.getUserById(currentUserId).enqueue(new DatabaseCallback<UserApi.User>(LOG_TAG) {
             @Override
-            public void onNull(Response<UserApi.User> response) {
+            public void onNullResponse(Response<UserApi.User> response) {
                 errorLog("Fail with update", null);
             }
 
@@ -73,7 +73,7 @@ public class ProfileRepository {
     public void changeUserInformation(final String id, User newInformation) {
         userApi.changeUserInformation(id, transformToUserApiUser(newInformation)).enqueue(new DatabaseCallback<UserApi.User>(LOG_TAG) {
             @Override
-            public void onNull(Response<UserApi.User> response) {
+            public void onNullResponse(Response<UserApi.User> response) {
                 errorLog("Failed with change information about " + id, null);
             }
 

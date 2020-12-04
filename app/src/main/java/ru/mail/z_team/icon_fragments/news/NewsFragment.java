@@ -53,7 +53,6 @@ public class NewsFragment extends Fragment {
             }
             else {
                 noNews.setVisibility(View.INVISIBLE);
-                Collections.sort(walks);
                 adapter.setWalks(walks);
             }
         });

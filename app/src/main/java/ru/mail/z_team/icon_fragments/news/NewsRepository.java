@@ -11,6 +11,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import retrofit2.Response;
@@ -44,7 +45,7 @@ public class NewsRepository {
         String curId = FirebaseAuth.getInstance().getUid();
         userApi.getUserFriendsIds(curId).enqueue(new DatabaseCallback<ArrayList<String>>(LOG_TAG) {
             @Override
-            public void onNull(Response<ArrayList<String>> response) {
+            public void onNullResponse(Response<ArrayList<String>> response) {
                 currentUserNews.postValue(new ArrayList<>());
                 log(curId + " doesn't have friends");
             }
@@ -52,33 +53,40 @@ public class NewsRepository {
             @Override
             public void onSuccessResponse(Response<ArrayList<String>> response) {
                 log(curId + " have friends " + response.body().size());
-                compileNews(response.body());
+                compileNewsAndPostInCurrentNews(response.body());
             }
         });
     }
 
-    private void compileNews(ArrayList<String> ids) {
+    private void compileNewsAndPostInCurrentNews(ArrayList<String> ids) {
         ArrayList<Walk> news = new ArrayList<>();
 
         log("Compile news");
-        for (String id : ids){
+        for (String id : ids) {
             log("Compile news... " + ids.indexOf(id));
-            userApi.getUserWalksById(id).enqueue(new DatabaseCallback<List<UserApi.Walk>>(LOG_TAG) {
+            userApi.getUserWalksById(id).enqueue(new DatabaseCallback<ArrayList<UserApi.Walk>>(LOG_TAG) {
                 @Override
-                public void onNull(Response<List<UserApi.Walk>> response) {
+                public void onNullResponse(Response<ArrayList<UserApi.Walk>> response) {
                     log(id + " doesn't have walks");
                 }
 
                 @Override
-                public void onSuccessResponse(Response<List<UserApi.Walk>> response) {
+                public void onSuccessResponse(Response<ArrayList<UserApi.Walk>> response) {
                     log(id + " have walks");
-                    for (UserApi.Walk walk : response.body()){
-                        news.add(transformToWalk(walk));
-                        currentUserNews.postValue(news);
-                    }
+                    news.addAll(transformToWalkAll(response.body()));
+                    Collections.sort(news);
+                    currentUserNews.postValue(news);
                 }
             });
         }
+    }
+
+    private ArrayList<Walk> transformToWalkAll(ArrayList<UserApi.Walk> walks) {
+        ArrayList<Walk> result = new ArrayList<>();
+        for (UserApi.Walk walk : walks) {
+            result.add(transformToWalk(walk));
+        }
+        return result;
     }
 
     private Walk transformToWalk(UserApi.Walk walk) {

@@ -43,7 +43,7 @@ public class FriendsRepository {
 
         userApi.getUserById(currentUserId).enqueue(new DatabaseCallback<UserApi.User>(LOG_TAG) {
             @Override
-            public void onNull(Response<UserApi.User> response) {
+            public void onNullResponse(Response<UserApi.User> response) {
                 errorLog("Fail with update", null);
             }
 
@@ -81,7 +81,7 @@ public class FriendsRepository {
         log("checkUserExistence");
         userApi.getUserById(id).enqueue(new DatabaseCallback<UserApi.User>(LOG_TAG) {
             @Override
-            public void onNull(Response<UserApi.User> response) {
+            public void onNullResponse(Response<UserApi.User> response) {
                 Log.d(LOG_TAG, "posted false");
                 userExistence.postValue(false);
             }
@@ -104,7 +104,7 @@ public class FriendsRepository {
 
         userApi.getUserById(id).enqueue(new DatabaseCallback<UserApi.User>(LOG_TAG) {
             @Override
-            public void onNull(Response<UserApi.User> response) {
+            public void onNullResponse(Response<UserApi.User> response) {
                 errorLog("Failed to get " + id + " user", null);
             }
 
@@ -124,7 +124,7 @@ public class FriendsRepository {
         });
         userApi.getUserById(curUserId).enqueue(new DatabaseCallback<UserApi.User>(LOG_TAG) {
             @Override
-            public void onNull(Response<UserApi.User> response) {
+            public void onNullResponse(Response<UserApi.User> response) {
                 errorLog("Failed to get " + curUserId + " user", null);
             }
 
@@ -149,7 +149,7 @@ public class FriendsRepository {
     private void addFriendIdToFriendsIdsList(final String user, final int number, final String friendId) {
         userApi.addFriendId(user, number, friendId).enqueue(new DatabaseCallback<String>(LOG_TAG) {
             @Override
-            public void onNull(Response<String> response) {
+            public void onNullResponse(Response<String> response) {
                 log("failed to add friend id");
             }
 
@@ -163,7 +163,7 @@ public class FriendsRepository {
     private void addFriendToUser(final String userId, final int number, final UserApi.Friend friend) {
         userApi.addFriend(userId, number, friend).enqueue(new DatabaseCallback<UserApi.Friend>(LOG_TAG) {
             @Override
-            public void onNull(Response<UserApi.Friend> response) {
+            public void onNullResponse(Response<UserApi.Friend> response) {
                 errorLog("Failed to add friend " + friend.id, null);
             }
 

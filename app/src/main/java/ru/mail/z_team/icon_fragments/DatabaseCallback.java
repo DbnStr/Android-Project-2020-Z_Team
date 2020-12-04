@@ -11,7 +11,7 @@ public abstract class DatabaseCallback<T> implements Callback<T> {
     private static final int FAILED_TO_READ_WRITE_DB_CODE = 401;
     private final String logTag;
 
-    public abstract void onNull(Response<T> response);
+    public abstract void onNullResponse(Response<T> response);
 
     public abstract void onSuccessResponse(Response<T> response);
 
@@ -27,7 +27,7 @@ public abstract class DatabaseCallback<T> implements Callback<T> {
         }
         if (response.body() == null) {
             Log.e(logTag, "File not found", null);
-            onNull(response);
+            onNullResponse(response);
             return;
         }
         if (response.isSuccessful()) {

@@ -39,15 +39,15 @@ public class WalksRepository {
 
     public void updateCurrentUserWalks() {
         String id = FirebaseAuth.getInstance().getUid();
-        userApi.getUserWalksById(id).enqueue(new DatabaseCallback<List<UserApi.Walk>>(LOG_TAG) {
+        userApi.getUserWalksById(id).enqueue(new DatabaseCallback<ArrayList<UserApi.Walk>>(LOG_TAG) {
             @Override
-            public void onNull(Response<List<UserApi.Walk>> response) {
+            public void onNullResponse(Response<ArrayList<UserApi.Walk>> response) {
                 currentUserWalks.postValue(new ArrayList<>());
                 Log.d(LOG_TAG, "Walks was empty");
             }
 
             @Override
-            public void onSuccessResponse(Response<List<UserApi.Walk>> response) {
+            public void onSuccessResponse(Response<ArrayList<UserApi.Walk>> response) {
                 ArrayList<Walk> walks = new ArrayList<>();
                 for (UserApi.Walk walk : response.body()) {
                     walks.add(transformToWalk(walk));
