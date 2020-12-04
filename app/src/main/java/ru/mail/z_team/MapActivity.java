@@ -3,6 +3,7 @@ package ru.mail.z_team;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Button;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -45,6 +46,8 @@ public class MapActivity extends AppCompatActivity {
     private Point startPos = null, destinationPos = null;
     private final ArrayList<DirectionsRoute> routes = new ArrayList<>();
 
+    private Button saveMapButton;
+
     public MapActivity() {
     }
 
@@ -81,6 +84,11 @@ public class MapActivity extends AppCompatActivity {
                 return true;
             });
         }));
+
+        saveMapButton = findViewById(R.id.save_map_btn);
+        saveMapButton.setOnClickListener(v -> {
+
+        });
     }
 
     private void addMarker(MapboxMap mapboxMap, LatLng point) {
