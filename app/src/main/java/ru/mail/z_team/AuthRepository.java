@@ -24,7 +24,7 @@ import ru.mail.z_team.network.UserApi;
 
 public class AuthRepository implements Executor{
 
-    private static final String LOG_TAG = "AuthRepo";
+    private static final String LOG_TAG = "AuthRepository";
     private static final int FAILED_WRITE_DB_CODE = 401;
     private static final int SUCCESS_CODE = 200;
     private final UserApi userApi;
