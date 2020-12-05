@@ -11,16 +11,18 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import ru.mail.z_team.R;
 import ru.mail.z_team.WrapContentLayoutManager;
+import ru.mail.z_team.icon_fragments.go_out.WalkViewModel;
 
 public class WalksFragment extends Fragment {
 
     private static final String LOG_TAG = "WalksFragment";
     WalkAdapter adapter;
-    private WalksViewModel viewModel;
+    WalkViewModel viewModel;
     TextView noWalks;
 
     @Override
@@ -36,33 +38,26 @@ public class WalksFragment extends Fragment {
 
         noWalks = view.findViewById(R.id.no_walks_tv);
 
-        return view;
-    }
-
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-
         final RecyclerView recyclerView = view.findViewById(R.id.recycler_walks);
         recyclerView.setLayoutManager(new WrapContentLayoutManager(getActivity()));
 
         adapter = new WalkAdapter(getActivity());
-        recyclerView.setAdapter(adapter);
 
-        viewModel = new ViewModelProvider(this).get(WalksViewModel.class);
-        viewModel.updateCurrentUserWalks();
+        viewModel = new ViewModelProvider(this).get(WalkViewModel.class);
+        viewModel.update();
         viewModel.getCurrentUserWalks().observe(getActivity(), walks -> {
-            log("get walks... " + walks.size());
-            if (walks.isEmpty()) {
+            Log.d(LOG_TAG, "get walks... " + walks.size());
+            if (walks.isEmpty()){
                 noWalks.setVisibility(View.VISIBLE);
-            } else {
+            }
+            else {
                 noWalks.setVisibility(View.INVISIBLE);
                 adapter.setWalks(walks);
             }
         });
-    }
 
-    private void log(final String message) {
-        Log.d(LOG_TAG, message);
+        recyclerView.setAdapter(adapter);
+
+        return view;
     }
 }
