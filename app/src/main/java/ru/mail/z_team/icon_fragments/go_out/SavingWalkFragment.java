@@ -19,7 +19,7 @@ public class SavingWalkFragment extends Fragment {
     Button addWalk;
     EditText walkTitle;
     String title;
-    WalkViewModel viewModel;
+    GoOutViewModel viewModel;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -38,7 +38,7 @@ public class SavingWalkFragment extends Fragment {
             }
         });
 
-        viewModel = new WalkViewModel(getActivity().getApplication());
+        viewModel = new GoOutViewModel(getActivity().getApplication());
         return view;
     }
 
