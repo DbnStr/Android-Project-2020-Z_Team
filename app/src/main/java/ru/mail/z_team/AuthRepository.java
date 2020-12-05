@@ -149,7 +149,7 @@ public class AuthRepository implements Executor{
     }
 
     private void warningLog(String message, Throwable tr) {
-        Log.w(LOG_TAG, message, tr);
+
     }
 
     @Override

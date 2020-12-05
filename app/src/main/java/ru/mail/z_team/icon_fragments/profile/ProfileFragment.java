@@ -22,12 +22,13 @@ import java.util.HashMap;
 
 import ru.mail.z_team.R;
 import ru.mail.z_team.user.User;
+import ru.mail.z_team.user.UserViewModel;
 
 public class ProfileFragment extends Fragment {
 
     private static final String LOG_TAG = "ProfileFragment";
 
-    private ProfileViewModel profileViewModel;
+    private UserViewModel userViewModel;
     private EditText name;
     private EditText age;
     private Button editBtn;
@@ -44,12 +45,10 @@ public class ProfileFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_profile, container, false);
-
         name = view.findViewById(R.id.profile_name);
         age = view.findViewById(R.id.profile_age);
         editBtn = view.findViewById(R.id.edit_btn);
         saveChangesBtn = view.findViewById(R.id.save_changes_btn);
-
         return view;
     }
 
@@ -61,19 +60,22 @@ public class ProfileFragment extends Fragment {
 
         editBtn.setOnClickListener(v -> enableEditAbilityAll());
         saveChangesBtn.setOnClickListener(v -> {
-            profileViewModel.changeCurrentUserInformation(getProfileInfo());
+            String userId = FirebaseAuth.getInstance().getUid();
+            userViewModel.changeUserInformation(userId, getProfileInfo());
             disableEditAbilityAll();
         });
+
 
         Observer<User> observer = user -> {
             if (user != null) {
                 setProfileData(user);
             }
         };
-        profileViewModel = new ViewModelProvider(getActivity())
-                .get(ProfileViewModel.class);
-        profileViewModel.updateCurrentUser();
-        profileViewModel
+        String userId = FirebaseAuth.getInstance().getUid();
+        userViewModel = new ViewModelProvider(getActivity())
+                .get(UserViewModel.class);
+        userViewModel.updateCurrentUser();
+        userViewModel
                 .getCurrentUser()
                 .observe(getViewLifecycleOwner(), observer);
     }

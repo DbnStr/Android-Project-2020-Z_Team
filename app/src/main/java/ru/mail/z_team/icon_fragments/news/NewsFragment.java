@@ -13,6 +13,8 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.util.Collections;
+
 import ru.mail.z_team.R;
 import ru.mail.z_team.WrapContentLayoutManager;
 
@@ -43,14 +45,15 @@ public class NewsFragment extends Fragment {
         recyclerView.setAdapter(adapter);
 
         viewModel = new ViewModelProvider(this).get(NewsViewModel.class);
-        viewModel.updateCurrentUserNews();
-        viewModel.getCurrentUserNews().observe(getActivity(), walks -> {
+        viewModel.updateNews();
+        viewModel.getNews().observe(getActivity(), walks -> {
             Log.d(LOG_TAG, "get walks... " + walks.size());
             if (walks.isEmpty()){
                 noNews.setVisibility(View.VISIBLE);
             }
             else {
                 noNews.setVisibility(View.INVISIBLE);
+                Collections.sort(walks);
                 adapter.setWalks(walks);
             }
         });
