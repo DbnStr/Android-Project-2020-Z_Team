@@ -60,7 +60,7 @@ public interface UserApi {
     Call<List<Friend>> getUserFriendsById(@Path("id") String id);
 
     @GET("/Walks/{id}.json")
-    Call<List<Walk>> getUserWalksById(@Path("id") String id);
+    Call<ArrayList<Walk>> getUserWalksById(@Path("id") String id);
 
     @GET("/FriendsIds/{id}.json")
     Call<ArrayList<String>> getUserFriendsIds(@Path("id") String id);

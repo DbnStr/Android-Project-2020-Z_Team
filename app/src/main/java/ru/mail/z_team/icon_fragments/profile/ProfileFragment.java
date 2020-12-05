@@ -3,7 +3,6 @@ package ru.mail.z_team.icon_fragments.profile;
 import android.annotation.SuppressLint;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,19 +15,18 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.google.firebase.auth.FirebaseAuth;
-
 import java.util.HashMap;
 
+import ru.mail.z_team.Logger;
 import ru.mail.z_team.R;
 import ru.mail.z_team.user.User;
-import ru.mail.z_team.user.UserViewModel;
 
 public class ProfileFragment extends Fragment {
 
     private static final String LOG_TAG = "ProfileFragment";
+    private Logger logger;
 
-    private UserViewModel userViewModel;
+    private ProfileViewModel profileViewModel;
     private EditText name;
     private EditText age;
     private Button editBtn;
@@ -36,7 +34,8 @@ public class ProfileFragment extends Fragment {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        log("OnCreate");
+        logger = new Logger(LOG_TAG, true);
+        logger.log("OnCreate");
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
     }
@@ -45,10 +44,12 @@ public class ProfileFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_profile, container, false);
+
         name = view.findViewById(R.id.profile_name);
         age = view.findViewById(R.id.profile_age);
         editBtn = view.findViewById(R.id.edit_btn);
         saveChangesBtn = view.findViewById(R.id.save_changes_btn);
+
         return view;
     }
 
@@ -60,28 +61,21 @@ public class ProfileFragment extends Fragment {
 
         editBtn.setOnClickListener(v -> enableEditAbilityAll());
         saveChangesBtn.setOnClickListener(v -> {
-            String userId = FirebaseAuth.getInstance().getUid();
-            userViewModel.changeUserInformation(userId, getProfileInfo());
+            profileViewModel.changeCurrentUserInformation(getProfileInfo());
             disableEditAbilityAll();
         });
-
 
         Observer<User> observer = user -> {
             if (user != null) {
                 setProfileData(user);
             }
         };
-        String userId = FirebaseAuth.getInstance().getUid();
-        userViewModel = new ViewModelProvider(getActivity())
-                .get(UserViewModel.class);
-        userViewModel.updateCurrentUser();
-        userViewModel
+        profileViewModel = new ViewModelProvider(getActivity())
+                .get(ProfileViewModel.class);
+        profileViewModel.updateCurrentUser();
+        profileViewModel
                 .getCurrentUser()
                 .observe(getViewLifecycleOwner(), observer);
-    }
-
-    private void log(String message) {
-        Log.d(LOG_TAG, message);
     }
 
     private void disableEditAbilityAll() {

@@ -2,7 +2,6 @@ package ru.mail.z_team;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -42,7 +41,6 @@ public class MainMenuActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d("MenuActivity", "onCreate: ");
         setContentView(R.layout.activity_main_menu);
 
         firebaseAuth = FirebaseAuth.getInstance();
@@ -65,7 +63,7 @@ public class MainMenuActivity extends AppCompatActivity {
         if (getSupportFragmentManager().findFragmentById(container) == null) {
             getSupportFragmentManager()
                     .beginTransaction()
-                    .add(container, new NewsFragment(), NEWS_TAG)
+                    .replace(container, new NewsFragment(), NEWS_TAG)
                     .addToBackStack(null)
                     .commitAllowingStateLoss();
         }

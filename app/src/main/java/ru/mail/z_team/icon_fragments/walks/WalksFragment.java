@@ -1,7 +1,6 @@
 package ru.mail.z_team.icon_fragments.walks;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,20 +13,21 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import ru.mail.z_team.Logger;
 import ru.mail.z_team.R;
-import ru.mail.z_team.WrapContentLayoutManager;
-import ru.mail.z_team.icon_fragments.go_out.WalkViewModel;
 
 public class WalksFragment extends Fragment {
 
     private static final String LOG_TAG = "WalksFragment";
+    private Logger logger;
     WalkAdapter adapter;
-    WalkViewModel viewModel;
+    private WalksViewModel viewModel;
     TextView noWalks;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        Log.d("WalksFragment", "OnCreate");
+        logger = new Logger(LOG_TAG, true);
+        logger.log("onCreate");
         super.onCreate(savedInstanceState);
     }
 
@@ -38,26 +38,29 @@ public class WalksFragment extends Fragment {
 
         noWalks = view.findViewById(R.id.no_walks_tv);
 
+        return view;
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
         final RecyclerView recyclerView = view.findViewById(R.id.recycler_walks);
-        recyclerView.setLayoutManager(new WrapContentLayoutManager(getActivity()));
+        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
         adapter = new WalkAdapter(getActivity());
+        recyclerView.setAdapter(adapter);
 
-        viewModel = new ViewModelProvider(this).get(WalkViewModel.class);
-        viewModel.update();
+        viewModel = new ViewModelProvider(this).get(WalksViewModel.class);
+        viewModel.updateCurrentUserWalks();
         viewModel.getCurrentUserWalks().observe(getActivity(), walks -> {
-            Log.d(LOG_TAG, "get walks... " + walks.size());
-            if (walks.isEmpty()){
+            logger.log("get walks... " + walks.size());
+            if (walks.isEmpty()) {
                 noWalks.setVisibility(View.VISIBLE);
-            }
-            else {
+            } else {
                 noWalks.setVisibility(View.INVISIBLE);
                 adapter.setWalks(walks);
             }
         });
-
-        recyclerView.setAdapter(adapter);
-
-        return view;
     }
 }
