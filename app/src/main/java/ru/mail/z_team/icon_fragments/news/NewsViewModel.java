@@ -10,30 +10,27 @@ import androidx.lifecycle.LiveData;
 import java.util.ArrayList;
 
 import ru.mail.z_team.icon_fragments.walks.Walk;
+import ru.mail.z_team.user.UserRepository;
 
 public class NewsViewModel extends AndroidViewModel {
 
     private static final String LOG_TAG = "NewsViewModel";
-    private final NewsRepository repository;
+    private final UserRepository repository;
     private final LiveData<ArrayList<Walk>> currentUserNews;
 
     public NewsViewModel(@NonNull Application application) {
         super(application);
-        repository = new NewsRepository(getApplication());
+        repository = UserRepository.getInstance(getApplication());
         currentUserNews = repository.getNews();
     }
 
-    public void updateCurrentUserNews() {
-        log("updateNews");
-        repository.updateCurrentUserNews();
+    public void updateNews() {
+        Log.d(LOG_TAG, "updateNews");
+        repository.updateNews();
     }
 
-    public LiveData<ArrayList<Walk>> getCurrentUserNews() {
-        log("getNews");
+    public LiveData<ArrayList<Walk>> getNews() {
+        Log.d(LOG_TAG, "getNews");
         return currentUserNews;
-    }
-
-    private void log(final String message) {
-        Log.d(LOG_TAG, message);
     }
 }

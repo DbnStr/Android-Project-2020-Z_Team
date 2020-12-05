@@ -8,27 +8,31 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MediatorLiveData;
 
-import ru.mail.z_team.R;
+import java.util.ArrayList;
 
-public class GoOutViewModel extends AndroidViewModel {
+import ru.mail.z_team.R;
+import ru.mail.z_team.icon_fragments.walks.Walk;
+import ru.mail.z_team.user.UserRepository;
+
+public class WalkViewModel extends AndroidViewModel {
 
     private static final String LOG_TAG = "WalkViewModel";
-    private final GoOutRepository repository;
+    UserRepository repository;
     MediatorLiveData<String> postWalkStatus = new MediatorLiveData<>();
 
-    public GoOutViewModel(@NonNull Application application) {
+    public WalkViewModel(@NonNull Application application) {
         super(application);
-        repository = new GoOutRepository(getApplication());
+        repository = UserRepository.getInstance(getApplication());
     }
 
     public void postWalk(String title) {
-        log("postWalk");
+        Log.d(LOG_TAG, "postWalk");
         repository.postWalk(title);
         postWalkStatus.addSource(repository.getPostStatus(), postStatus -> {
-            if (postStatus == GoOutRepository.PostStatus.FAILED){
+            if (postStatus == UserRepository.PostStatus.FAILED){
                 postWalkStatus.postValue(getApplication().getString(R.string.FAILED));
             }
-            else if (postStatus == GoOutRepository.PostStatus.OK){
+            else if (postStatus == UserRepository.PostStatus.OK){
                 postWalkStatus.postValue(getApplication().getString(R.string.SUCCESS));
             }
         });
@@ -38,11 +42,11 @@ public class GoOutViewModel extends AndroidViewModel {
         return postWalkStatus;
     }
 
-    private void log(final String message) {
-        Log.d(LOG_TAG, message);
+    public void update() {
+        repository.updateCurrentUserWalks();
     }
 
-    private void errorLog(final String message, Throwable t) {
-        Log.e(LOG_TAG, message, t);
+    public LiveData<ArrayList<Walk>> getCurrentUserWalks() {
+        return repository.getCurrentUserWalks();
     }
 }
