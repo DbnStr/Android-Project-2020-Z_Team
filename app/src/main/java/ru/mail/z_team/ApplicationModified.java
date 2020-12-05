@@ -8,21 +8,21 @@ import ru.mail.z_team.network.ApiRepository;
 public class ApplicationModified extends Application {
 
     private ApiRepository apiRepository;
-    private AuthRepo authRepo;
+    private AuthRepository authRepository;
 
     @Override
     public void onCreate() {
         super.onCreate();
         apiRepository = new ApiRepository();
-        authRepo = new AuthRepo(apiRepository);
+        authRepository = new AuthRepository(apiRepository);
     }
 
     public ApiRepository getApis() {
         return apiRepository;
     }
 
-    public AuthRepo getAuthRepo() {
-        return authRepo;
+    public AuthRepository getAuthRepository() {
+        return authRepository;
     }
 
     public static ApplicationModified from(Context context) {
