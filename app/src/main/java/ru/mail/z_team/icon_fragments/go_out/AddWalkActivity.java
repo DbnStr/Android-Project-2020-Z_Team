@@ -46,7 +46,6 @@ public class AddWalkActivity extends AppCompatActivity {
         viewModel = new GoOutViewModel(getApplication());
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.O)
     private void postWalk() {
         logger.log("postWalk");
         viewModel.postWalk(title);

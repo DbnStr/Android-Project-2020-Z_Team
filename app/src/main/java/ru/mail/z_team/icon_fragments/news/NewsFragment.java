@@ -11,11 +11,11 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import ru.mail.z_team.Logger;
 import ru.mail.z_team.R;
+import ru.mail.z_team.WrapContentLayoutManager;
 
 public class NewsFragment extends Fragment {
 
@@ -40,7 +40,7 @@ public class NewsFragment extends Fragment {
         noNews = view.findViewById(R.id.no_news_tv);
 
         final RecyclerView recyclerView = view.findViewById(R.id.recycler_news);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        recyclerView.setLayoutManager(new WrapContentLayoutManager(getActivity()));
 
         adapter = new NewsAdapter(getActivity());
         recyclerView.setAdapter(adapter);

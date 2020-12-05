@@ -63,7 +63,7 @@ public class MainMenuActivity extends AppCompatActivity {
         if (getSupportFragmentManager().findFragmentById(container) == null) {
             getSupportFragmentManager()
                     .beginTransaction()
-                    .add(container, new NewsFragment(), NEWS_TAG)
+                    .replace(container, new NewsFragment(), NEWS_TAG)
                     .addToBackStack(null)
                     .commitAllowingStateLoss();
         }
