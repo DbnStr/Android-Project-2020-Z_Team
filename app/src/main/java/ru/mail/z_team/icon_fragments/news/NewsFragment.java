@@ -14,11 +14,13 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import ru.mail.z_team.Logger;
 import ru.mail.z_team.R;
 
 public class NewsFragment extends Fragment {
 
     private static final String LOG_TAG = "News Fragment";
+    private Logger logger;
     NewsAdapter adapter;
     TextView noNews;
     NewsViewModel viewModel;
@@ -26,6 +28,7 @@ public class NewsFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         Log.d("NewsFragment", "OnCreate");
+        logger = new Logger(LOG_TAG, true);
         super.onCreate(savedInstanceState);
     }
 
@@ -45,7 +48,7 @@ public class NewsFragment extends Fragment {
         viewModel = new ViewModelProvider(this).get(NewsViewModel.class);
         viewModel.updateCurrentUserNews();
         viewModel.getCurrentUserNews().observe(getActivity(), walks -> {
-            Log.d(LOG_TAG, "get walks... " + walks.size());
+            logger.log("get walks... " + walks.size());
             if (walks.isEmpty()){
                 noNews.setVisibility(View.VISIBLE);
             }

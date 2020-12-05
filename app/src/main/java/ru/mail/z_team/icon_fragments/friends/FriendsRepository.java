@@ -1,7 +1,6 @@
 package ru.mail.z_team.icon_fragments.friends;
 
 import android.content.Context;
-import android.util.Log;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -11,6 +10,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import java.util.ArrayList;
 
 import retrofit2.Response;
+import ru.mail.z_team.Logger;
 import ru.mail.z_team.icon_fragments.DatabaseCallback;
 import ru.mail.z_team.network.ApiRepository;
 import ru.mail.z_team.network.UserApi;
@@ -20,6 +20,7 @@ import ru.mail.z_team.user.User;
 public class FriendsRepository {
 
     private static final String LOG_TAG = "FriendsRepository";
+    private final Logger logger;
 
     private final UserApi userApi;
 
@@ -30,6 +31,7 @@ public class FriendsRepository {
 
     public FriendsRepository(Context context) {
         userApi = ApiRepository.from(context).getUserApi();
+        logger = new Logger(LOG_TAG, true);
     }
 
     public LiveData<User> getCurrentUser() {
@@ -39,12 +41,12 @@ public class FriendsRepository {
     public void updateCurrentUser() {
         String currentUserId = FirebaseAuth.getInstance().getUid();
 
-        log("update user - " + currentUserId);
+        logger.log("update user - " + currentUserId);
 
         userApi.getUserById(currentUserId).enqueue(new DatabaseCallback<UserApi.User>(LOG_TAG) {
             @Override
             public void onNullResponse(Response<UserApi.User> response) {
-                errorLog("Fail with update", null);
+                logger.errorLog("Fail with update");
             }
 
             @Override
@@ -78,11 +80,11 @@ public class FriendsRepository {
     }
 
     public void checkUserExistence(String id) {
-        log("checkUserExistence");
+        logger.log("checkUserExistence");
         userApi.getUserById(id).enqueue(new DatabaseCallback<UserApi.User>(LOG_TAG) {
             @Override
             public void onNullResponse(Response<UserApi.User> response) {
-                Log.d(LOG_TAG, "posted false");
+                logger.log("posted false");
                 userExistence.postValue(false);
             }
 
@@ -94,18 +96,18 @@ public class FriendsRepository {
     }
 
     public LiveData<Boolean> userExists() {
-        log("userExists");
+        logger.log("userExists");
         return userExistence;
     }
 
     public void addFriendToCurrentUser(String id, int num) {
-        log("addFriend");
+        logger.log("addFriend");
         String curUserId = FirebaseAuth.getInstance().getUid();
 
         userApi.getUserById(id).enqueue(new DatabaseCallback<UserApi.User>(LOG_TAG) {
             @Override
             public void onNullResponse(Response<UserApi.User> response) {
-                errorLog("Failed to get " + id + " user", null);
+                logger.errorLog("Failed to get " + id + " user");
             }
 
             @Override
@@ -125,7 +127,7 @@ public class FriendsRepository {
         userApi.getUserById(curUserId).enqueue(new DatabaseCallback<UserApi.User>(LOG_TAG) {
             @Override
             public void onNullResponse(Response<UserApi.User> response) {
-                errorLog("Failed to get " + curUserId + " user", null);
+                logger.errorLog("Failed to get " + curUserId + " user");
             }
 
             @Override
@@ -150,12 +152,12 @@ public class FriendsRepository {
         userApi.addFriendId(user, number, friendId).enqueue(new DatabaseCallback<String>(LOG_TAG) {
             @Override
             public void onNullResponse(Response<String> response) {
-                log("failed to add friend id");
+                logger.log("failed to add friend id");
             }
 
             @Override
             public void onSuccessResponse(Response<String> response) {
-                log("successfully add friend id");
+                logger.log("successfully add friend id");
             }
         });
     }
@@ -164,7 +166,7 @@ public class FriendsRepository {
         userApi.addFriend(userId, number, friend).enqueue(new DatabaseCallback<UserApi.Friend>(LOG_TAG) {
             @Override
             public void onNullResponse(Response<UserApi.Friend> response) {
-                errorLog("Failed to add friend " + friend.id, null);
+                logger.errorLog("Failed to add friend " + friend.id);
             }
 
             @Override
@@ -172,13 +174,5 @@ public class FriendsRepository {
                 updateCurrentUser();
             }
         });
-    }
-
-    private void log(final String message) {
-        Log.d(LOG_TAG, message);
-    }
-
-    private void errorLog(String message, Throwable t) {
-        Log.e(LOG_TAG, message, t);
     }
 }

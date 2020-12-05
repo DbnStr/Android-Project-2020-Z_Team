@@ -1,7 +1,6 @@
 package ru.mail.z_team;
 
 import android.app.Application;
-import android.util.Log;
 import android.util.Pair;
 
 import androidx.annotation.NonNull;
@@ -12,7 +11,9 @@ import androidx.lifecycle.MediatorLiveData;
 @SuppressWarnings("WeakerAccess")
 public class AuthViewModel extends AndroidViewModel{
 
-    private static final String TAG = "AuthViewModel";
+    private static final String LOG_TAG = "AuthViewModel";
+    private final Logger logger;
+
     private final String none = getApplication().getResources().getString(R.string.NONE);
     private final String onProgress = getApplication().getResources().getString(R.string.ON_PROGRESS);
     private final String error = getApplication().getResources().getString(R.string.ERROR);
@@ -26,6 +27,7 @@ public class AuthViewModel extends AndroidViewModel{
         super(application);
         mAuthState.setValue(new Pair<>(none, ""));
         authRepository = AuthRepository.getInstance(getApplication());
+        logger = new Logger(LOG_TAG, true);
     }
 
     public LiveData<Pair<String, String>> getProgress() {
@@ -37,7 +39,7 @@ public class AuthViewModel extends AndroidViewModel{
     }
 
     public void loginUser(String email, String password) {
-        Log.d(TAG, "loginUser");
+        logger.log("loginUser");
         mAuthState.postValue(new Pair<>(onProgress, ""));
 
         final LiveData<Pair<AuthRepository.AuthProgress, String>> progressLiveData = authRepository.login(email, password);
@@ -54,7 +56,7 @@ public class AuthViewModel extends AndroidViewModel{
     }
 
     public void registerUser(String email, String password) {
-        Log.d(TAG, "registerUser");
+        logger.log("registerUser");
         mAuthState.postValue(new Pair<>(onProgress, ""));
         final LiveData<Pair<AuthRepository.AuthProgress, String>> progressLiveData = authRepository.register(email, password);
         mAuthState.addSource(progressLiveData, authProgressStringPair -> {

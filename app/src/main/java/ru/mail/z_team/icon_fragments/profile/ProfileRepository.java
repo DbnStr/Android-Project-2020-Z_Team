@@ -1,7 +1,6 @@
 package ru.mail.z_team.icon_fragments.profile;
 
 import android.content.Context;
-import android.util.Log;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -11,6 +10,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import java.util.ArrayList;
 
 import retrofit2.Response;
+import ru.mail.z_team.Logger;
 import ru.mail.z_team.icon_fragments.DatabaseCallback;
 import ru.mail.z_team.network.ApiRepository;
 import ru.mail.z_team.network.UserApi;
@@ -20,6 +20,7 @@ import ru.mail.z_team.user.User;
 public class ProfileRepository {
 
     private static final String LOG_TAG = "ProfileRepository";
+    private final Logger logger;
 
     private final UserApi userApi;
 
@@ -27,6 +28,7 @@ public class ProfileRepository {
 
     public ProfileRepository(Context context) {
         userApi = ApiRepository.from(context).getUserApi();
+        logger = new Logger(LOG_TAG, true);
     }
 
     public LiveData<User> getCurrentUser() {
@@ -36,12 +38,12 @@ public class ProfileRepository {
     public void updateCurrentUser() {
         String currentUserId = FirebaseAuth.getInstance().getUid();
 
-        log("update user - " + currentUserId);
+        logger.log("update user - " + currentUserId);
 
         userApi.getUserById(currentUserId).enqueue(new DatabaseCallback<UserApi.User>(LOG_TAG) {
             @Override
             public void onNullResponse(Response<UserApi.User> response) {
-                errorLog("Fail with update", null);
+                logger.errorLog("Fail with update");
             }
 
             @Override
@@ -75,12 +77,12 @@ public class ProfileRepository {
         userApi.changeUserInformation(currentUserId, transformToUserApiUser(newInformation)).enqueue(new DatabaseCallback<UserApi.User>(LOG_TAG) {
             @Override
             public void onNullResponse(Response<UserApi.User> response) {
-                errorLog("Failed with change information about " + currentUserId, null);
+                logger.errorLog("Failed with change information about " + currentUserId);
             }
 
             @Override
             public void onSuccessResponse(Response<UserApi.User> response) {
-                log("Change information about " + currentUserId);
+                logger.log("Change information about " + currentUserId);
             }
         });
     }
@@ -96,13 +98,4 @@ public class ProfileRepository {
     private Friend transformToFriend(UserApi.Friend friend) {
         return new Friend(friend.name, friend.id);
     }
-
-    private void log(String message) {
-        Log.d(LOG_TAG, message);
-    }
-
-    private void errorLog(String message, Throwable t) {
-        Log.e(LOG_TAG, message, t);
-    }
-
 }

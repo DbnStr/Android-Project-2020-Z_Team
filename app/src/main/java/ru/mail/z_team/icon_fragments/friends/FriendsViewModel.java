@@ -1,17 +1,18 @@
 package ru.mail.z_team.icon_fragments.friends;
 
 import android.app.Application;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 
+import ru.mail.z_team.Logger;
 import ru.mail.z_team.user.User;
 
 public class FriendsViewModel extends AndroidViewModel {
 
     private static final String LOG_TAG = "FriendsViewModel";
+    private final Logger logger;
 
     private final FriendsRepository repository;
 
@@ -19,6 +20,7 @@ public class FriendsViewModel extends AndroidViewModel {
 
     public FriendsViewModel(@NonNull Application application) {
         super(application);
+        logger = new Logger(LOG_TAG, true);
         repository = new FriendsRepository(getApplication());
         currentUserData = repository.getCurrentUser();
     }
@@ -32,30 +34,22 @@ public class FriendsViewModel extends AndroidViewModel {
     }
 
     public void checkUserExistence(final String id) {
-        log("checkUserExistence");
+        logger.log("checkUserExistence");
         repository.checkUserExistence(id);
     }
 
     public LiveData<Boolean> userExists(){
-        log("userExists");
+        logger.log("userExists");
         return repository.userExists();
     }
 
     public void addFriendToCurrentUser(String id) {
-        log("addFriend");
+        logger.log("addFriend");
         User currentUser = currentUserData.getValue();
         if (! currentUser.isThisFriendAdded(id)) {
             repository.addFriendToCurrentUser(id, currentUser.getFriendsListSize());
         } else {
-            errorLog("Friend already added", null);
+            logger.errorLog("Friend already added");
         }
-    }
-
-    private void log(final String message) {
-        Log.d(LOG_TAG, message);
-    }
-
-    private void errorLog(String message, Error error) {
-        Log.e(LOG_TAG, message, error);
     }
 }

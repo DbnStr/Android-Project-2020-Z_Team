@@ -3,7 +3,6 @@ package ru.mail.z_team.icon_fragments.profile;
 import android.annotation.SuppressLint;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,16 +15,16 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.google.firebase.auth.FirebaseAuth;
-
 import java.util.HashMap;
 
+import ru.mail.z_team.Logger;
 import ru.mail.z_team.R;
 import ru.mail.z_team.user.User;
 
 public class ProfileFragment extends Fragment {
 
     private static final String LOG_TAG = "ProfileFragment";
+    private Logger logger;
 
     private ProfileViewModel profileViewModel;
     private EditText name;
@@ -35,7 +34,8 @@ public class ProfileFragment extends Fragment {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        log("OnCreate");
+        logger = new Logger(LOG_TAG, true);
+        logger.log("OnCreate");
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
     }
@@ -76,10 +76,6 @@ public class ProfileFragment extends Fragment {
         profileViewModel
                 .getCurrentUser()
                 .observe(getViewLifecycleOwner(), observer);
-    }
-
-    private void log(String message) {
-        Log.d(LOG_TAG, message);
     }
 
     private void disableEditAbilityAll() {

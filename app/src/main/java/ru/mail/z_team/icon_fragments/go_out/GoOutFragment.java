@@ -2,7 +2,6 @@ package ru.mail.z_team.icon_fragments.go_out;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import ru.mail.z_team.Logger;
 import ru.mail.z_team.MapActivity;
 import ru.mail.z_team.R;
 
@@ -20,9 +20,13 @@ public class GoOutFragment extends Fragment {
     Button addWalk;
     Button toMapBtn;
 
+    private Logger logger;
+    private static final String LOG_TAG = "GoOutFragment";
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        Log.d("GoForWalk", "OnCreate");
+        logger = new Logger(LOG_TAG, true);
+        logger.log("onCreate");
         super.onCreate(savedInstanceState);
     }
 

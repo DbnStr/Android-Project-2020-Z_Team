@@ -1,7 +1,6 @@
 package ru.mail.z_team.icon_fragments.go_out;
 
 import android.content.Context;
-import android.util.Log;
 
 import androidx.lifecycle.MutableLiveData;
 
@@ -14,6 +13,7 @@ import java.util.Date;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import ru.mail.z_team.Logger;
 import ru.mail.z_team.icon_fragments.DatabaseCallback;
 import ru.mail.z_team.network.ApiRepository;
 import ru.mail.z_team.network.UserApi;
@@ -21,6 +21,7 @@ import ru.mail.z_team.network.UserApi;
 public class GoOutRepository {
 
     private static final String LOG_TAG = "GoOutRepository";
+    private final Logger logger;
 
     private final UserApi userApi;
 
@@ -33,6 +34,7 @@ public class GoOutRepository {
 
     public GoOutRepository(Context context) {
         userApi = ApiRepository.from(context).getUserApi();
+        logger = new Logger(LOG_TAG, true);
     }
 
     public void postWalk(String title) {
@@ -54,9 +56,8 @@ public class GoOutRepository {
     }
 
     private void addWalkInDb(int currentWalkNumber, String title, String id, String name) {
-        Log.d(LOG_TAG, "postWalk");
+        logger.log("Post a walk");
         Date currentTime = new Date();
-        Log.d(LOG_TAG, "postWalk named  - " + name);
         userApi.addWalk(id, currentWalkNumber, new UserApi.Walk(title, sdf.format(currentTime), name)).enqueue(new Callback<UserApi.User>() {
             @Override
             public void onResponse(Call<UserApi.User> call, Response<UserApi.User> response) {
@@ -69,7 +70,7 @@ public class GoOutRepository {
 
             @Override
             public void onFailure(Call<UserApi.User> call, Throwable t) {
-                Log.e(LOG_TAG, t.getMessage(), null);
+                logger.errorLog(t.getMessage());
                 postStatus.postValue(PostStatus.FAILED);
             }
         });
@@ -78,12 +79,12 @@ public class GoOutRepository {
     private void updateCurrentUserName() {
         String currentUserId = FirebaseAuth.getInstance().getUid();
 
-        log("update user - " + currentUserId);
+        logger.log("update user - " + currentUserId);
 
         userApi.getUserById(currentUserId).enqueue(new DatabaseCallback<UserApi.User>(LOG_TAG) {
             @Override
             public void onNullResponse(Response<UserApi.User> response) {
-                errorLog("Fail with update", null);
+                logger.errorLog("Fail with update");
             }
 
             @Override
@@ -100,13 +101,5 @@ public class GoOutRepository {
     public enum PostStatus {
         OK,
         FAILED
-    }
-
-    private void log(final String message) {
-        Log.d(LOG_TAG, message);
-    }
-
-    private void errorLog(final String message, Throwable t) {
-        Log.e(LOG_TAG, message, t);
     }
 }

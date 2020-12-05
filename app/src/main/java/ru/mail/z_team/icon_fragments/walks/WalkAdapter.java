@@ -1,7 +1,6 @@
 package ru.mail.z_team.icon_fragments.walks;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,15 +13,18 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.TimeZone;
 
+import ru.mail.z_team.Logger;
 import ru.mail.z_team.R;
 
 public class WalkAdapter extends RecyclerView.Adapter<WalksViewHolder> {
     private static final String LOG_TAG = "WalkAdapter";
+    private final Logger logger;
     private ArrayList<Walk> walks;
     private final Context context;
 
     public WalkAdapter(Context context) {
         this.context = context;
+        logger = new Logger(LOG_TAG, true);
         this.walks = new ArrayList<>();
     }
 
@@ -35,7 +37,7 @@ public class WalkAdapter extends RecyclerView.Adapter<WalksViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull WalksViewHolder holder, int position) {
-        Log.d(LOG_TAG, "OnBindViewHolderWalk " + position);
+        logger.log("OnBindViewHolderWalk " + position);
         String title = walks.get(position).getTitle();
         Date date = walks.get(position).getDate();
         holder.walkTitle.setText(title);

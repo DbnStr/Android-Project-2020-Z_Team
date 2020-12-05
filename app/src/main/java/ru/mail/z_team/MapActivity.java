@@ -1,7 +1,6 @@
 package ru.mail.z_team;
 
 import android.os.Bundle;
-import android.util.Log;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -9,11 +8,11 @@ import com.mapbox.mapboxsdk.Mapbox;
 import com.mapbox.mapboxsdk.annotations.MarkerOptions;
 import com.mapbox.mapboxsdk.camera.CameraPosition;
 import com.mapbox.mapboxsdk.camera.CameraUpdateFactory;
-import com.mapbox.mapboxsdk.constants.Style;
 import com.mapbox.mapboxsdk.geometry.LatLng;
 import com.mapbox.mapboxsdk.maps.MapView;
 import com.mapbox.mapboxsdk.maps.MapboxMap;
 import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
+import com.mapbox.mapboxsdk.maps.Style;
 
 public class MapActivity extends AppCompatActivity implements OnMapReadyCallback {
 
@@ -25,7 +24,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d("MapActivity", "onCreate");
         setContentView(R.layout.activity_map);
 
         Mapbox.getInstance(this, getString(R.string.mapbox_access_token));
@@ -40,9 +38,10 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                     .tilt(20)
                     .build();
             mapboxMap.animateCamera(CameraUpdateFactory.newCameraPosition(position), 7000);
-            mapboxMap.addOnMapClickListener((MapboxMap.OnMapClickListener) point -> mapboxMap.addMarker(new MarkerOptions()
+            mapboxMap.addOnMapClickListener((MapboxMap.OnMapClickListener) point -> {mapboxMap.addMarker(new MarkerOptions()
                     .position(point)
-                    .title("new point")));
+                    .title("new point"));
+            return true;});
         });
     }
 

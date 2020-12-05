@@ -1,7 +1,6 @@
 package ru.mail.z_team.icon_fragments.walks;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,21 +10,24 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import ru.mail.z_team.Logger;
 import ru.mail.z_team.R;
-import ru.mail.z_team.WrapContentLayoutManager;
 
 public class WalksFragment extends Fragment {
 
     private static final String LOG_TAG = "WalksFragment";
+    private Logger logger;
     WalkAdapter adapter;
     private WalksViewModel viewModel;
     TextView noWalks;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        Log.d("WalksFragment", "OnCreate");
+        logger = new Logger(LOG_TAG, true);
+        logger.log("onCreate");
         super.onCreate(savedInstanceState);
     }
 
@@ -44,7 +46,7 @@ public class WalksFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         final RecyclerView recyclerView = view.findViewById(R.id.recycler_walks);
-        recyclerView.setLayoutManager(new WrapContentLayoutManager(getActivity()));
+        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
         adapter = new WalkAdapter(getActivity());
         recyclerView.setAdapter(adapter);
@@ -52,7 +54,7 @@ public class WalksFragment extends Fragment {
         viewModel = new ViewModelProvider(this).get(WalksViewModel.class);
         viewModel.updateCurrentUserWalks();
         viewModel.getCurrentUserWalks().observe(getActivity(), walks -> {
-            log("get walks... " + walks.size());
+            logger.log("get walks... " + walks.size());
             if (walks.isEmpty()) {
                 noWalks.setVisibility(View.VISIBLE);
             } else {
@@ -60,9 +62,5 @@ public class WalksFragment extends Fragment {
                 adapter.setWalks(walks);
             }
         });
-    }
-
-    private void log(final String message) {
-        Log.d(LOG_TAG, message);
     }
 }

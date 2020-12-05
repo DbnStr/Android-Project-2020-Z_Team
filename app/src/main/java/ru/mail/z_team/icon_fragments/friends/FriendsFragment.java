@@ -1,7 +1,6 @@
 package ru.mail.z_team.icon_fragments.friends;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,13 +18,14 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 
+import ru.mail.z_team.Logger;
 import ru.mail.z_team.R;
 import ru.mail.z_team.user.Friend;
 
 public class FriendsFragment extends Fragment {
 
     private static final String LOG_TAG = "FriendsFragment";
-
+    private Logger logger;
 
     private FriendAdapter adapter;
     FriendsViewModel viewModel;
@@ -36,7 +36,8 @@ public class FriendsFragment extends Fragment {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        log("OnCreate");
+        logger = new Logger(LOG_TAG, true);
+        logger.log("OnCreate");
         super.onCreate(savedInstanceState);
     }
 
@@ -67,7 +68,7 @@ public class FriendsFragment extends Fragment {
         viewModel.getCurrentUser()
                 .observe(getActivity(), user -> {
                     ArrayList<Friend> friends = user.getFriends();
-                    log("get user friends... " + friends.toString());
+                    logger.log("get user friends... " + friends.toString());
                     if (friends.isEmpty()) {
                         noFriends.setVisibility(View.VISIBLE);
                     } else {
@@ -82,7 +83,7 @@ public class FriendsFragment extends Fragment {
                 fieldAddFriend.setError("Id can't be empty");
                 fieldAddFriend.setFocusable(true);
             } else {
-                log("addFriendBtn");
+                logger.log("addFriendBtn");
                 noFriends.setVisibility(View.INVISIBLE);
                 viewModel.checkUserExistence(id);
 
@@ -92,23 +93,19 @@ public class FriendsFragment extends Fragment {
         });
     }
 
-    private void log(String message) {
-        Log.d(LOG_TAG, message);
-    }
-
     class ExistenceObserver<T extends Boolean> implements Observer<T> {
 
         private final String id;
 
         ExistenceObserver(String id) {
-            log("ExistenceObserver");
+            logger.log("ExistenceObserver");
             this.id = id;
         }
 
         @Override
         public void onChanged(T t) {
             if (t.booleanValue()) {
-                log("FriendExisted");
+                logger.log("FriendExisted");
                 viewModel.addFriendToCurrentUser(id);
             } else {
                 fieldAddFriend.setError("User with entered ID doesn't exist");
