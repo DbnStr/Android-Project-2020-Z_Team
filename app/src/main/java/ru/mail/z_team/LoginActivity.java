@@ -6,7 +6,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.InputType;
-import android.util.Log;
 import android.util.Pair;
 import android.util.Patterns;
 import android.view.View;
@@ -28,6 +27,7 @@ import com.google.firebase.auth.FirebaseAuth;
 public class LoginActivity extends AppCompatActivity implements LifecycleOwner {
 
     private static final String LOG_TAG = "LoginActivity";
+    private Logger logger;
 
     Button signInBtn;
     TextView toRegistration, recoverPassword;
@@ -40,7 +40,8 @@ public class LoginActivity extends AppCompatActivity implements LifecycleOwner {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d(LOG_TAG, "startOnCreate");
+        logger = new Logger(LOG_TAG, true);
+        logger.log("startOnCreate");
         setContentView(R.layout.activity_login);
 
         ActionBar actionBar = getSupportActionBar();
@@ -79,7 +80,7 @@ public class LoginActivity extends AppCompatActivity implements LifecycleOwner {
                 if (authState == getString(R.string.ON_PROGRESS)) {
                     progressDialog.show();
                 } else if (authState == getString(R.string.SUCCESS)) {
-                    Log.d(LOG_TAG, "signInWithEmail:success");
+                    logger.log("signInWithEmail:success");
                     progressDialog.dismiss();
                     Toast.makeText(LoginActivity.this, message + " signed in successfully",
                             Toast.LENGTH_SHORT).show();
@@ -163,7 +164,7 @@ public class LoginActivity extends AppCompatActivity implements LifecycleOwner {
     }
 
     private void loginUser(String email, String password) {
-        Log.d(LOG_TAG, "loginUser");
+        logger.log("loginUser");
         authViewModel.loginUser(email, password);
     }
 

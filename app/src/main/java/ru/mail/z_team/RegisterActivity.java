@@ -3,7 +3,6 @@ package ru.mail.z_team;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
@@ -20,7 +19,7 @@ import com.google.firebase.auth.FirebaseAuth;
 
 public class RegisterActivity extends AppCompatActivity {
 
-    private static final String TAG = "RegisterActivity";
+    private static final String LOG_TAG = "RegisterActivity";
     Button registerBtn;
     EditText emailEt, passwordEt;
     TextView toLogin;
@@ -32,8 +31,6 @@ public class RegisterActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ApplicationModified.from(getApplicationContext()).setNewRepository();
-        Log.d(TAG, "startOnCreate");
         setContentView(R.layout.activity_register);
 
         ActionBar actionBar = getSupportActionBar();
@@ -53,7 +50,6 @@ public class RegisterActivity extends AppCompatActivity {
             if (authState == getString(R.string.ON_PROGRESS)) {
                 progressDialog.show();
             } else if (authState == getString(R.string.SUCCESS)) {
-                Log.d(TAG, "createUserWithEmail:success");
                 progressDialog.dismiss();
                 Toast.makeText(RegisterActivity.this, message + " registered",
                         Toast.LENGTH_SHORT).show();
