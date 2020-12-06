@@ -5,6 +5,7 @@ import android.content.Context;
 import androidx.lifecycle.MutableLiveData;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.mapbox.geojson.Feature;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -37,28 +38,32 @@ public class GoOutRepository {
         logger = new Logger(LOG_TAG, true);
     }
 
-    public void postWalk(String title) {
+    public void postWalk(String title, Feature walk) {
         String currentUserId = FirebaseAuth.getInstance().getUid();
 
         updateCurrentUserName();
         userApi.getUserWalksById(currentUserId).enqueue(new DatabaseCallback<ArrayList<UserApi.Walk>>(LOG_TAG) {
             @Override
             public void onNullResponse(Response<ArrayList<UserApi.Walk>> response) {
-                addWalkInDb(0, title, currentUserId, currentUserName);
+                addWalkInDb(0, title, currentUserId, currentUserName, walk);
             }
 
             @Override
             public void onSuccessResponse(Response<ArrayList<UserApi.Walk>> response) {
                 int count = response.body().size();
-                addWalkInDb(count, title, currentUserId, currentUserName);
+                addWalkInDb(count, title, currentUserId, currentUserName, walk);
             }
         });
     }
 
-    private void addWalkInDb(int currentWalkNumber, String title, String id, String name) {
+    private void addWalkInDb(int currentWalkNumber,
+                             String title,
+                             String id,
+                             String name,
+                             Feature walk) {
         logger.log("Post a walk");
         Date currentTime = new Date();
-        userApi.addWalk(id, currentWalkNumber, new UserApi.Walk(title, sdf.format(currentTime), name)).enqueue(new Callback<UserApi.User>() {
+        userApi.addWalk(id, currentWalkNumber, new UserApi.Walk(title, sdf.format(currentTime), name, walk)).enqueue(new Callback<UserApi.User>() {
             @Override
             public void onResponse(Call<UserApi.User> call, Response<UserApi.User> response) {
                 if (response.isSuccessful()) {

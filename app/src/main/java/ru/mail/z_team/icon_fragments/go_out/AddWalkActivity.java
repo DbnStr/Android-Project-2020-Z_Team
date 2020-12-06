@@ -9,6 +9,8 @@ import android.widget.Toast;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.mapbox.geojson.Feature;
+
 import ru.mail.z_team.Logger;
 import ru.mail.z_team.R;
 
@@ -48,7 +50,8 @@ public class AddWalkActivity extends AppCompatActivity {
 
     private void postWalk() {
         logger.log("postWalk");
-        viewModel.postWalk(title);
+        Feature walk = null;
+        viewModel.postWalk(title, walk);
         viewModel.getPostStatus().observe(this, s -> {
             if (s == getString(R.string.SUCCESS)){
                 Toast.makeText(this, "Posted successfully", Toast.LENGTH_LONG).show();

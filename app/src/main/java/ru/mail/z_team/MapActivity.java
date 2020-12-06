@@ -2,7 +2,6 @@ package ru.mail.z_team;
 
 import android.graphics.Color;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
@@ -13,6 +12,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.mapbox.api.directions.v5.MapboxDirections;
 import com.mapbox.api.directions.v5.models.DirectionsResponse;
 import com.mapbox.api.directions.v5.models.DirectionsRoute;
+import com.mapbox.geojson.Feature;
 import com.mapbox.geojson.LineString;
 import com.mapbox.geojson.Point;
 import com.mapbox.mapboxsdk.Mapbox;
@@ -39,13 +39,16 @@ import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.lineWidth;
 
 public class MapActivity extends AppCompatActivity {
 
+    private static final String LOG_TAG = "MapActivity";
+    private Logger logger;
 
     private static final String ROUTE_SOURCE_ID = "route-source-id";
-    private static final String LOG_TAG = "MapActivity";
     private static final String LAYER_BELOW_ID = "layer-below-id";
     private static final String DIRECTIONS_LAYER_ID = "directions-layer-id";
     private static final String SAVE_TAG = "save-walk";
+
     private MapView mapView;
+    private Feature walkGeoJSON;
     private Point startPos = null, destinationPos = null;
     private final ArrayList<DirectionsRoute> routes = new ArrayList<>();
 
@@ -57,7 +60,8 @@ public class MapActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        log("OnCreate");
+        logger = new Logger(LOG_TAG, true);
+        logger.log("OnCreate");
 
         Mapbox.getInstance(this, getString(R.string.mapbox_access_token));
 
@@ -125,9 +129,9 @@ public class MapActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<DirectionsResponse> call, Response<DirectionsResponse> response) {
                 if (response.body() == null) {
-                    log("No routes found, make sure you set the right user and access token.");
+                    logger.log("No routes found, make sure you set the right user and access token.");
                 } else if (response.body().routes().size() == 0) {
-                    log("No routes found");
+                    logger.log("No routes found");
                 } else {
                     routes.addAll(response.body().routes());
                 }
@@ -137,7 +141,8 @@ public class MapActivity extends AppCompatActivity {
                         GeoJsonSource source = style.getSourceAs(ROUTE_SOURCE_ID);
 
                         if (source != null) {
-                            log("routes count = " + routes.size());
+                            logger.log("routes count = " + routes.size());
+                            walkGeoJSON = Feature.fromGeometry(LineString.fromPolyline(routes.get(0).geometry(), PRECISION_6));
                             source.setGeoJson(LineString.fromPolyline(routes.get(0).geometry(), PRECISION_6));
                         }
                     });
@@ -146,9 +151,13 @@ public class MapActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<DirectionsResponse> call, Throwable t) {
-                logError(t.getMessage());
+                logger.errorLog(t.getMessage());
             }
         });
+    }
+
+    public Feature getWalkGeoJSON() {
+        return walkGeoJSON;
     }
 
     @Override
@@ -192,13 +201,5 @@ public class MapActivity extends AppCompatActivity {
     public void onLowMemory() {
         super.onLowMemory();
         mapView.onLowMemory();
-    }
-
-    private void log(String message) {
-        Log.d(LOG_TAG, message);
-    }
-
-    private void logError(String message) {
-        Log.e(LOG_TAG, message);
     }
 }

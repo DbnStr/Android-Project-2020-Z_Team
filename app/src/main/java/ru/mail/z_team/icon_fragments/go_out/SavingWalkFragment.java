@@ -11,6 +11,9 @@ import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 
+import com.mapbox.geojson.Feature;
+
+import ru.mail.z_team.MapActivity;
 import ru.mail.z_team.R;
 
 public class SavingWalkFragment extends Fragment {
@@ -44,7 +47,8 @@ public class SavingWalkFragment extends Fragment {
 
     private void postWalk() {
         Log.d(LOG_TAG, "postWalk");
-        viewModel.postWalk(title);
+        Feature walk = ((MapActivity) getActivity()).getWalkGeoJSON();
+        viewModel.postWalk(title, walk);
         viewModel.getPostStatus().observe(getActivity(), s -> {
             if (s == getString(R.string.SUCCESS)){
                 Toast.makeText(getActivity(), "Posted successfully", Toast.LENGTH_LONG).show();
