@@ -10,8 +10,11 @@ import com.google.firebase.auth.FirebaseAuth;
 import java.util.ArrayList;
 
 import retrofit2.Response;
+import ru.mail.z_team.ApplicationModified;
 import ru.mail.z_team.Logger;
 import ru.mail.z_team.icon_fragments.DatabaseCallback;
+import ru.mail.z_team.local_storage.LocalDatabase;
+import ru.mail.z_team.local_storage.UserDao;
 import ru.mail.z_team.network.ApiRepository;
 import ru.mail.z_team.network.UserApi;
 import ru.mail.z_team.user.Friend;
@@ -23,12 +26,16 @@ public class ProfileRepository {
     private final Logger logger;
 
     private final UserApi userApi;
+    private final UserDao userDao;
+    private final LocalDatabase localDatabase;
 
     private final MutableLiveData<User> currentUserData = new MutableLiveData<>();
 
     public ProfileRepository(Context context) {
         userApi = ApiRepository.from(context).getUserApi();
         logger = new Logger(LOG_TAG, true);
+        userDao = ApplicationModified.from(context).getLocalDatabase().getUserDao();
+        localDatabase = ApplicationModified.from(context).getLocalDatabase();
     }
 
     public LiveData<User> getCurrentUser() {
@@ -49,8 +56,25 @@ public class ProfileRepository {
             @Override
             public void onSuccessResponse(Response<UserApi.User> response) {
                 currentUserData.postValue(transformToUser(response.body()));
+
+                localDatabase.databaseWriteExecutor.execute(() -> {
+                    userDao.insert(transformToLocalDBUser(response.body()));
+                });
             }
         });
+    }
+
+    private ru.mail.z_team.local_storage.User transformToLocalDBUser(UserApi.User user) {
+        ru.mail.z_team.local_storage.User result = new ru.mail.z_team.local_storage.User();
+        String name = user.name;
+        if (name == null) {
+            name = "Anonymous";
+        }
+        result.name = name;
+        result.id = user.id;
+        result.age = user.age;
+
+        return result;
     }
 
     private User transformToUser(UserApi.User user) {
@@ -83,6 +107,10 @@ public class ProfileRepository {
             @Override
             public void onSuccessResponse(Response<UserApi.User> response) {
                 logger.log("Change information about " + currentUserId);
+
+                localDatabase.databaseWriteExecutor.execute(() -> {
+                    userDao.insert(transformToLocalDBUser(newInformation));
+                });
             }
         });
     }
@@ -92,6 +120,15 @@ public class ProfileRepository {
         result.id = user.getId();
         result.name = user.getName();
         result.age = user.getAge();
+        return result;
+    }
+
+    private ru.mail.z_team.local_storage.User transformToLocalDBUser(User user) {
+        ru.mail.z_team.local_storage.User result = new ru.mail.z_team.local_storage.User();
+        result.name = user.name;
+        result.id = user.id;
+        result.age = user.age;
+
         return result;
     }
 
