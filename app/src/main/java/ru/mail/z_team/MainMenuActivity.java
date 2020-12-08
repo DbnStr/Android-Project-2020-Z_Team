@@ -20,6 +20,8 @@ import ru.mail.z_team.icon_fragments.friends.FriendsFragment;
 import ru.mail.z_team.icon_fragments.go_out.GoOutFragment;
 import ru.mail.z_team.icon_fragments.news.NewsFragment;
 import ru.mail.z_team.icon_fragments.profile.ProfileFragment;
+import ru.mail.z_team.icon_fragments.walks.Walk;
+import ru.mail.z_team.icon_fragments.walks.WalkFragment;
 import ru.mail.z_team.icon_fragments.walks.WalksFragment;
 import ru.mail.z_team.user.User;
 import ru.mail.z_team.user.UserFragment;
@@ -32,6 +34,7 @@ public class MainMenuActivity extends AppCompatActivity {
     static private final String PROFILE_TAG = "PROFILE FRAGMENT";
     static private final String USER_TAG = "USER FRAGMENT";
     static private final String GO_OUT_TAG = "GO_OUT FRAGMENT";
+    private static final String WALK_TAG = "WALK FRAGMENT";
 
     FirebaseAuth firebaseAuth;
     FragmentManager fragmentManager;
@@ -84,6 +87,14 @@ public class MainMenuActivity extends AppCompatActivity {
         fragmentManager
                 .beginTransaction()
                 .replace(container, new UserFragment(user), USER_TAG)
+                .addToBackStack(null)
+                .commitAllowingStateLoss();
+    }
+
+    public void openWalkProfile(Walk walk) {
+        fragmentManager
+                .beginTransaction()
+                .replace(container, new WalkFragment(walk), WALK_TAG)
                 .addToBackStack(null)
                 .commitAllowingStateLoss();
     }

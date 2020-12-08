@@ -14,6 +14,7 @@ import java.util.Date;
 import java.util.TimeZone;
 
 import ru.mail.z_team.Logger;
+import ru.mail.z_team.MainMenuActivity;
 import ru.mail.z_team.R;
 
 public class WalkAdapter extends RecyclerView.Adapter<WalksViewHolder> {
@@ -45,6 +46,12 @@ public class WalkAdapter extends RecyclerView.Adapter<WalksViewHolder> {
                 new SimpleDateFormat("EEE, MMM d, yyyy hh:mm:ss a z");
         sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
         holder.walkDate.setText(sdf.format(date));
+
+        holder.walkBody.setOnClickListener(v -> {
+            if (context instanceof MainMenuActivity){
+                ((MainMenuActivity) context).openWalkProfile(walks.get(position));
+            }
+        });
     }
 
     @Override
