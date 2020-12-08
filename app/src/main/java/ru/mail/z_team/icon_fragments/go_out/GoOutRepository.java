@@ -5,7 +5,7 @@ import android.content.Context;
 import androidx.lifecycle.MutableLiveData;
 
 import com.google.firebase.auth.FirebaseAuth;
-import com.mapbox.geojson.Feature;
+import com.mapbox.geojson.FeatureCollection;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -38,7 +38,7 @@ public class GoOutRepository {
         logger = new Logger(LOG_TAG, true);
     }
 
-    public void postWalk(String title, Feature walk) {
+    public void postWalk(String title, FeatureCollection walk) {
         String currentUserId = FirebaseAuth.getInstance().getUid();
 
         updateCurrentUserName();
@@ -60,7 +60,7 @@ public class GoOutRepository {
                              String title,
                              String id,
                              String name,
-                             Feature walk) {
+                             FeatureCollection walk) {
         logger.log("Post a walk");
         Date currentTime = new Date();
         userApi.addWalk(id, currentWalkNumber, new UserApi.Walk(title, sdf.format(currentTime), name, walk)).enqueue(new Callback<UserApi.User>() {

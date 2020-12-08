@@ -7,7 +7,7 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MediatorLiveData;
 
-import com.mapbox.geojson.Feature;
+import com.mapbox.geojson.FeatureCollection;
 
 import ru.mail.z_team.Logger;
 import ru.mail.z_team.R;
@@ -25,7 +25,7 @@ public class GoOutViewModel extends AndroidViewModel {
         repository = new GoOutRepository(getApplication());
     }
 
-    public void postWalk(String title, Feature walk) {
+    public void postWalk(String title, FeatureCollection walk) {
         logger.log("postWalk");
         repository.postWalk(title, walk);
         postWalkStatus.addSource(repository.getPostStatus(), postStatus -> {

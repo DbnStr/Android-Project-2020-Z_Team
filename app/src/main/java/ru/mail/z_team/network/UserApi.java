@@ -1,6 +1,6 @@
 package ru.mail.z_team.network;
 
-import com.mapbox.geojson.Feature;
+import com.mapbox.geojson.FeatureCollection;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,9 +47,9 @@ public interface UserApi {
         public String title;
         public String author;
         public String date;
-        public Feature walk;
+        public FeatureCollection walk;
 
-        public Walk(String title, String date, String author, Feature walk) {
+        public Walk(String title, String date, String author, FeatureCollection walk) {
             this.title = title;
             this.date = date;
             this.author = author;

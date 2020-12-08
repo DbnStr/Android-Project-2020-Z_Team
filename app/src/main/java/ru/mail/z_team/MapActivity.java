@@ -13,6 +13,7 @@ import com.mapbox.api.directions.v5.MapboxDirections;
 import com.mapbox.api.directions.v5.models.DirectionsResponse;
 import com.mapbox.api.directions.v5.models.DirectionsRoute;
 import com.mapbox.geojson.Feature;
+import com.mapbox.geojson.FeatureCollection;
 import com.mapbox.geojson.LineString;
 import com.mapbox.geojson.Point;
 import com.mapbox.mapboxsdk.Mapbox;
@@ -48,7 +49,7 @@ public class MapActivity extends AppCompatActivity {
     private static final String SAVE_TAG = "save-walk";
 
     private MapView mapView;
-    private Feature walkGeoJSON;
+    private FeatureCollection walkGeoJSON;
     private Point startPos = null, destinationPos = null;
     private final ArrayList<DirectionsRoute> routes = new ArrayList<>();
 
@@ -142,7 +143,14 @@ public class MapActivity extends AppCompatActivity {
 
                         if (source != null) {
                             logger.log("routes count = " + routes.size());
-                            walkGeoJSON = Feature.fromGeometry(LineString.fromPolyline(routes.get(0).geometry(), PRECISION_6));
+                            Feature walkRouteGeoJSON = Feature.fromGeometry(LineString.fromPolyline(routes.get(0).geometry(), PRECISION_6));
+                            Feature walkStartPointGeoJSON = Feature.fromGeometry(startPos);
+                            Feature walkDestinationPointGeoJSON = Feature.fromGeometry(destinationPos);
+                            ArrayList<Feature> walkList = new ArrayList<>();
+                            walkList.add(walkRouteGeoJSON);
+                            walkList.add(walkStartPointGeoJSON);
+                            walkList.add(walkDestinationPointGeoJSON);
+                            walkGeoJSON = FeatureCollection.fromFeatures(walkList);
                             source.setGeoJson(LineString.fromPolyline(routes.get(0).geometry(), PRECISION_6));
                         }
                     });
@@ -156,7 +164,7 @@ public class MapActivity extends AppCompatActivity {
         });
     }
 
-    public Feature getWalkGeoJSON() {
+    public FeatureCollection getWalkGeoJSON() {
         return walkGeoJSON;
     }
 

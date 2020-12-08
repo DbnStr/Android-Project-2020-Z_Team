@@ -11,7 +11,7 @@ import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 
-import com.mapbox.geojson.Feature;
+import com.mapbox.geojson.FeatureCollection;
 
 import ru.mail.z_team.MapActivity;
 import ru.mail.z_team.R;
@@ -47,7 +47,7 @@ public class SavingWalkFragment extends Fragment {
 
     private void postWalk() {
         Log.d(LOG_TAG, "postWalk");
-        Feature walk = ((MapActivity) getActivity()).getWalkGeoJSON();
+        FeatureCollection walk = ((MapActivity) getActivity()).getWalkGeoJSON();
         viewModel.postWalk(title, walk);
         viewModel.getPostStatus().observe(getActivity(), s -> {
             if (s == getString(R.string.SUCCESS)){
