@@ -16,12 +16,12 @@ import java.util.TimeZone;
 import ru.mail.z_team.Logger;
 import ru.mail.z_team.MainMenuActivity;
 import ru.mail.z_team.R;
-import ru.mail.z_team.icon_fragments.walks.Walk;
+import ru.mail.z_team.icon_fragments.walks.WalkAnnotation;
 
 public class NewsAdapter extends RecyclerView.Adapter<NewsViewHolder> {
     private static final String LOG_TAG = "NewsAdapter";
     private final Logger logger;
-    private ArrayList<Walk> walks;
+    private ArrayList<WalkAnnotation> walks;
     private final Context context;
 
     public NewsAdapter(Context context) {
@@ -64,7 +64,7 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsViewHolder> {
         return walks.size();
     }
 
-    public void setWalks(ArrayList<Walk> walks) {
+    public void setWalks(ArrayList<WalkAnnotation> walks) {
         this.walks = walks;
         this.notifyItemRangeChanged(0, this.walks.size());
     }

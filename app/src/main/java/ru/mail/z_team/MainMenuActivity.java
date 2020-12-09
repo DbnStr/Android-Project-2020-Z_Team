@@ -20,7 +20,7 @@ import ru.mail.z_team.icon_fragments.friends.FriendsFragment;
 import ru.mail.z_team.icon_fragments.go_out.GoOutFragment;
 import ru.mail.z_team.icon_fragments.news.NewsFragment;
 import ru.mail.z_team.icon_fragments.profile.ProfileFragment;
-import ru.mail.z_team.icon_fragments.walks.Walk;
+import ru.mail.z_team.icon_fragments.walks.WalkAnnotation;
 import ru.mail.z_team.icon_fragments.walks.WalkFragment;
 import ru.mail.z_team.icon_fragments.walks.WalksFragment;
 import ru.mail.z_team.user.User;
@@ -95,7 +95,7 @@ public class MainMenuActivity extends AppCompatActivity {
                 .commitAllowingStateLoss();
     }
 
-    public void openWalkProfile(Walk walk) {
+    public void openWalkProfile(WalkAnnotation walk) {
         logger.log("Open walk profile");
         fragmentManager
                 .beginTransaction()

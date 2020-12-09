@@ -40,6 +40,20 @@ public interface UserApi {
         public Friend(){}
     }
 
+    class WalkInfo {
+        public String title;
+        public String author;
+        public String date;
+        public String id;
+
+        public WalkInfo(String title, String date, String author, String id) {
+            this.title = title;
+            this.date = date;
+            this.author = author;
+            this.id = id;
+        }
+    }
+
     class Walk {
         public String title;
         public String author;
@@ -57,10 +71,10 @@ public interface UserApi {
     @GET("/Users/{id}.json")
     Call<User> getUserById(@Path("id") String id);
 
-    @GET("/Walks/{id}.json")
-    Call<ArrayList<Walk>> getUserWalksById(@Path("id") String id);
+    @GET("/WalkInfo/{id}.json")
+    Call<ArrayList<WalkInfo>> getUserWalksById(@Path("id") String id);
 
-    @GET("/Walks/{id}/{date}.json")
+    @GET("/WalkMaps/{id}/{date}.json")
     Call<Walk> getWalkByDateAndId(@Path("id") String id, @Path("date") String date);
 
     @GET("/FriendsIds/{id}.json")
@@ -69,8 +83,11 @@ public interface UserApi {
     @PUT("/Users/{id}.json")
     Call<User> addUser(@Path("id") String id, @Body User user);
 
-    @PUT("/Walks/{id}/{num}.json")
-    Call<User> addWalk(@Path("id") String id, @Path("num") int num, @Body Walk walk);
+    @PUT("/WalkInfo/{id}/{num}.json")
+    Call<WalkInfo> addWalkInfo(@Path("id") String id, @Path("num") int num, @Body WalkInfo walk);
+
+    @PUT("/WalkMaps/{id}/{num}.json")
+    Call<Walk> addWalk(@Path("id") String id, @Path("num") String num, @Body Walk walk);
 
     @PUT("/FriendsIds/{id}/{num}.json")
     Call<String> addFriendId(@Path("id") String id, @Path("num") int num, @Body String friendId);

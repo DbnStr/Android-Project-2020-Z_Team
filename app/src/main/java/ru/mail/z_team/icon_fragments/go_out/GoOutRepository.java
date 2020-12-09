@@ -42,14 +42,14 @@ public class GoOutRepository {
         String currentUserId = FirebaseAuth.getInstance().getUid();
 
         updateCurrentUserName();
-        userApi.getUserWalksById(currentUserId).enqueue(new DatabaseCallback<ArrayList<UserApi.Walk>>(LOG_TAG) {
+        userApi.getUserWalksById(currentUserId).enqueue(new DatabaseCallback<ArrayList<UserApi.WalkInfo>>(LOG_TAG) {
             @Override
-            public void onNullResponse(Response<ArrayList<UserApi.Walk>> response) {
+            public void onNullResponse(Response<ArrayList<UserApi.WalkInfo>> response) {
                 addWalkInDb(0, title, currentUserId, currentUserName, walk);
             }
 
             @Override
-            public void onSuccessResponse(Response<ArrayList<UserApi.Walk>> response) {
+            public void onSuccessResponse(Response<ArrayList<UserApi.WalkInfo>> response) {
                 int count = response.body().size();
                 addWalkInDb(count, title, currentUserId, currentUserName, walk);
             }
@@ -64,9 +64,9 @@ public class GoOutRepository {
         logger.log("Post a walk");
         Date currentTime = new Date();
         String map = walk.toJson();
-        userApi.addWalk(id, currentWalkNumber, new UserApi.Walk(title, sdf.format(currentTime), name, map)).enqueue(new Callback<UserApi.User>() {
+        userApi.addWalk(id, sdf.format(currentTime), new UserApi.Walk(title, sdf.format(currentTime), name, map)).enqueue(new Callback<UserApi.Walk>() {
             @Override
-            public void onResponse(Call<UserApi.User> call, Response<UserApi.User> response) {
+            public void onResponse(Call<UserApi.Walk> call, Response<UserApi.Walk> response) {
                 if (response.isSuccessful()) {
                     postStatus.postValue(PostStatus.OK);
                 } else {
@@ -75,7 +75,23 @@ public class GoOutRepository {
             }
 
             @Override
-            public void onFailure(Call<UserApi.User> call, Throwable t) {
+            public void onFailure(Call<UserApi.Walk> call, Throwable t) {
+                logger.errorLog(t.getMessage());
+                postStatus.postValue(PostStatus.FAILED);
+            }
+        });
+        userApi.addWalkInfo(id, currentWalkNumber, new UserApi.WalkInfo(title, sdf.format(currentTime), name, id)).enqueue(new Callback<UserApi.WalkInfo>() {
+            @Override
+            public void onResponse(Call<UserApi.WalkInfo> call, Response<UserApi.WalkInfo> response) {
+                if (response.isSuccessful()) {
+                    postStatus.postValue(PostStatus.OK);
+                } else {
+                    postStatus.postValue(PostStatus.FAILED);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<UserApi.WalkInfo> call, Throwable t) {
                 logger.errorLog(t.getMessage());
                 postStatus.postValue(PostStatus.FAILED);
             }

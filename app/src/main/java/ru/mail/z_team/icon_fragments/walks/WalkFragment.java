@@ -7,7 +7,9 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.mapbox.geojson.LineString;
 import com.mapbox.geojson.Point;
@@ -32,7 +34,8 @@ import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.lineWidth;
 
 public class WalkFragment extends Fragment {
 
-    private final Walk walk;
+    private final WalkAnnotation walkAnnotation;
+    private Walk walk;
     private MapView mapView;
     private LatLng start, destination;
 
@@ -43,8 +46,10 @@ public class WalkFragment extends Fragment {
     private static final String LOG_TAG = "WalkFragment";
     private final Logger logger;
 
-    public WalkFragment(Walk walk) {
-        this.walk = walk;
+    private WalkProfileViewModel viewModel;
+
+    public WalkFragment(WalkAnnotation walkAnnotation) {
+        this.walkAnnotation = walkAnnotation;
         logger = new Logger(LOG_TAG, true);
     }
 
@@ -57,6 +62,26 @@ public class WalkFragment extends Fragment {
 
         mapView = view.findViewById(R.id.walk_map_view);
         mapView.onCreate(savedInstanceState);
+        return view;
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        viewModel = new ViewModelProvider(this).get(WalkProfileViewModel.class);
+        viewModel.updateCurrentDisplayedWalk(walkAnnotation);
+        viewModel.getCurrentDisplayedWalk().observe(getActivity(), walk -> {
+            if (walk != null) {
+                this.walk = walk;
+                onMapCreated();
+            }
+        });
+
+
+    }
+
+    private void onMapCreated() {
         mapView.getMapAsync(mapboxMap -> mapboxMap.setStyle(Style.MAPBOX_STREETS, style -> {
 
             Point startPoint = (Point) walk.getMap().features().get(1).geometry();
@@ -65,7 +90,7 @@ public class WalkFragment extends Fragment {
             destination = new LatLng(destinationPoint.latitude(), destinationPoint.longitude());
             ArrayList<Point> routePoints = (ArrayList<Point>) ((LineString) walk.getMap().features().get(0).geometry()).coordinates();
             ArrayList<LatLng> routeLatLngs = new ArrayList<>();
-            for (Point point : routePoints){
+            for (Point point : routePoints) {
                 routeLatLngs.add(new LatLng(point.latitude(), point.longitude()));
             }
             LatLngBounds latLngBounds = new LatLngBounds.Builder()
@@ -76,7 +101,6 @@ public class WalkFragment extends Fragment {
             initLayers(style);
             showWalk(mapboxMap);
         }));
-        return view;
     }
 
     private void addMarker(MapboxMap mapboxMap, LatLng point) {

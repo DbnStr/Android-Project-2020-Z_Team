@@ -20,7 +20,7 @@ import ru.mail.z_team.R;
 public class WalkAdapter extends RecyclerView.Adapter<WalksViewHolder> {
     private static final String LOG_TAG = "WalkAdapter";
     private final Logger logger;
-    private ArrayList<Walk> walks;
+    private ArrayList<WalkAnnotation> walks;
     private final Context context;
 
     public WalkAdapter(Context context) {
@@ -60,7 +60,7 @@ public class WalkAdapter extends RecyclerView.Adapter<WalksViewHolder> {
         return walks.size();
     }
 
-    public void setWalks(ArrayList<Walk> walks) {
+    public void setWalks(ArrayList<WalkAnnotation> walks) {
         this.walks = walks;
         this.notifyItemRangeChanged(0, this.walks.size());
     }
