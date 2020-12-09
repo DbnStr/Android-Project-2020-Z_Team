@@ -9,6 +9,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.mapbox.api.directions.v5.DirectionsCriteria;
 import com.mapbox.api.directions.v5.MapboxDirections;
 import com.mapbox.api.directions.v5.models.DirectionsResponse;
 import com.mapbox.api.directions.v5.models.DirectionsRoute;
@@ -123,6 +124,7 @@ public class MapActivity extends AppCompatActivity {
         MapboxDirections client = MapboxDirections.builder()
                 .origin(startPos)
                 .destination(destinationPos)
+                .profile(DirectionsCriteria.PROFILE_WALKING)
                 .accessToken(getString(R.string.mapbox_access_token))
                 .build();
 
