@@ -1,11 +1,14 @@
 package ru.mail.z_team.icon_fragments.walks;
 
+import com.mapbox.geojson.FeatureCollection;
+
 import java.util.Date;
 
 public class Walk implements Comparable<Walk>{
     String title;
     String author;
     Date date;
+    FeatureCollection map;
 
     public void setAuthor(String author) {
         this.author = author;
@@ -19,6 +22,10 @@ public class Walk implements Comparable<Walk>{
         this.date = date;
     }
 
+    public void setMap(FeatureCollection map) {
+        this.map = map;
+    }
+
     public String getAuthor() {
         return author;
     }
@@ -29,6 +36,10 @@ public class Walk implements Comparable<Walk>{
 
     public String getTitle() {
         return title;
+    }
+
+    public FeatureCollection getMap() {
+        return map;
     }
 
     @Override

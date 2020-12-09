@@ -1,9 +1,6 @@
 package ru.mail.z_team.network;
 
-import com.mapbox.geojson.FeatureCollection;
-
 import java.util.ArrayList;
-import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.http.Body;
@@ -47,9 +44,9 @@ public interface UserApi {
         public String title;
         public String author;
         public String date;
-        public FeatureCollection walk;
+        public String walk;
 
-        public Walk(String title, String date, String author, FeatureCollection walk) {
+        public Walk(String title, String date, String author, String walk) {
             this.title = title;
             this.date = date;
             this.author = author;
@@ -60,11 +57,11 @@ public interface UserApi {
     @GET("/Users/{id}.json")
     Call<User> getUserById(@Path("id") String id);
 
-    @GET("/Users/{id}/friends.json")
-    Call<List<Friend>> getUserFriendsById(@Path("id") String id);
-
     @GET("/Walks/{id}.json")
     Call<ArrayList<Walk>> getUserWalksById(@Path("id") String id);
+
+    @GET("/Walks/{id}/{date}.json")
+    Call<Walk> getWalkByDateAndId(@Path("id") String id, @Path("date") String date);
 
     @GET("/FriendsIds/{id}.json")
     Call<ArrayList<String>> getUserFriendsIds(@Path("id") String id);

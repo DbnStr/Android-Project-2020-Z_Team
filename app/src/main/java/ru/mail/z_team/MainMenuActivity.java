@@ -36,6 +36,9 @@ public class MainMenuActivity extends AppCompatActivity {
     static private final String GO_OUT_TAG = "GO_OUT FRAGMENT";
     private static final String WALK_TAG = "WALK FRAGMENT";
 
+    private static final String LOG_TAG = "MainMenuActivity";
+    private Logger logger;
+
     FirebaseAuth firebaseAuth;
     FragmentManager fragmentManager;
     int container;
@@ -45,6 +48,7 @@ public class MainMenuActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_menu);
+        logger = new Logger(LOG_TAG, true);
 
         firebaseAuth = FirebaseAuth.getInstance();
 
@@ -92,6 +96,7 @@ public class MainMenuActivity extends AppCompatActivity {
     }
 
     public void openWalkProfile(Walk walk) {
+        logger.log("Open walk profile");
         fragmentManager
                 .beginTransaction()
                 .replace(container, new WalkFragment(walk), WALK_TAG)

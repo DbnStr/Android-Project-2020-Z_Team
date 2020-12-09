@@ -48,6 +48,7 @@ public class WalkAdapter extends RecyclerView.Adapter<WalksViewHolder> {
         holder.walkDate.setText(sdf.format(date));
 
         holder.walkBody.setOnClickListener(v -> {
+            logger.log("clicked on holder.body");
             if (context instanceof MainMenuActivity){
                 ((MainMenuActivity) context).openWalkProfile(walks.get(position));
             }

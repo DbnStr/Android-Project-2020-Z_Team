@@ -6,6 +6,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.mapbox.geojson.FeatureCollection;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -25,6 +26,7 @@ public class WalksRepository {
     private final UserApi userApi;
 
     private final MutableLiveData<ArrayList<Walk>> currentUserWalks = new MutableLiveData<>();
+    private final MutableLiveData<Walk> currentDisplayedWalk = new MutableLiveData<>();
 
     SimpleDateFormat sdf =
             new SimpleDateFormat("EEE, MMM d, yyyy hh:mm:ss a z");
@@ -36,6 +38,24 @@ public class WalksRepository {
 
     public LiveData<ArrayList<Walk>> getCurrentUserWalks() {
         return currentUserWalks;
+    }
+
+    public LiveData<Walk> getCurrentDisplayedWalk() {
+        return currentDisplayedWalk;
+    }
+
+    public void updateCurrentDisplayedWalk(String userId, String date){
+        userApi.getWalkByDateAndId(userId, date).enqueue(new DatabaseCallback<UserApi.Walk>(LOG_TAG) {
+            @Override
+            public void onNullResponse(Response<UserApi.Walk> response) {
+                logger.errorLog("This walk doesn't exist");
+            }
+
+            @Override
+            public void onSuccessResponse(Response<UserApi.Walk> response) {
+                currentDisplayedWalk.postValue(transformToWalk(response.body()));
+            }
+        });
     }
 
     public void updateCurrentUserWalks() {
@@ -67,6 +87,8 @@ public class WalksRepository {
         Walk transformed = new Walk();
         transformed.setTitle(walk.title);
         transformed.setAuthor(walk.author);
+        FeatureCollection map = FeatureCollection.fromJson(walk.walk);
+        transformed.setMap(map);
         try {
             transformed.setDate(sdf.parse(walk.date));
         } catch (ParseException e) {

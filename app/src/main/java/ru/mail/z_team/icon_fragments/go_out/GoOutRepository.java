@@ -63,7 +63,8 @@ public class GoOutRepository {
                              FeatureCollection walk) {
         logger.log("Post a walk");
         Date currentTime = new Date();
-        userApi.addWalk(id, currentWalkNumber, new UserApi.Walk(title, sdf.format(currentTime), name, walk)).enqueue(new Callback<UserApi.User>() {
+        String map = walk.toJson();
+        userApi.addWalk(id, currentWalkNumber, new UserApi.Walk(title, sdf.format(currentTime), name, map)).enqueue(new Callback<UserApi.User>() {
             @Override
             public void onResponse(Call<UserApi.User> call, Response<UserApi.User> response) {
                 if (response.isSuccessful()) {
