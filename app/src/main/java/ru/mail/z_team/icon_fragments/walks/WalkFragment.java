@@ -10,6 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import com.mapbox.mapboxsdk.Mapbox;
+import com.mapbox.mapboxsdk.annotations.MarkerOptions;
 import com.mapbox.mapboxsdk.camera.CameraPosition;
 import com.mapbox.mapboxsdk.camera.CameraUpdateFactory;
 import com.mapbox.mapboxsdk.geometry.LatLng;
@@ -63,6 +64,12 @@ public class WalkFragment extends Fragment {
             showWalk(mapboxMap);
         }));
         return view;
+    }
+
+    private void addMarker(MapboxMap mapboxMap, LatLng point) {
+        mapboxMap.addMarker(new MarkerOptions()
+                .position(point)
+                .title("new point"));
     }
 
     private void initLayers(@NonNull Style loadedMapStyle) {
