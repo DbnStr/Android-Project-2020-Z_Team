@@ -18,7 +18,7 @@ import ru.mail.z_team.R;
 
 public class SavingWalkFragment extends Fragment {
 
-    private static final String LOG_TAG = "AddWalkActivity";
+    private static final String LOG_TAG = "SavingWalkFragment";
     Button addWalk;
     EditText walkTitle;
     String title;
