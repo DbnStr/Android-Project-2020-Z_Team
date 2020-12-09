@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
+import com.mapbox.geojson.Point;
 import com.mapbox.mapboxsdk.Mapbox;
 import com.mapbox.mapboxsdk.annotations.MarkerOptions;
 import com.mapbox.mapboxsdk.camera.CameraPosition;
@@ -88,6 +89,12 @@ public class WalkFragment extends Fragment {
                 GeoJsonSource source = style.getSourceAs(ROUTE_SOURCE_ID);
 
                 if (source != null) {
+                    Point startPoint = (Point) walk.getMap().features().get(1).geometry();
+                    LatLng start = new LatLng(startPoint.latitude(), startPoint.longitude());
+                    Point destinationPoint = (Point) walk.getMap().features().get(2).geometry();
+                    LatLng destination = new LatLng(destinationPoint.latitude(), destinationPoint.longitude());
+                    addMarker(mapboxMap, start);
+                    addMarker(mapboxMap, destination);
                     source.setGeoJson(walk.getMap());
                 }
             });
