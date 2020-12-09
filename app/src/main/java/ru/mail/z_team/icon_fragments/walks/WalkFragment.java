@@ -9,17 +9,20 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
+import com.mapbox.geojson.LineString;
 import com.mapbox.geojson.Point;
 import com.mapbox.mapboxsdk.Mapbox;
 import com.mapbox.mapboxsdk.annotations.MarkerOptions;
-import com.mapbox.mapboxsdk.camera.CameraPosition;
 import com.mapbox.mapboxsdk.camera.CameraUpdateFactory;
 import com.mapbox.mapboxsdk.geometry.LatLng;
+import com.mapbox.mapboxsdk.geometry.LatLngBounds;
 import com.mapbox.mapboxsdk.maps.MapView;
 import com.mapbox.mapboxsdk.maps.MapboxMap;
 import com.mapbox.mapboxsdk.maps.Style;
 import com.mapbox.mapboxsdk.style.layers.LineLayer;
 import com.mapbox.mapboxsdk.style.sources.GeoJsonSource;
+
+import java.util.ArrayList;
 
 import ru.mail.z_team.Logger;
 import ru.mail.z_team.R;
@@ -31,6 +34,7 @@ public class WalkFragment extends Fragment {
 
     private final Walk walk;
     private MapView mapView;
+    private LatLng start, destination;
 
     private static final String ROUTE_SOURCE_ID = "route-source-id";
     private static final String LAYER_BELOW_ID = "layer-below-id";
@@ -54,12 +58,20 @@ public class WalkFragment extends Fragment {
         mapView = view.findViewById(R.id.walk_map_view);
         mapView.onCreate(savedInstanceState);
         mapView.getMapAsync(mapboxMap -> mapboxMap.setStyle(Style.MAPBOX_STREETS, style -> {
-            CameraPosition position = new CameraPosition.Builder()
-                    .target(new LatLng(55.765762, 37.685479))
-                    .zoom(14)
-                    .tilt(20)
+
+            Point startPoint = (Point) walk.getMap().features().get(1).geometry();
+            start = new LatLng(startPoint.latitude(), startPoint.longitude());
+            Point destinationPoint = (Point) walk.getMap().features().get(2).geometry();
+            destination = new LatLng(destinationPoint.latitude(), destinationPoint.longitude());
+            ArrayList<Point> routePoints = (ArrayList<Point>) ((LineString) walk.getMap().features().get(0).geometry()).coordinates();
+            ArrayList<LatLng> routeLatLngs = new ArrayList<>();
+            for (Point point : routePoints){
+                routeLatLngs.add(new LatLng(point.latitude(), point.longitude()));
+            }
+            LatLngBounds latLngBounds = new LatLngBounds.Builder()
+                    .includes(routeLatLngs)
                     .build();
-            mapboxMap.animateCamera(CameraUpdateFactory.newCameraPosition(position), 7000);
+            mapboxMap.animateCamera(CameraUpdateFactory.newLatLngBounds(latLngBounds, 10), 7000);
 
             initLayers(style);
             showWalk(mapboxMap);
@@ -89,10 +101,6 @@ public class WalkFragment extends Fragment {
                 GeoJsonSource source = style.getSourceAs(ROUTE_SOURCE_ID);
 
                 if (source != null) {
-                    Point startPoint = (Point) walk.getMap().features().get(1).geometry();
-                    LatLng start = new LatLng(startPoint.latitude(), startPoint.longitude());
-                    Point destinationPoint = (Point) walk.getMap().features().get(2).geometry();
-                    LatLng destination = new LatLng(destinationPoint.latitude(), destinationPoint.longitude());
                     addMarker(mapboxMap, start);
                     addMarker(mapboxMap, destination);
                     source.setGeoJson(walk.getMap());
