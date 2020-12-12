@@ -13,6 +13,8 @@ import androidx.fragment.app.Fragment;
 
 import com.mapbox.geojson.FeatureCollection;
 
+import java.util.ArrayList;
+
 import ru.mail.z_team.MapActivity;
 import ru.mail.z_team.R;
 
@@ -48,7 +50,8 @@ public class SavingWalkFragment extends Fragment {
     private void postWalk() {
         Log.d(LOG_TAG, "postWalk");
         FeatureCollection walk = ((MapActivity) getActivity()).getWalkGeoJSON();
-        viewModel.postWalk(title, walk);
+        ArrayList<Story> stories = ((MapActivity) getActivity()).getStories();
+        viewModel.postWalk(title, walk, stories);
         viewModel.getPostStatus().observe(getActivity(), s -> {
             if (s == getString(R.string.SUCCESS)){
                 Toast.makeText(getActivity(), "Posted successfully", Toast.LENGTH_LONG).show();

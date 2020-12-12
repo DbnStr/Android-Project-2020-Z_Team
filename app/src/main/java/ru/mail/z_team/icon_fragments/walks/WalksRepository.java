@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import retrofit2.Response;
 import ru.mail.z_team.Logger;
 import ru.mail.z_team.icon_fragments.DatabaseCallback;
-import ru.mail.z_team.network.ApiRepository;
+import ru.mail.z_team.network.DatabaseApiRepository;
 import ru.mail.z_team.network.UserApi;
 
 public class WalksRepository {
@@ -30,7 +30,7 @@ public class WalksRepository {
             new SimpleDateFormat("EEE, MMM d, yyyy hh:mm:ss a z");
 
     public WalksRepository(Context context) {
-        userApi = ApiRepository.from(context).getUserApi();
+        userApi = DatabaseApiRepository.from(context).getUserApi();
         logger = new Logger(LOG_TAG, true);
     }
 

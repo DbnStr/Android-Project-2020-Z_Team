@@ -59,12 +59,22 @@ public interface UserApi {
         public String author;
         public String date;
         public String walk;
+        public ArrayList<Story> stories;
 
-        public Walk(String title, String date, String author, String walk) {
+        public Walk(String title, String date, String author, String walk, ArrayList<Story> stories) {
             this.title = title;
             this.date = date;
             this.author = author;
             this.walk = walk;
+            this.stories = stories;
+        }
+    }
+
+    class Story {
+        public String description;
+
+        public Story(String description) {
+            this.description = description;
         }
     }
 

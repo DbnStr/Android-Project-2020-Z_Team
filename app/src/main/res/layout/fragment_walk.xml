@@ -4,7 +4,7 @@
     android:id="@+id/walk_map_container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MapActivity"
+    tools:context=".MainMenuActivity"
     xmlns:mapbox="http://schemas.android.com/tools">
 
     <com.mapbox.mapboxsdk.maps.MapView

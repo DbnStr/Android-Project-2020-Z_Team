@@ -37,6 +37,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import ru.mail.z_team.icon_fragments.go_out.SavingWalkFragment;
+import ru.mail.z_team.icon_fragments.go_out.Story;
 import ru.mail.z_team.icon_fragments.go_out.StoryFragment;
 
 import static com.mapbox.core.constants.Constants.PRECISION_6;
@@ -59,6 +60,7 @@ public class MapActivity extends AppCompatActivity {
     private Point startPos = null, destinationPos = null;
     private final ArrayList<DirectionsRoute> routes = new ArrayList<>();
     private final ArrayList<Feature> walkList = new ArrayList<>();
+    private final ArrayList<Story> stories = new ArrayList<>();
 
     private FloatingActionButton saveMapButton;
 
@@ -94,7 +96,6 @@ public class MapActivity extends AppCompatActivity {
                     addMarker(mapboxMap, point);
                     getRoute(mapboxMap, startPos, destinationPos);
                 } else {
-                    //Toast.makeText(getApplication(), "You have chosen two points", Toast.LENGTH_LONG).show();
                     onMapClicked(mapboxMap, point);
                 }
                 return true;
@@ -139,10 +140,17 @@ public class MapActivity extends AppCompatActivity {
         Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.ic_baseline_photo_24);
 
         Icon icon = iconFactory.fromBitmap(bitmap);
+
+        //TODO resolve problem with custom icon
+
         mapboxMap.addMarker(new MarkerOptions()
                 .position(point)
                 //.icon(icon)
                 .title("story point"));
+    }
+
+    public void addStory(Story story) {
+        stories.add(story);
     }
 
     private void addMarker(MapboxMap mapboxMap, LatLng point) {
@@ -208,6 +216,10 @@ public class MapActivity extends AppCompatActivity {
 
     public FeatureCollection getWalkGeoJSON() {
         return walkGeoJSON;
+    }
+
+    public ArrayList<Story> getStories() {
+        return stories;
     }
 
     @Override

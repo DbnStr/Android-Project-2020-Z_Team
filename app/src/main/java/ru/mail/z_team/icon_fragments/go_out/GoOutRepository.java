@@ -16,7 +16,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import ru.mail.z_team.Logger;
 import ru.mail.z_team.icon_fragments.DatabaseCallback;
-import ru.mail.z_team.network.ApiRepository;
+import ru.mail.z_team.network.DatabaseApiRepository;
 import ru.mail.z_team.network.UserApi;
 
 public class GoOutRepository {
@@ -34,24 +34,24 @@ public class GoOutRepository {
     private String currentUserName;
 
     public GoOutRepository(Context context) {
-        userApi = ApiRepository.from(context).getUserApi();
+        userApi = DatabaseApiRepository.from(context).getUserApi();
         logger = new Logger(LOG_TAG, true);
     }
 
-    public void postWalk(String title, FeatureCollection walk) {
+    public void postWalk(String title, FeatureCollection walk, ArrayList<Story> stories) {
         String currentUserId = FirebaseAuth.getInstance().getUid();
 
         updateCurrentUserName();
         userApi.getUserWalksById(currentUserId).enqueue(new DatabaseCallback<ArrayList<UserApi.WalkInfo>>(LOG_TAG) {
             @Override
             public void onNullResponse(Response<ArrayList<UserApi.WalkInfo>> response) {
-                addWalkInDb(0, title, currentUserId, currentUserName, walk);
+                addWalkInDb(0, title, currentUserId, currentUserName, walk, stories);
             }
 
             @Override
             public void onSuccessResponse(Response<ArrayList<UserApi.WalkInfo>> response) {
                 int count = response.body().size();
-                addWalkInDb(count, title, currentUserId, currentUserName, walk);
+                addWalkInDb(count, title, currentUserId, currentUserName, walk, stories);
             }
         });
     }
@@ -60,11 +60,13 @@ public class GoOutRepository {
                              String title,
                              String id,
                              String name,
-                             FeatureCollection walk) {
+                             FeatureCollection walk,
+                             ArrayList<Story> stories) {
         logger.log("Post a walk");
         Date currentTime = new Date();
         String map = walk.toJson();
-        userApi.addWalk(id, sdf.format(currentTime), new UserApi.Walk(title, sdf.format(currentTime), name, map)).enqueue(new Callback<UserApi.Walk>() {
+        ArrayList<UserApi.Story> userApiStories = transformToUserApiStoryAll(stories);
+        userApi.addWalk(id, sdf.format(currentTime), new UserApi.Walk(title, sdf.format(currentTime), name, map, userApiStories)).enqueue(new Callback<UserApi.Walk>() {
             @Override
             public void onResponse(Call<UserApi.Walk> call, Response<UserApi.Walk> response) {
                 if (response.isSuccessful()) {
@@ -96,6 +98,19 @@ public class GoOutRepository {
                 postStatus.postValue(PostStatus.FAILED);
             }
         });
+    }
+
+    private ArrayList<UserApi.Story> transformToUserApiStoryAll(ArrayList<Story> stories) {
+        ArrayList<UserApi.Story> res = new ArrayList<>();
+        for (Story story : stories){
+            res.add(transformToUserApiStory(story));
+        }
+        return res;
+    }
+
+    private UserApi.Story transformToUserApiStory(Story story) {
+        UserApi.Story apiStory = new UserApi.Story(story.getDescription());
+        return apiStory;
     }
 
     private void updateCurrentUserName() {
