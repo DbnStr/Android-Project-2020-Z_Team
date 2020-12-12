@@ -1,9 +1,10 @@
 package ru.mail.z_team;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -18,6 +19,8 @@ import com.mapbox.geojson.FeatureCollection;
 import com.mapbox.geojson.LineString;
 import com.mapbox.geojson.Point;
 import com.mapbox.mapboxsdk.Mapbox;
+import com.mapbox.mapboxsdk.annotations.Icon;
+import com.mapbox.mapboxsdk.annotations.IconFactory;
 import com.mapbox.mapboxsdk.annotations.MarkerOptions;
 import com.mapbox.mapboxsdk.camera.CameraPosition;
 import com.mapbox.mapboxsdk.camera.CameraUpdateFactory;
@@ -34,6 +37,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import ru.mail.z_team.icon_fragments.go_out.SavingWalkFragment;
+import ru.mail.z_team.icon_fragments.go_out.StoryFragment;
 
 import static com.mapbox.core.constants.Constants.PRECISION_6;
 import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.lineColor;
@@ -48,11 +52,13 @@ public class MapActivity extends AppCompatActivity {
     private static final String LAYER_BELOW_ID = "layer-below-id";
     private static final String DIRECTIONS_LAYER_ID = "directions-layer-id";
     private static final String SAVE_TAG = "save-walk";
+    private static final String STORY_TAG = "story";
 
     private MapView mapView;
     private FeatureCollection walkGeoJSON;
     private Point startPos = null, destinationPos = null;
     private final ArrayList<DirectionsRoute> routes = new ArrayList<>();
+    private final ArrayList<Feature> walkList = new ArrayList<>();
 
     private FloatingActionButton saveMapButton;
 
@@ -88,7 +94,8 @@ public class MapActivity extends AppCompatActivity {
                     addMarker(mapboxMap, point);
                     getRoute(mapboxMap, startPos, destinationPos);
                 } else {
-                    Toast.makeText(getApplication(), "You have chosen two points", Toast.LENGTH_LONG).show();
+                    //Toast.makeText(getApplication(), "You have chosen two points", Toast.LENGTH_LONG).show();
+                    onMapClicked(mapboxMap, point);
                 }
                 return true;
             });
@@ -102,6 +109,40 @@ public class MapActivity extends AppCompatActivity {
                         .commitAllowingStateLoss();
             });
         }));
+    }
+
+    private void onMapClicked(MapboxMap mapboxMap, LatLng point) {
+        if (mapboxMap != null) {
+            mapboxMap.getStyle(style -> {
+                Point storyPoint = Point.fromLngLat(point.getLongitude(), point.getLatitude());
+                addStoryMarker(mapboxMap, point);
+
+                Feature feature = Feature.fromGeometry(storyPoint);
+                feature.addStringProperty("markerType", "storyMarker");
+
+                walkList.add(feature);
+                walkGeoJSON = FeatureCollection.fromFeatures(walkList);
+
+                mapView.setVisibility(View.GONE);
+                getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.map_container, new StoryFragment(storyPoint), STORY_TAG)
+                        .addToBackStack(null)
+                        .commitAllowingStateLoss();
+
+            });
+        }
+    }
+
+    private void addStoryMarker(MapboxMap mapboxMap, LatLng point) {
+        IconFactory iconFactory = IconFactory.getInstance(MapActivity.this);
+        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.ic_baseline_photo_24);
+
+        Icon icon = iconFactory.fromBitmap(bitmap);
+        mapboxMap.addMarker(new MarkerOptions()
+                .position(point)
+                //.icon(icon)
+                .title("story point"));
     }
 
     private void addMarker(MapboxMap mapboxMap, LatLng point) {
@@ -148,7 +189,6 @@ public class MapActivity extends AppCompatActivity {
                             Feature walkRouteGeoJSON = Feature.fromGeometry(LineString.fromPolyline(routes.get(0).geometry(), PRECISION_6));
                             Feature walkStartPointGeoJSON = Feature.fromGeometry(startPos);
                             Feature walkDestinationPointGeoJSON = Feature.fromGeometry(destinationPos);
-                            ArrayList<Feature> walkList = new ArrayList<>();
                             walkList.add(walkRouteGeoJSON);
                             walkList.add(walkStartPointGeoJSON);
                             walkList.add(walkDestinationPointGeoJSON);
@@ -211,5 +251,9 @@ public class MapActivity extends AppCompatActivity {
     public void onLowMemory() {
         super.onLowMemory();
         mapView.onLowMemory();
+    }
+
+    public void backToActivity() {
+        mapView.setVisibility(View.VISIBLE);
     }
 }
