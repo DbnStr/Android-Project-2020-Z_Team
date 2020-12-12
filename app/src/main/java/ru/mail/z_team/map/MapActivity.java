@@ -41,8 +41,7 @@ public class MapActivity extends AppCompatActivity {
             fragmentManager
                     .beginTransaction()
                     .replace(container, new MapFragment(), MAP_TAG)
-                    .addToBackStack(null)
-                    .commitAllowingStateLoss();
+                    .commit();
         }
     }
 

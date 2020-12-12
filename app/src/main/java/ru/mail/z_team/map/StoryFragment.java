@@ -103,8 +103,8 @@ public class StoryFragment extends Fragment {
 
             ((MapActivity) getActivity()).addStory(story);
 
-            //TODO there must be sth better to close fragment
-            //getActivity().onBackPressed();
+            //TODO there must be sth to close fragment
+            getActivity().getSupportFragmentManager().popBackStack();
         });
 
         addPhotoBtn.setOnClickListener(v -> {
@@ -234,4 +234,5 @@ public class StoryFragment extends Fragment {
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
+
 }

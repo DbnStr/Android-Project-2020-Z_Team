@@ -71,6 +71,8 @@ public class MapFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
+        logger.log("onCreateView");
+
         Mapbox.getInstance(getContext(), getString(R.string.mapbox_access_token));
 
         View view = inflater.inflate(R.layout.fragment_map, container, false);
@@ -102,7 +104,7 @@ public class MapFragment extends Fragment {
                 mapView.setVisibility(View.GONE);
                 getActivity().getSupportFragmentManager()
                         .beginTransaction()
-                        .replace(R.id.map_container, new SavingWalkFragment(), SAVE_TAG)
+                        .replace(R.id.map_activity_container, new SavingWalkFragment(), SAVE_TAG)
                         .addToBackStack(null)
                         .commitAllowingStateLoss();
             });
@@ -126,7 +128,7 @@ public class MapFragment extends Fragment {
                 mapView.setVisibility(View.GONE);
                 getActivity().getSupportFragmentManager()
                         .beginTransaction()
-                        .replace(R.id.map_container, new StoryFragment(storyPoint), STORY_TAG)
+                        .replace(R.id.map_activity_container, new StoryFragment(storyPoint), STORY_TAG)
                         .addToBackStack(null)
                         .commitAllowingStateLoss();
 
@@ -211,6 +213,7 @@ public class MapFragment extends Fragment {
 
     @Override
     public void onResume() {
+        logger.log("onResume");
         super.onResume();
         mapView.onResume();
     }
@@ -218,30 +221,35 @@ public class MapFragment extends Fragment {
     @Override
     @SuppressWarnings({"MissingPermission"})
     public void onStart() {
+        logger.log("onStart");
         super.onStart();
         mapView.onStart();
     }
 
     @Override
     public void onStop() {
+        logger.log("onStop");
         super.onStop();
         mapView.onStop();
     }
 
     @Override
     public void onPause() {
+        logger.log("onPause");
         super.onPause();
         mapView.onPause();
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
+        logger.log("onSaveInstance");
         super.onSaveInstanceState(outState);
         mapView.onSaveInstanceState(outState);
     }
 
     @Override
     public void onDestroy() {
+        logger.log("onDestroy");
         super.onDestroy();
         mapView.onDestroy();
     }
