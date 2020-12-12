@@ -1,4 +1,4 @@
-package ru.mail.z_team.icon_fragments.go_out;
+package ru.mail.z_team.map;
 
 import android.os.Bundle;
 import android.util.Log;
@@ -15,8 +15,8 @@ import com.mapbox.geojson.FeatureCollection;
 
 import java.util.ArrayList;
 
-import ru.mail.z_team.MapActivity;
 import ru.mail.z_team.R;
+import ru.mail.z_team.icon_fragments.go_out.GoOutViewModel;
 
 public class SavingWalkFragment extends Fragment {
 

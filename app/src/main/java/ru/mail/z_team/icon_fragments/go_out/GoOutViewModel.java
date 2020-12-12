@@ -13,6 +13,7 @@ import java.util.ArrayList;
 
 import ru.mail.z_team.Logger;
 import ru.mail.z_team.R;
+import ru.mail.z_team.map.Story;
 
 public class GoOutViewModel extends AndroidViewModel {
 

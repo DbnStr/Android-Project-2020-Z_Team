@@ -1,4 +1,4 @@
-package ru.mail.z_team.icon_fragments.go_out;
+package ru.mail.z_team.map;
 
 import android.Manifest;
 import android.app.AlertDialog;
@@ -28,7 +28,6 @@ import androidx.fragment.app.Fragment;
 import com.mapbox.geojson.Point;
 
 import ru.mail.z_team.Logger;
-import ru.mail.z_team.MapActivity;
 import ru.mail.z_team.R;
 
 import static android.app.Activity.RESULT_OK;
@@ -86,7 +85,6 @@ public class StoryFragment extends Fragment {
         uploadBtn.setOnClickListener(v -> {
             logger.log("uploadBtn clicked");
             String descriptionText = description.getText().toString().trim();
-            String place = "";
 
             if (TextUtils.isEmpty(descriptionText)) {
                 description.setError("Enter description");
@@ -106,7 +104,7 @@ public class StoryFragment extends Fragment {
             ((MapActivity) getActivity()).addStory(story);
 
             //TODO there must be sth better to close fragment
-            getActivity().onBackPressed();
+            //getActivity().onBackPressed();
         });
 
         addPhotoBtn.setOnClickListener(v -> {
@@ -235,11 +233,5 @@ public class StoryFragment extends Fragment {
             logger.errorLog("onActivityResult result code was not ok");
         }
         super.onActivityResult(requestCode, resultCode, data);
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        ((MapActivity) getActivity()).backToActivity();
     }
 }

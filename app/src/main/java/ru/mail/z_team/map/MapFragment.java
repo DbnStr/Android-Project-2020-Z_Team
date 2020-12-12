@@ -1,13 +1,15 @@
-package ru.mail.z_team;
+package ru.mail.z_team.map;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.mapbox.api.directions.v5.DirectionsCriteria;
@@ -36,18 +38,17 @@ import java.util.ArrayList;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import ru.mail.z_team.icon_fragments.go_out.SavingWalkFragment;
-import ru.mail.z_team.icon_fragments.go_out.Story;
-import ru.mail.z_team.icon_fragments.go_out.StoryFragment;
+import ru.mail.z_team.Logger;
+import ru.mail.z_team.R;
 
 import static com.mapbox.core.constants.Constants.PRECISION_6;
 import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.lineColor;
 import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.lineWidth;
 
-public class MapActivity extends AppCompatActivity {
+public class MapFragment extends Fragment {
 
-    private static final String LOG_TAG = "MapActivity";
-    private Logger logger;
+    private static final String LOG_TAG = "MapFragment";
+    private final Logger logger;
 
     private static final String ROUTE_SOURCE_ID = "route-source-id";
     private static final String LAYER_BELOW_ID = "layer-below-id";
@@ -56,28 +57,24 @@ public class MapActivity extends AppCompatActivity {
     private static final String STORY_TAG = "story";
 
     private MapView mapView;
-    private FeatureCollection walkGeoJSON;
     private Point startPos = null, destinationPos = null;
     private final ArrayList<DirectionsRoute> routes = new ArrayList<>();
     private final ArrayList<Feature> walkList = new ArrayList<>();
-    private final ArrayList<Story> stories = new ArrayList<>();
 
     private FloatingActionButton saveMapButton;
 
-    public MapActivity() {
+    public MapFragment() {
+        logger = new Logger(LOG_TAG, true);
     }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        logger = new Logger(LOG_TAG, true);
-        logger.log("OnCreate");
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
 
-        Mapbox.getInstance(this, getString(R.string.mapbox_access_token));
+        Mapbox.getInstance(getContext(), getString(R.string.mapbox_access_token));
 
-        setContentView(R.layout.activity_map);
-
-        mapView = findViewById(R.id.map_view);
+        View view = inflater.inflate(R.layout.fragment_map, container, false);
+        mapView = view.findViewById(R.id.map_view);
         mapView.onCreate(savedInstanceState);
         mapView.getMapAsync(mapboxMap -> mapboxMap.setStyle(Style.MAPBOX_STREETS, style -> {
             CameraPosition position = new CameraPosition.Builder()
@@ -100,16 +97,18 @@ public class MapActivity extends AppCompatActivity {
                 }
                 return true;
             });
-            saveMapButton = findViewById(R.id.save_map_btn);
+            saveMapButton = view.findViewById(R.id.save_map_btn);
             saveMapButton.setOnClickListener(v -> {
                 mapView.setVisibility(View.GONE);
-                getSupportFragmentManager()
+                getActivity().getSupportFragmentManager()
                         .beginTransaction()
                         .replace(R.id.map_container, new SavingWalkFragment(), SAVE_TAG)
                         .addToBackStack(null)
                         .commitAllowingStateLoss();
             });
         }));
+
+        return view;
     }
 
     private void onMapClicked(MapboxMap mapboxMap, LatLng point) {
@@ -122,10 +121,10 @@ public class MapActivity extends AppCompatActivity {
                 feature.addStringProperty("markerType", "storyMarker");
 
                 walkList.add(feature);
-                walkGeoJSON = FeatureCollection.fromFeatures(walkList);
+                ((MapActivity) getActivity()).setWalkGeoJSON(FeatureCollection.fromFeatures(walkList));
 
                 mapView.setVisibility(View.GONE);
-                getSupportFragmentManager()
+                getActivity().getSupportFragmentManager()
                         .beginTransaction()
                         .replace(R.id.map_container, new StoryFragment(storyPoint), STORY_TAG)
                         .addToBackStack(null)
@@ -136,7 +135,7 @@ public class MapActivity extends AppCompatActivity {
     }
 
     private void addStoryMarker(MapboxMap mapboxMap, LatLng point) {
-        IconFactory iconFactory = IconFactory.getInstance(MapActivity.this);
+        IconFactory iconFactory = IconFactory.getInstance(getActivity());
         Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.ic_baseline_photo_24);
 
         Icon icon = iconFactory.fromBitmap(bitmap);
@@ -147,10 +146,6 @@ public class MapActivity extends AppCompatActivity {
                 .position(point)
                 //.icon(icon)
                 .title("story point"));
-    }
-
-    public void addStory(Story story) {
-        stories.add(story);
     }
 
     private void addMarker(MapboxMap mapboxMap, LatLng point) {
@@ -200,7 +195,7 @@ public class MapActivity extends AppCompatActivity {
                             walkList.add(walkRouteGeoJSON);
                             walkList.add(walkStartPointGeoJSON);
                             walkList.add(walkDestinationPointGeoJSON);
-                            walkGeoJSON = FeatureCollection.fromFeatures(walkList);
+                            ((MapActivity) getActivity()).setWalkGeoJSON(FeatureCollection.fromFeatures(walkList));
                             source.setGeoJson(LineString.fromPolyline(routes.get(0).geometry(), PRECISION_6));
                         }
                     });
@@ -214,14 +209,6 @@ public class MapActivity extends AppCompatActivity {
         });
     }
 
-    public FeatureCollection getWalkGeoJSON() {
-        return walkGeoJSON;
-    }
-
-    public ArrayList<Story> getStories() {
-        return stories;
-    }
-
     @Override
     public void onResume() {
         super.onResume();
@@ -230,13 +217,13 @@ public class MapActivity extends AppCompatActivity {
 
     @Override
     @SuppressWarnings({"MissingPermission"})
-    protected void onStart() {
+    public void onStart() {
         super.onStart();
         mapView.onStart();
     }
 
     @Override
-    protected void onStop() {
+    public void onStop() {
         super.onStop();
         mapView.onStop();
     }
@@ -248,13 +235,13 @@ public class MapActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onSaveInstanceState(Bundle outState) {
+    public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         mapView.onSaveInstanceState(outState);
     }
 
     @Override
-    protected void onDestroy() {
+    public void onDestroy() {
         super.onDestroy();
         mapView.onDestroy();
     }
@@ -263,9 +250,5 @@ public class MapActivity extends AppCompatActivity {
     public void onLowMemory() {
         super.onLowMemory();
         mapView.onLowMemory();
-    }
-
-    public void backToActivity() {
-        mapView.setVisibility(View.VISIBLE);
     }
 }

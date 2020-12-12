@@ -12,8 +12,8 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import ru.mail.z_team.Logger;
-import ru.mail.z_team.MapActivity;
 import ru.mail.z_team.R;
+import ru.mail.z_team.map.MapActivity;
 
 public class GoOutFragment extends Fragment {
 
