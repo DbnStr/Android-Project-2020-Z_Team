@@ -115,6 +115,7 @@ public class StoryFragment extends Fragment {
     }
 
     private void showImagePickDialog() {
+        logger.log("showImagePickDialog");
         String[] options = {"Camera", "Gallery"};
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
@@ -146,6 +147,7 @@ public class StoryFragment extends Fragment {
     }
 
     private void pickFromCamera() {
+        logger.log("pickFromCamera");
         ContentValues contentValues = new ContentValues();
         contentValues.put(MediaStore.Images.Media.TITLE, "title");
         contentValues.put(MediaStore.Images.Media.DESCRIPTION, "description");
@@ -170,17 +172,20 @@ public class StoryFragment extends Fragment {
     }
 
     private boolean checkCameraPermission() {
+        logger.log("checkCameraPermission");
         boolean res = ContextCompat.checkSelfPermission(getContext(),
                 cameraPermissions[0]) == (PackageManager.PERMISSION_GRANTED) && checkStoragePermission();
         return res;
     }
 
     private void requestCameraPermission() {
+        logger.log("requestCameraPermission");
         ActivityCompat.requestPermissions(getActivity(), cameraPermissions, CAMERA_REQUEST_CODE);
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        logger.log("onRequestPermissionsResult");
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         switch (requestCode) {
             case CAMERA_REQUEST_CODE:
@@ -209,6 +214,7 @@ public class StoryFragment extends Fragment {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        logger.log("onActivityResult");
         if (resultCode == RESULT_OK) {
             if (requestCode == PICK_GALLERY_CODE) {
                 imageRui = data.getData();
@@ -224,6 +230,9 @@ public class StoryFragment extends Fragment {
                 resourcesLayout.addView(imageView);
             }
 
+        }
+        else {
+            logger.errorLog("onActivityResult result code was not ok");
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
