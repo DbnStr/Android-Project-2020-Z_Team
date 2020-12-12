@@ -53,7 +53,7 @@ public class StoryFragment extends Fragment {
     private String[] cameraPermissions;
     private String[] storagePermissions;
 
-    private Uri image_rui = null;
+    private Uri imageRui = null;
 
     public StoryFragment(Point storyPoint) {
         point = storyPoint;
@@ -88,7 +88,7 @@ public class StoryFragment extends Fragment {
             String descriptionText = description.getText().toString().trim();
             String place = "";
 
-            if (TextUtils.isEmpty(descriptionText)){
+            if (TextUtils.isEmpty(descriptionText)) {
                 description.setError("Enter description");
                 description.setFocusable(true);
                 return;
@@ -96,12 +96,11 @@ public class StoryFragment extends Fragment {
 
             Story story = new Story();
             story.setDescription(descriptionText);
-            if (image_rui == null) {
+            if (imageRui == null) {
                 story.setRui("noImage");
-            }
-            else {
-                story.setRui(String.valueOf(image_rui));
-                story.setUri(image_rui);
+            } else {
+                story.setRui(String.valueOf(imageRui));
+                story.setUri(imageRui);
             }
 
             ((MapActivity) getActivity()).addStory(story);
@@ -151,11 +150,11 @@ public class StoryFragment extends Fragment {
         contentValues.put(MediaStore.Images.Media.TITLE, "title");
         contentValues.put(MediaStore.Images.Media.DESCRIPTION, "description");
 
-        image_rui = getActivity().getContentResolver()
+        imageRui = getActivity().getContentResolver()
                 .insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues);
 
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        intent.putExtra(MediaStore.EXTRA_OUTPUT, image_rui);
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, imageRui);
 
         startActivityForResult(intent, PICK_CAMERA_CODE);
     }
@@ -184,47 +183,45 @@ public class StoryFragment extends Fragment {
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         switch (requestCode) {
-            case CAMERA_REQUEST_CODE: {
+            case CAMERA_REQUEST_CODE:
                 if (grantResults.length > 0) {
                     boolean cameraAccepted = grantResults[0] == PackageManager.PERMISSION_GRANTED;
                     boolean storageAccepted = grantResults[1] == PackageManager.PERMISSION_GRANTED;
                     if (cameraAccepted && storageAccepted) {
                         pickFromCamera();
-                    }
-                    else {
+                    } else {
                         Toast.makeText(getActivity(), "Permissions are necessary", Toast.LENGTH_LONG).show();
                     }
                 }
-            }
-            break;
-            case STORAGE_REQUEST_CODE: {
+                break;
+            case STORAGE_REQUEST_CODE:
                 if (grantResults.length > 0) {
                     boolean storageAccepted = grantResults[1] == PackageManager.PERMISSION_GRANTED;
                     if (storageAccepted) {
                         pickFromGallery();
-                    }
-                    else {
+                    } else {
                         Toast.makeText(getActivity(), "Permission is necessary", Toast.LENGTH_LONG).show();
                     }
                 }
-            }
-            break;
+                break;
         }
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        if (resultCode == RESULT_OK){
+        if (resultCode == RESULT_OK) {
             if (requestCode == PICK_GALLERY_CODE) {
-                image_rui = data.getData();
+                imageRui = data.getData();
 
                 ImageView imageView = new ImageView(getContext());
-                imageView.setImageURI(image_rui);
+                imageView.setImageURI(imageRui);
 
                 resourcesLayout.addView(imageView);
-            }
-            else if (requestCode == PICK_CAMERA_CODE) {
+            } else if (requestCode == PICK_CAMERA_CODE) {
+                ImageView imageView = new ImageView(getContext());
+                imageView.setImageURI(imageRui);
 
+                resourcesLayout.addView(imageView);
             }
 
         }
