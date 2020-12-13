@@ -35,10 +35,12 @@ import static android.app.Activity.RESULT_OK;
 public class StoryFragment extends Fragment {
 
     private final Point point;
-    private TextView place;
+    private TextView place, photoCounter;
     private EditText description;
     private Button addPhotoBtn, uploadBtn;
-    private LinearLayout resourcesLayout;
+    private LinearLayout photoCounterLayout;
+
+    private int photoCount = 0;
 
     private static final String LOG_TAG = "StoryFragment";
     private final Logger logger;
@@ -68,7 +70,8 @@ public class StoryFragment extends Fragment {
         uploadBtn = view.findViewById(R.id.story_upload);
         place = view.findViewById(R.id.story_place);
         description = view.findViewById(R.id.story_description);
-        resourcesLayout = view.findViewById(R.id.story_resources);
+        photoCounter = view.findViewById(R.id.story_photo_count);
+        photoCounterLayout = view.findViewById(R.id.story_photo_count_layout);
 
         cameraPermissions = new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE};
         storagePermissions = new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE};
@@ -103,7 +106,6 @@ public class StoryFragment extends Fragment {
 
             ((MapActivity) getActivity()).addStory(story);
 
-            //TODO there must be sth to close fragment
             getActivity().getSupportFragmentManager().popBackStack();
         });
 
@@ -220,12 +222,20 @@ public class StoryFragment extends Fragment {
                 ImageView imageView = new ImageView(getContext());
                 imageView.setImageURI(imageRui);
 
-                resourcesLayout.addView(imageView);
+                if (photoCount == 0) {
+                    photoCounterLayout.setVisibility(View.VISIBLE);
+                }
+                photoCount++;
+                photoCounter.setText(String.valueOf(photoCount));
             } else if (requestCode == PICK_CAMERA_CODE) {
                 ImageView imageView = new ImageView(getContext());
                 imageView.setImageURI(imageRui);
 
-                resourcesLayout.addView(imageView);
+                if (photoCount == 0) {
+                    photoCounterLayout.setVisibility(View.VISIBLE);
+                }
+                photoCount++;
+                photoCounter.setText(String.valueOf(photoCount));
             }
 
         }
