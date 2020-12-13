@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -27,6 +28,7 @@ import com.mapbox.mapboxsdk.annotations.MarkerOptions;
 import com.mapbox.mapboxsdk.camera.CameraPosition;
 import com.mapbox.mapboxsdk.camera.CameraUpdateFactory;
 import com.mapbox.mapboxsdk.geometry.LatLng;
+import com.mapbox.mapboxsdk.geometry.LatLngBounds;
 import com.mapbox.mapboxsdk.maps.MapView;
 import com.mapbox.mapboxsdk.maps.MapboxMap;
 import com.mapbox.mapboxsdk.maps.Style;
@@ -56,12 +58,14 @@ public class MapFragment extends Fragment {
     private static final String SAVE_TAG = "save-walk";
     private static final String STORY_TAG = "story";
 
-    private MapView mapView;
+    private MapView mapView = null;
     private Point startPos = null, destinationPos = null;
     private final ArrayList<DirectionsRoute> routes = new ArrayList<>();
     private final ArrayList<Feature> walkList = new ArrayList<>();
 
     private FloatingActionButton saveMapButton;
+
+    private boolean isInitialized = false;
 
     public MapFragment() {
         logger = new Logger(LOG_TAG, true);
@@ -76,16 +80,43 @@ public class MapFragment extends Fragment {
         Mapbox.getInstance(getContext(), getString(R.string.mapbox_access_token));
 
         View view = inflater.inflate(R.layout.fragment_map, container, false);
+
+        return view;
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        logger.log("onViewCreated");
         mapView = view.findViewById(R.id.map_view);
         mapView.onCreate(savedInstanceState);
         mapView.getMapAsync(mapboxMap -> mapboxMap.setStyle(Style.MAPBOX_STREETS, style -> {
-            CameraPosition position = new CameraPosition.Builder()
-                    .target(new LatLng(55.765762, 37.685479))
-                    .zoom(14)
-                    .tilt(20)
-                    .build();
-            mapboxMap.animateCamera(CameraUpdateFactory.newCameraPosition(position), 7000);
+            if (isInitialized) {
+                ArrayList<Point> routePoints = (ArrayList<Point>) ((LineString) ((MapActivity) getActivity())
+                        .getWalkGeoJSON()
+                        .features()
+                        .get(0)
+                        .geometry()).coordinates();
+                ArrayList<LatLng> routeLatLngs = new ArrayList<>();
+                for (Point point : routePoints) {
+                    routeLatLngs.add(new LatLng(point.latitude(), point.longitude()));
+                }
+                LatLngBounds latLngBounds = new LatLngBounds.Builder()
+                        .includes(routeLatLngs)
+                        .build();
+                mapboxMap.animateCamera(CameraUpdateFactory.newLatLngBounds(latLngBounds, 10));
+            } else {
+                CameraPosition position = new CameraPosition.Builder()
+                        .target(new LatLng(55.765762, 37.685479))
+                        .zoom(14)
+                        .tilt(20)
+                        .build();
+                mapboxMap.animateCamera(CameraUpdateFactory.newCameraPosition(position), 7000);
+            }
             initLayers(style);
+            if (isInitialized){
+                showWalk(mapboxMap);
+            }
             mapboxMap.addOnMapClickListener(point -> {
                 if (startPos == null) {
                     startPos = Point.fromLngLat(point.getLongitude(), point.getLatitude());
@@ -108,9 +139,25 @@ public class MapFragment extends Fragment {
                         .addToBackStack(null)
                         .commitAllowingStateLoss();
             });
-        }));
 
-        return view;
+            isInitialized = true;
+        }));
+    }
+
+    private void showWalk(MapboxMap mapboxMap) {
+        logger.log("showWalk");
+        if (mapboxMap != null) {
+            mapboxMap.getStyle(style -> {
+                GeoJsonSource source = style.getSourceAs(ROUTE_SOURCE_ID);
+
+                if (source != null) {
+                    addMarker(mapboxMap, new LatLng(startPos.latitude(), startPos.longitude()));
+                    addMarker(mapboxMap, new LatLng(destinationPos.latitude(), destinationPos.longitude()));
+                    source.setGeoJson(((MapActivity) getActivity())
+                            .getWalkGeoJSON());
+                }
+            });
+        }
     }
 
     private void onMapClicked(MapboxMap mapboxMap, LatLng point) {
@@ -130,7 +177,7 @@ public class MapFragment extends Fragment {
                         .beginTransaction()
                         .replace(R.id.map_activity_container, new StoryFragment(storyPoint), STORY_TAG)
                         .addToBackStack(null)
-                        .commitAllowingStateLoss();
+                        .commit();
 
             });
         }

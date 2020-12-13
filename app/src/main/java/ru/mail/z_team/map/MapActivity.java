@@ -18,7 +18,7 @@ public class MapActivity extends AppCompatActivity {
     private static final String MAP_TAG = "open map fragment";
     private Logger logger;
 
-    private FeatureCollection walkGeoJSON;
+    private FeatureCollection walkGeoJSON = null;
     private final ArrayList<Story> stories = new ArrayList<>();
 
     private FragmentManager fragmentManager;
