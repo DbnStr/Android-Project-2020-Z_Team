@@ -8,10 +8,15 @@ import androidx.lifecycle.MutableLiveData;
 import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import retrofit2.Response;
+import ru.mail.z_team.ApplicationModified;
 import ru.mail.z_team.Logger;
 import ru.mail.z_team.icon_fragments.DatabaseCallback;
+import ru.mail.z_team.local_storage.LocalDatabase;
+import ru.mail.z_team.local_storage.UserDao;
+import ru.mail.z_team.local_storage.UserFriend;
 import ru.mail.z_team.network.ApiRepository;
 import ru.mail.z_team.network.UserApi;
 import ru.mail.z_team.user.Friend;
@@ -24,7 +29,10 @@ public class FriendsRepository {
 
     private final UserApi userApi;
 
-    private final MutableLiveData<User> currentUserData = new MutableLiveData<>();
+    private final UserDao userDao;
+    private final LocalDatabase localDatabase;
+
+    private final MutableLiveData<ArrayList<Friend>> currentUserFriends = new MutableLiveData<>();
     private final MutableLiveData<Boolean> userExistence = new MutableLiveData<>();
 
     private int count;
@@ -32,13 +40,15 @@ public class FriendsRepository {
     public FriendsRepository(Context context) {
         userApi = ApiRepository.from(context).getUserApi();
         logger = new Logger(LOG_TAG, true);
+        userDao = ApplicationModified.from(context).getLocalDatabase().getUserDao();
+        localDatabase = ApplicationModified.from(context).getLocalDatabase();
     }
 
-    public LiveData<User> getCurrentUser() {
-        return currentUserData;
+    public LiveData<ArrayList<Friend>> getCurrentUserFriends() {
+        return currentUserFriends;
     }
 
-    public void updateCurrentUser() {
+    public void updateCurrentUserFriends() {
         String currentUserId = FirebaseAuth.getInstance().getUid();
 
         logger.log("update user - " + currentUserId);
@@ -51,7 +61,16 @@ public class FriendsRepository {
 
             @Override
             public void onSuccessResponse(Response<UserApi.User> response) {
-                currentUserData.postValue(transformToUser(response.body()));
+                currentUserFriends.postValue(transformToUser(response.body()).getFriends());
+
+                localDatabase.databaseWriteExecutor.execute(() -> {
+                    logger.log("DSDS");
+                    User currentUser = transformToUser(response.body());
+                    ArrayList<Friend> friends = currentUser.getFriends();
+                    for(Friend friend : friends) {
+                        userDao.insert(transformToLocalDBFriend(friend, currentUserId));
+                    }
+                });
             }
         });
     }
@@ -72,6 +91,14 @@ public class FriendsRepository {
                 user.age,
                 user.id,
                 userFriends
+        );
+    }
+
+    private ru.mail.z_team.local_storage.Friend transformToLocalDBFriend(Friend friend, String currentUserId) {
+        return new ru.mail.z_team.local_storage.Friend(
+                friend.name,
+                friend.id,
+                currentUserId
         );
     }
 
@@ -171,7 +198,7 @@ public class FriendsRepository {
 
             @Override
             public void onSuccessResponse(Response<UserApi.Friend> response) {
-                updateCurrentUser();
+               updateCurrentUserFriends();
             }
         });
     }

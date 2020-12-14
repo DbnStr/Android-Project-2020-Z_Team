@@ -8,6 +8,7 @@ import androidx.lifecycle.MutableLiveData;
 import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import retrofit2.Response;
 import ru.mail.z_team.ApplicationModified;
@@ -15,6 +16,7 @@ import ru.mail.z_team.Logger;
 import ru.mail.z_team.icon_fragments.DatabaseCallback;
 import ru.mail.z_team.local_storage.LocalDatabase;
 import ru.mail.z_team.local_storage.UserDao;
+import ru.mail.z_team.local_storage.UserFriend;
 import ru.mail.z_team.network.ApiRepository;
 import ru.mail.z_team.network.UserApi;
 import ru.mail.z_team.user.Friend;
@@ -59,9 +61,27 @@ public class ProfileRepository {
 
                 localDatabase.databaseWriteExecutor.execute(() -> {
                     userDao.insert(transformToLocalDBUser(response.body()));
+
+                    User currentUser = transformToUser(response.body());
+                    ArrayList<Friend> friends = currentUser.getFriends();
+                    for(Friend friend : friends) {
+                        userDao.insert(transformToLocalDBFriend(friend, currentUserId));
+                    }
+
+                    List<UserFriend> fr = userDao.getUserFriends();
+                    logger.log(fr.get(0).name);
                 });
+
             }
         });
+    }
+
+    private ru.mail.z_team.local_storage.Friend transformToLocalDBFriend(Friend friend, String currentUserId) {
+        return new ru.mail.z_team.local_storage.Friend(
+                friend.name,
+                friend.id,
+                currentUserId
+        );
     }
 
     private ru.mail.z_team.local_storage.User transformToLocalDBUser(UserApi.User user) {

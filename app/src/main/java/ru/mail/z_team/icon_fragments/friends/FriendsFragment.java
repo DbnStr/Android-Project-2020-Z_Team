@@ -64,10 +64,9 @@ public class FriendsFragment extends Fragment {
         recyclerView.setAdapter(adapter);
 
         viewModel = new ViewModelProvider(this).get(FriendsViewModel.class);
-        viewModel.updateCurrentUser();
-        viewModel.getCurrentUser()
-                .observe(getActivity(), user -> {
-                    ArrayList<Friend> friends = user.getFriends();
+        viewModel.updateCurrentUserFriends();
+        viewModel.getCurrentUserFriends()
+                .observe(getActivity(), friends -> {
                     logger.log("get user friends... " + friends.toString());
                     if (friends.isEmpty()) {
                         noFriends.setVisibility(View.VISIBLE);

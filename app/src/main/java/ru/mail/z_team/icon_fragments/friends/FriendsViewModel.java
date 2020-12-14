@@ -6,7 +6,11 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+
 import ru.mail.z_team.Logger;
+import ru.mail.z_team.user.Friend;
 import ru.mail.z_team.user.User;
 
 public class FriendsViewModel extends AndroidViewModel {
@@ -16,21 +20,21 @@ public class FriendsViewModel extends AndroidViewModel {
 
     private final FriendsRepository repository;
 
-    private final LiveData<User> currentUserData;
+    private final LiveData<ArrayList<Friend>> currentUserFriends;
 
     public FriendsViewModel(@NonNull Application application) {
         super(application);
         logger = new Logger(LOG_TAG, true);
         repository = new FriendsRepository(getApplication());
-        currentUserData = repository.getCurrentUser();
+        currentUserFriends = repository.getCurrentUserFriends();
     }
 
-    public LiveData<User> getCurrentUser() {
-        return currentUserData;
+    public LiveData<ArrayList<Friend>> getCurrentUserFriends() {
+        return currentUserFriends;
     }
 
-    public void updateCurrentUser() {
-        repository.updateCurrentUser();
+    public void updateCurrentUserFriends() {
+        repository.updateCurrentUserFriends();
     }
 
     public void checkUserExistence(final String id) {
@@ -45,11 +49,20 @@ public class FriendsViewModel extends AndroidViewModel {
 
     public void addFriendToCurrentUser(String id) {
         logger.log("addFriend");
-        User currentUser = currentUserData.getValue();
-        if (! currentUser.isThisFriendAdded(id)) {
-            repository.addFriendToCurrentUser(id, currentUser.getFriendsListSize());
+        ArrayList<Friend> friends = currentUserFriends.getValue();
+        if (! isFriendWithIDAdded(friends, id)) {
+            repository.addFriendToCurrentUser(id, friends.size());
         } else {
             logger.errorLog("Friend already added");
         }
+    }
+
+    private boolean isFriendWithIDAdded(ArrayList<Friend> friends, String id) {
+        for(Friend friend : friends) {
+            if (friend.id.equals(id)) {
+                return true;
+            }
+        }
+        return false;
     }
 }
