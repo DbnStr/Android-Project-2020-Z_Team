@@ -35,7 +35,7 @@ import ru.mail.z_team.icon_fragments.go_out.GoOutViewModel;
 
 import static android.app.Activity.RESULT_OK;
 
-public class StoryFragment extends Fragment {
+public class SaveStoryFragment extends Fragment {
 
     private final Point point;
     private TextView place, photoCounter;
@@ -45,7 +45,7 @@ public class StoryFragment extends Fragment {
 
     private int photoCount = 0;
 
-    private static final String LOG_TAG = "StoryFragment";
+    private static final String LOG_TAG = "SaveStoryFragment";
     private final Logger logger;
 
     private static final int CAMERA_REQUEST_CODE = 100;
@@ -61,7 +61,7 @@ public class StoryFragment extends Fragment {
 
     private GoOutViewModel viewModel;
 
-    public StoryFragment(Point storyPoint) {
+    public SaveStoryFragment(Point storyPoint) {
         point = storyPoint;
         logger = new Logger(LOG_TAG, true);
     }
@@ -69,7 +69,7 @@ public class StoryFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_story, container, false);
+        View view = inflater.inflate(R.layout.fragment_save_story, container, false);
 
         addPhotoBtn = view.findViewById(R.id.story_add_photo);
         uploadBtn = view.findViewById(R.id.story_upload);
@@ -116,6 +116,7 @@ public class StoryFragment extends Fragment {
 
             ((MapActivity) getActivity()).addStory(story);
             Feature walkPointGeoJSON = Feature.fromGeometry(point);
+            story.setPoint(walkPointGeoJSON);
             walkPointGeoJSON.addStringProperty("markerType", "storyMarker");
             walkPointGeoJSON.addStringProperty("placeName", place.getText().toString());
             ((MapActivity) getActivity()).addToWalkGeoJSON(walkPointGeoJSON);

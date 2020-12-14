@@ -129,6 +129,7 @@ public class GoOutRepository {
         UserApi.Story apiStory = new UserApi.Story(story.getDescription());
         apiStory.place = story.getPlace();
         apiStory.images = new ArrayList<>();
+        apiStory.point = story.getPoint().toJson();
         for (int j = 0; j < story.getUriImages().size(); j++) {
             StorageReference storageReference = FirebaseStorage.getInstance().getReference()
                     .child("WalkMaps/" + id + "/" + date + "/stories/" + i + "/images/"

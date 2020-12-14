@@ -95,8 +95,8 @@ public class MapFragment extends Fragment {
         mapView.getMapAsync(mapboxMap -> mapboxMap.setStyle(Style.MAPBOX_STREETS, style -> {
             if (isInitialized) {
                 ArrayList<Point> routePoints = new ArrayList<>();
-                for (Feature feature : ((MapActivity) getActivity()).getWalkGeoJSON().features()){
-                    if (feature.geometry() instanceof LineString){
+                for (Feature feature : ((MapActivity) getActivity()).getWalkGeoJSON().features()) {
+                    if (feature.geometry() instanceof LineString) {
                         routePoints = (ArrayList<Point>) ((LineString) feature
                                 .geometry()).coordinates();
                     }
@@ -174,7 +174,7 @@ public class MapFragment extends Fragment {
 
                 getActivity().getSupportFragmentManager()
                         .beginTransaction()
-                        .replace(R.id.map_activity_container, new StoryFragment(storyPoint), STORY_TAG)
+                        .replace(R.id.map_activity_container, new SaveStoryFragment(storyPoint), STORY_TAG)
                         .addToBackStack(null)
                         .commit();
 

@@ -2,6 +2,7 @@ package ru.mail.z_team.icon_fragments.walks;
 
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.PointF;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -14,6 +15,7 @@ import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.mapbox.geojson.Feature;
 import com.mapbox.geojson.LineString;
 import com.mapbox.geojson.Point;
 import com.mapbox.mapboxsdk.Mapbox;
@@ -24,16 +26,20 @@ import com.mapbox.mapboxsdk.maps.MapView;
 import com.mapbox.mapboxsdk.maps.MapboxMap;
 import com.mapbox.mapboxsdk.maps.Style;
 import com.mapbox.mapboxsdk.style.layers.LineLayer;
+import com.mapbox.mapboxsdk.style.layers.Property;
 import com.mapbox.mapboxsdk.style.layers.SymbolLayer;
 import com.mapbox.mapboxsdk.style.sources.GeoJsonSource;
 import com.mapbox.mapboxsdk.utils.BitmapUtils;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import ru.mail.z_team.Logger;
 import ru.mail.z_team.R;
+import ru.mail.z_team.map.Story;
 
 import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconAllowOverlap;
+import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconAnchor;
 import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconImage;
 import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.lineColor;
 import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.lineWidth;
@@ -43,7 +49,6 @@ public class WalkFragment extends Fragment {
     private final WalkAnnotation walkAnnotation;
     private Walk walk;
     private MapView mapView;
-    private LatLng start, destination;
 
     private static final String ROUTE_SOURCE_ID = "route-source-id";
     private static final String SYMBOL_SOURCE_ID = "symbol-source-id";
@@ -51,6 +56,7 @@ public class WalkFragment extends Fragment {
     private static final String SYMBOL_LAYER_ID = "symbol-layer-id";
     private static final String DIRECTIONS_LAYER_ID = "directions-layer-id";
 
+    private static final String STORY_TAG = "open story fragment";
     private static final String LOG_TAG = "WalkFragment";
     private final Logger logger;
 
@@ -92,7 +98,14 @@ public class WalkFragment extends Fragment {
     private void onMapCreated() {
         mapView.getMapAsync(mapboxMap -> mapboxMap.setStyle(Style.MAPBOX_STREETS, style -> {
 
-            ArrayList<Point> routePoints = (ArrayList<Point>) ((LineString) walk.getMap().features().get(0).geometry()).coordinates();
+            ArrayList<Point> routePoints = new ArrayList<>();
+            for (Feature feature : walk.getMap().features()) {
+                if (feature.geometry() instanceof LineString) {
+                    routePoints = (ArrayList<Point>) ((LineString) feature
+                            .geometry()).coordinates();
+                }
+            }
+
             ArrayList<LatLng> routeLatLngs = new ArrayList<>();
             for (Point point : routePoints) {
                 routeLatLngs.add(new LatLng(point.latitude(), point.longitude()));
@@ -105,6 +118,23 @@ public class WalkFragment extends Fragment {
             initLayers(style);
             showWalk(mapboxMap);
             addMarkers(mapboxMap);
+
+            mapboxMap.addOnMapClickListener(point -> {
+                final PointF pixel = mapboxMap.getProjection().toScreenLocation(point);
+                List<Feature> features = mapboxMap.queryRenderedFeatures(pixel, SYMBOL_LAYER_ID);
+                if (features.size() > 0) {
+                    for (Story story : walk.getStories()) {
+                        if (story.getPoint().equals(point)) {
+                            getActivity().getSupportFragmentManager()
+                                    .beginTransaction()
+                                    .replace(R.id.map_activity_container, new StoryFragment(story), STORY_TAG)
+                                    .addToBackStack(null)
+                                    .commit();
+                        }
+                    }
+                }
+                return false;
+            });
         }));
     }
 
@@ -112,7 +142,7 @@ public class WalkFragment extends Fragment {
         mapboxMap.getStyle(style -> {
             GeoJsonSource source = style.getSourceAs(SYMBOL_SOURCE_ID);
 
-            if (source != null){
+            if (source != null) {
                 source.setGeoJson(walk.getMap());
             }
         });
@@ -135,7 +165,9 @@ public class WalkFragment extends Fragment {
         loadedMapStyle.addLayerBelow(
                 new SymbolLayer(SYMBOL_LAYER_ID, SYMBOL_SOURCE_ID)
                         .withProperties(iconAllowOverlap(true),
-                                iconImage("red-image")),
+                                iconImage("red-image"),
+                                iconAllowOverlap(true),
+                                iconAnchor(Property.ICON_ANCHOR_BOTTOM)),
                 LAYER_BELOW_ID);
     }
 

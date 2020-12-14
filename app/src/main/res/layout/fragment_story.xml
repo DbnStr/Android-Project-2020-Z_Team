@@ -8,67 +8,19 @@
     tools:context=".map.MapActivity">
 
     <TextView
-        android:id="@+id/story_place"
+        android:id="@+id/displayed_story_place"
         app:layout_constraintTop_toTopOf="parent"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
 
-    <EditText
-        android:id="@+id/story_description"
+    <TextView
+        android:id="@+id/displayed_story_description"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:minHeight="100dp"
         android:maxHeight="150dp"
         android:layout_marginTop="10dp"
-        app:layout_constraintTop_toBottomOf="@id/story_place"/>
-
-    <LinearLayout
-        android:id="@+id/story_add_resources"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/story_description">
-        <FrameLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
-
-            <Button
-                android:id="@+id/story_add_photo"
-                android:background="@drawable/ic_baseline_add_a_photo_24"
-                android:layout_width="60dp"
-                android:layout_height="60dp"
-                android:layout_margin="15dp"/>
-
-            <LinearLayout
-                android:id="@+id/story_photo_count_layout"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="right"
-                android:layout_marginRight="2dp"
-                android:layout_marginTop="2dp"
-                android:background="@drawable/count_bubble"
-                android:gravity="center"
-                android:visibility="invisible"
-                android:padding="4dp" >
-
-                <TextView
-                    android:id="@+id/story_photo_count"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="0"
-                    android:textColor="#FFFFFF"
-                    android:textSize="4pt"
-                    android:textStyle="bold" />
-            </LinearLayout>
-        </FrameLayout>
-    </LinearLayout>
-
-    <Button
-        android:id="@+id/story_upload"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Upload"
-        android:layout_margin="15dp"
-        app:layout_constraintTop_toBottomOf="@id/story_add_resources"/>
+        app:layout_constraintTop_toBottomOf="@id/displayed_story_place"/>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -5,6 +5,7 @@ import android.content.Context;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import com.mapbox.geojson.Feature;
 import com.mapbox.geojson.FeatureCollection;
 
 import java.text.ParseException;
@@ -84,6 +85,7 @@ public class WalkProfileRepository {
         story.setDescription(apiStory.description);
         story.setPlace(apiStory.place);
         story.setUrlImages(apiStory.images);
+        story.setPoint(Feature.fromJson(apiStory.point));
         return story;
     }
 }

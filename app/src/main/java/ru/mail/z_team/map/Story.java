@@ -2,12 +2,15 @@ package ru.mail.z_team.map;
 
 import android.net.Uri;
 
+import com.mapbox.geojson.Feature;
+
 import java.util.ArrayList;
 
 public class Story {
     private String description;
     private String place;
     private String rui;
+    private Feature point;
     private ArrayList<String> urlImages = new ArrayList<>();
     private final ArrayList<Uri> uriImages = new ArrayList<>();
 
@@ -21,6 +24,10 @@ public class Story {
 
     public void setRui(String rui) {
         this.rui = rui;
+    }
+
+    public void setPoint(Feature point) {
+        this.point = point;
     }
 
     public void setUrlImages(ArrayList<String> urlImages) {
@@ -39,8 +46,8 @@ public class Story {
         return place;
     }
 
-    public String getRui() {
-        return rui;
+    public Feature getPoint() {
+        return point;
     }
 
     public ArrayList<Uri> getUriImages() {
