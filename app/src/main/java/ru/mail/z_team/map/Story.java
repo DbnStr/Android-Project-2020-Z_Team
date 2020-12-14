@@ -8,6 +8,7 @@ public class Story {
     private String description;
     private String place;
     private String rui;
+    private ArrayList<String> urlImages = new ArrayList<>();
     private final ArrayList<Uri> uriImages = new ArrayList<>();
 
     public void setDescription(String description) {
@@ -20,6 +21,10 @@ public class Story {
 
     public void setRui(String rui) {
         this.rui = rui;
+    }
+
+    public void setUrlImages(ArrayList<String> urlImages) {
+        this.urlImages = urlImages;
     }
 
     public void addImage(Uri uri) {
@@ -40,5 +45,9 @@ public class Story {
 
     public ArrayList<Uri> getUriImages() {
         return uriImages;
+    }
+
+    public ArrayList<String> getUrlImages() {
+        return urlImages;
     }
 }

@@ -9,10 +9,12 @@ import com.mapbox.geojson.FeatureCollection;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 
 import retrofit2.Response;
 import ru.mail.z_team.Logger;
 import ru.mail.z_team.icon_fragments.DatabaseCallback;
+import ru.mail.z_team.map.Story;
 import ru.mail.z_team.network.DatabaseApiRepository;
 import ru.mail.z_team.network.UserApi;
 
@@ -58,11 +60,30 @@ public class WalkProfileRepository {
         transformed.setAuthor(walk.author);
         FeatureCollection map = FeatureCollection.fromJson(walk.walk);
         transformed.setMap(map);
+        transformed.setStories(transformToStoryAll(walk.stories));
         try {
             transformed.setDate(sdf.parse(walk.date));
         } catch (ParseException e) {
             e.printStackTrace();
         }
         return transformed;
+    }
+
+    private ArrayList<Story> transformToStoryAll(ArrayList<UserApi.Story> stories) {
+        ArrayList<Story> transformed = new ArrayList<>();
+        if (stories != null){
+            for (UserApi.Story apiStory : stories){
+                transformed.add(transformToStory(apiStory));
+            }
+        }
+        return transformed;
+    }
+
+    private Story transformToStory(UserApi.Story apiStory) {
+        Story story = new Story();
+        story.setDescription(apiStory.description);
+        story.setPlace(apiStory.place);
+        story.setUrlImages(apiStory.images);
+        return story;
     }
 }

@@ -5,6 +5,7 @@ import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 
+import com.mapbox.geojson.Feature;
 import com.mapbox.geojson.FeatureCollection;
 
 import java.util.ArrayList;
@@ -19,6 +20,7 @@ public class MapActivity extends AppCompatActivity {
     private Logger logger;
 
     private FeatureCollection walkGeoJSON = null;
+    private final ArrayList<Feature> walkList = new ArrayList<>();
     private final ArrayList<Story> stories = new ArrayList<>();
 
     private FragmentManager fragmentManager;
@@ -45,10 +47,6 @@ public class MapActivity extends AppCompatActivity {
         }
     }
 
-    public void setWalkGeoJSON(FeatureCollection walkGeoJSON) {
-        this.walkGeoJSON = walkGeoJSON;
-    }
-
     public void addStory(Story story) {
         stories.add(story);
     }
@@ -59,5 +57,11 @@ public class MapActivity extends AppCompatActivity {
 
     public ArrayList<Story> getStories() {
         return stories;
+    }
+
+    public void addToWalkGeoJSON(Feature walkPointGeoJSON) {
+        logger.log("addToWalkGeoJSON ... " + walkList.size());
+        walkList.add(walkPointGeoJSON);
+        walkGeoJSON = FeatureCollection.fromFeatures(walkList);
     }
 }

@@ -26,6 +26,7 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.mapbox.geojson.Feature;
 import com.mapbox.geojson.Point;
 
 import ru.mail.z_team.Logger;
@@ -114,6 +115,10 @@ public class StoryFragment extends Fragment {
             }
 
             ((MapActivity) getActivity()).addStory(story);
+            Feature walkPointGeoJSON = Feature.fromGeometry(point);
+            walkPointGeoJSON.addStringProperty("markerType", "storyMarker");
+            walkPointGeoJSON.addStringProperty("placeName", place.getText().toString());
+            ((MapActivity) getActivity()).addToWalkGeoJSON(walkPointGeoJSON);
 
             getActivity().getSupportFragmentManager().popBackStack();
         });

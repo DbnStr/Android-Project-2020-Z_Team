@@ -19,7 +19,6 @@ import com.mapbox.api.directions.v5.MapboxDirections;
 import com.mapbox.api.directions.v5.models.DirectionsResponse;
 import com.mapbox.api.directions.v5.models.DirectionsRoute;
 import com.mapbox.geojson.Feature;
-import com.mapbox.geojson.FeatureCollection;
 import com.mapbox.geojson.LineString;
 import com.mapbox.geojson.Point;
 import com.mapbox.mapboxsdk.Mapbox;
@@ -65,9 +64,6 @@ public class MapFragment extends Fragment {
     private MapView mapView = null;
     private Point startPos = null, destinationPos = null;
     private final ArrayList<DirectionsRoute> routes = new ArrayList<>();
-    private final ArrayList<Feature> walkList = new ArrayList<>();
-
-    private String curPlace;
 
     private FloatingActionButton saveMapButton;
 
@@ -98,11 +94,13 @@ public class MapFragment extends Fragment {
         mapView.onCreate(savedInstanceState);
         mapView.getMapAsync(mapboxMap -> mapboxMap.setStyle(Style.MAPBOX_STREETS, style -> {
             if (isInitialized) {
-                ArrayList<Point> routePoints = (ArrayList<Point>) ((LineString) ((MapActivity) getActivity())
-                        .getWalkGeoJSON()
-                        .features()
-                        .get(0)
-                        .geometry()).coordinates();
+                ArrayList<Point> routePoints = new ArrayList<>();
+                for (Feature feature : ((MapActivity) getActivity()).getWalkGeoJSON().features()){
+                    if (feature.geometry() instanceof LineString){
+                        routePoints = (ArrayList<Point>) ((LineString) feature
+                                .geometry()).coordinates();
+                    }
+                }
                 ArrayList<LatLng> routeLatLngs = new ArrayList<>();
                 for (Point point : routePoints) {
                     routeLatLngs.add(new LatLng(point.latitude(), point.longitude()));
@@ -122,6 +120,7 @@ public class MapFragment extends Fragment {
             initLayers(style);
             if (isInitialized){
                 showWalk(mapboxMap);
+                addMarkers(mapboxMap);
             }
             mapboxMap.addOnMapClickListener(point -> {
                 if (startPos == null) {
@@ -172,15 +171,7 @@ public class MapFragment extends Fragment {
         if (mapboxMap != null) {
             mapboxMap.getStyle(style -> {
                 Point storyPoint = Point.fromLngLat(point.getLongitude(), point.getLatitude());
-                addStoryMarker(mapboxMap, point);
 
-                Feature feature = Feature.fromGeometry(storyPoint);
-                feature.addStringProperty("markerType", "storyMarker");
-
-                walkList.add(feature);
-                ((MapActivity) getActivity()).setWalkGeoJSON(FeatureCollection.fromFeatures(walkList));
-
-                logger.log("check cur place ... " + curPlace);
                 getActivity().getSupportFragmentManager()
                         .beginTransaction()
                         .replace(R.id.map_activity_container, new StoryFragment(storyPoint), STORY_TAG)
@@ -191,15 +182,11 @@ public class MapFragment extends Fragment {
         }
     }
 
-    private void addStoryMarker(MapboxMap mapboxMap, LatLng point) {
+    private void addMarkers(MapboxMap mapboxMap) {
         mapboxMap.getStyle(style -> {
             GeoJsonSource source = style.getSourceAs(SYMBOL_SOURCE_ID);
 
             if (source != null){
-                Feature walkPointGeoJSON = Feature.fromGeometry(Point.fromLngLat(point.getLongitude(),
-                        point.getLatitude()));
-                walkList.add(walkPointGeoJSON);
-                ((MapActivity) getActivity()).setWalkGeoJSON(FeatureCollection.fromFeatures(walkList));
                 source.setGeoJson(((MapActivity) getActivity())
                         .getWalkGeoJSON());
             }
@@ -207,14 +194,15 @@ public class MapFragment extends Fragment {
     }
 
     private void addMarker(MapboxMap mapboxMap, LatLng point) {
+        logger.log("addMarker");
         mapboxMap.getStyle(style -> {
             GeoJsonSource source = style.getSourceAs(SYMBOL_SOURCE_ID);
 
             if (source != null){
                 Feature walkPointGeoJSON = Feature.fromGeometry(Point.fromLngLat(point.getLongitude(),
                         point.getLatitude()));
-                walkList.add(walkPointGeoJSON);
-                ((MapActivity) getActivity()).setWalkGeoJSON(FeatureCollection.fromFeatures(walkList));
+                walkPointGeoJSON.addStringProperty("markerType", "routeMarker");
+                ((MapActivity) getActivity()).addToWalkGeoJSON(walkPointGeoJSON);
                 source.setGeoJson(((MapActivity) getActivity())
                         .getWalkGeoJSON());
             }
@@ -223,6 +211,7 @@ public class MapFragment extends Fragment {
 
     private void initLayers(@NonNull Style loadedMapStyle) {
         loadedMapStyle.addSource(new GeoJsonSource(ROUTE_SOURCE_ID));
+        loadedMapStyle.addSource(new GeoJsonSource(SYMBOL_SOURCE_ID));
 
         Drawable drawable = ResourcesCompat.getDrawable(getResources(), R.drawable.ic_baseline_push_pin_24, null);
         Bitmap mBitmap = BitmapUtils.getBitmapFromDrawable(drawable);
@@ -267,8 +256,7 @@ public class MapFragment extends Fragment {
                         if (source != null) {
                             logger.log("routes count = " + routes.size());
                             Feature walkRouteGeoJSON = Feature.fromGeometry(LineString.fromPolyline(routes.get(0).geometry(), PRECISION_6));
-                            walkList.add(walkRouteGeoJSON);
-                            ((MapActivity) getActivity()).setWalkGeoJSON(FeatureCollection.fromFeatures(walkList));
+                            ((MapActivity) getActivity()).addToWalkGeoJSON(walkRouteGeoJSON);
                             source.setGeoJson(((MapActivity) getActivity())
                                     .getWalkGeoJSON());
                         }
