@@ -48,6 +48,6 @@ public abstract class UserDao {
     @Query("SELECT friend.id, friend.friend_name AS fr_name " + "FROM friend, user " + "WHERE friend.current_user_id == user.id")
     public abstract List<UserFriend> getUserFriends();
 
-    @Query("SELECT walk.title, walk.date, walk.author " + "FROM walk, user " + "WHERE walk.author == user.id")
+    @Query("SELECT walk.title, walk.date, walk.author " + "FROM walk, user " + "WHERE walk.author == user.name")
     public abstract List<UserWalk> getUserWalks();
 }

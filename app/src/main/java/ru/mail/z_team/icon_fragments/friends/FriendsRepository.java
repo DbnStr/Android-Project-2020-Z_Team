@@ -1,6 +1,8 @@
 package ru.mail.z_team.icon_fragments.friends;
 
 import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -27,6 +29,8 @@ public class FriendsRepository {
     private static final String LOG_TAG = "FriendsRepository";
     private final Logger logger;
 
+    private final Context context;
+
     private final UserApi userApi;
 
     private final UserDao userDao;
@@ -38,10 +42,14 @@ public class FriendsRepository {
     private int count;
 
     public FriendsRepository(Context context) {
+        this.context= context;
+
         userApi = ApiRepository.from(context).getUserApi();
+
         logger = new Logger(LOG_TAG, true);
-        userDao = ApplicationModified.from(context).getLocalDatabase().getUserDao();
+
         localDatabase = ApplicationModified.from(context).getLocalDatabase();
+        userDao = localDatabase.getUserDao();
     }
 
     public LiveData<ArrayList<Friend>> getCurrentUserFriends() {
@@ -52,24 +60,44 @@ public class FriendsRepository {
         String currentUserId = FirebaseAuth.getInstance().getUid();
 
         logger.log("update user - " + currentUserId);
+        if(isOnline(context)) {
+            userApi.getUserById(currentUserId).enqueue(new DatabaseCallback<UserApi.User>(LOG_TAG) {
+                @Override
+                public void onNullResponse(Response<UserApi.User> response) {
+                    logger.errorLog("Fail with update");
+                }
 
-        userApi.getUserById(currentUserId).enqueue(new DatabaseCallback<UserApi.User>(LOG_TAG) {
-            @Override
-            public void onNullResponse(Response<UserApi.User> response) {
-                logger.errorLog("Fail with update");
-            }
+                @Override
+                public void onSuccessResponse(Response<UserApi.User> response) {
+                    currentUserFriends.postValue(transformToUser(response.body()).getFriends());
 
-            @Override
-            public void onSuccessResponse(Response<UserApi.User> response) {
-                currentUserFriends.postValue(transformToUser(response.body()).getFriends());
+                    localDatabase.databaseWriteExecutor.execute(() -> {
+                        User currentUser = transformToUser(response.body());
+                        ArrayList<Friend> friends = currentUser.getFriends();
+                        userDao.deleteAllFriendsAndAddNew(transformToLocalDBFriendALl(friends, currentUserId));
+                    });
+                }
+            });
+        } else {
+            localDatabase.databaseWriteExecutor.execute(() -> {
+                currentUserFriends.postValue(transformToFriendAll(userDao.getUserFriends()));
+            });
+        }
+    }
 
-                localDatabase.databaseWriteExecutor.execute(() -> {
-                    User currentUser = transformToUser(response.body());
-                    ArrayList<Friend> friends = currentUser.getFriends();
-                    userDao.deleteAllFriendsAndAddNew(transformToLocalDBFriendALl(friends, currentUserId));
-                });
-            }
-        });
+    private ArrayList<Friend> transformToFriendAll(List<UserFriend> friends) {
+        ArrayList<Friend> result = new ArrayList<>();
+        for(UserFriend friend : friends) {
+            result.add(transformToFriend(friend));
+        }
+        return result;
+    }
+
+    private Friend transformToFriend(ru.mail.z_team.local_storage.UserFriend friend) {
+        return new Friend(
+                friend.name,
+                friend.id
+        );
     }
 
     private User transformToUser(UserApi.User user) {
@@ -206,5 +234,15 @@ public class FriendsRepository {
                updateCurrentUserFriends();
             }
         });
+    }
+
+    public static boolean isOnline(Context context) {
+        ConnectivityManager cm =
+                (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo netInfo = cm.getActiveNetworkInfo();
+        if (netInfo != null && netInfo.isConnectedOrConnecting()) {
+            return true;
+        }
+        return false;
     }
 }

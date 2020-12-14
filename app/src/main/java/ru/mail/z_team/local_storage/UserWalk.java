@@ -7,9 +7,9 @@ import java.util.Date;
 
 public class UserWalk {
 
-    String title;
+    public String title;
 
-    String date;
+    public String date;
 
-    String author;
+    public String author;
 }
