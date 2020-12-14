@@ -64,12 +64,9 @@ public class FriendsRepository {
                 currentUserFriends.postValue(transformToUser(response.body()).getFriends());
 
                 localDatabase.databaseWriteExecutor.execute(() -> {
-                    logger.log("DSDS");
                     User currentUser = transformToUser(response.body());
                     ArrayList<Friend> friends = currentUser.getFriends();
-                    for(Friend friend : friends) {
-                        userDao.insert(transformToLocalDBFriend(friend, currentUserId));
-                    }
+                    userDao.deleteAllFriendsAndAddNew(transformToLocalDBFriendALl(friends, currentUserId));
                 });
             }
         });
@@ -92,6 +89,14 @@ public class FriendsRepository {
                 user.id,
                 userFriends
         );
+    }
+
+    private List<ru.mail.z_team.local_storage.Friend> transformToLocalDBFriendALl(List<Friend> friends, String currentUserId) {
+        List<ru.mail.z_team.local_storage.Friend> result = new ArrayList<>();
+        for(Friend friend : friends) {
+            result.add(transformToLocalDBFriend(friend, currentUserId));
+        }
+        return result;
     }
 
     private ru.mail.z_team.local_storage.Friend transformToLocalDBFriend(Friend friend, String currentUserId) {

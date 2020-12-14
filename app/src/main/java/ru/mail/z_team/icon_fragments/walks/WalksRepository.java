@@ -10,6 +10,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.List;
 
 import retrofit2.Response;
 import ru.mail.z_team.ApplicationModified;
@@ -62,14 +63,19 @@ public class WalksRepository {
                 currentUserWalks.postValue(walks);
 
                 localDatabase.databaseWriteExecutor.execute(() -> {
-                    for(Walk walk : walks) {
-                        userDao.insert(transformToLocalDBWalk(walk));
-                    }
+                    userDao.deleteAllWalksAndAddNew(transformToLocalDBWalkAll(walks));
                 });
             }
         });
     }
 
+    private List<ru.mail.z_team.local_storage.Walk> transformToLocalDBWalkAll(List<Walk> walks) {
+        List<ru.mail.z_team.local_storage.Walk> result = new ArrayList<>();
+        for(Walk walk : walks) {
+            result.add(transformToLocalDBWalk(walk));
+        }
+        return result;
+    }
     private ru.mail.z_team.local_storage.Walk transformToLocalDBWalk(Walk walk) {
         return new ru.mail.z_team.local_storage.Walk(
                 walk.title,
