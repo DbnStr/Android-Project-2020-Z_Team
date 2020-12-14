@@ -105,6 +105,7 @@ public class StoryFragment extends Fragment {
 
             Story story = new Story();
             story.setDescription(descriptionText);
+            story.setPlace(place.getText().toString());
             if (imageRui == null) {
                 story.setRui("noImage");
             } else {

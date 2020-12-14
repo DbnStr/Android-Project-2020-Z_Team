@@ -127,6 +127,7 @@ public class GoOutRepository {
                                                   String date,
                                                   int i) {
         UserApi.Story apiStory = new UserApi.Story(story.getDescription());
+        apiStory.place = story.getPlace();
         apiStory.images = new ArrayList<>();
         for (int j = 0; j < story.getUriImages().size(); j++) {
             StorageReference storageReference = FirebaseStorage.getInstance().getReference()
