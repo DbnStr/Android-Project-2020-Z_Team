@@ -101,7 +101,7 @@ public class StoryFragment extends Fragment {
                 story.setRui("noImage");
             } else {
                 story.setRui(String.valueOf(imageRui));
-                story.setUri(imageRui);
+                story.addImage(imageRui);
             }
 
             ((MapActivity) getActivity()).addStory(story);

@@ -5,6 +5,8 @@ import android.content.Context;
 import androidx.lifecycle.MutableLiveData;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 import com.mapbox.geojson.FeatureCollection;
 
 import java.text.SimpleDateFormat;
@@ -66,7 +68,7 @@ public class GoOutRepository {
         logger.log("Post a walk");
         Date currentTime = new Date();
         String map = walk.toJson();
-        ArrayList<UserApi.Story> userApiStories = transformToUserApiStoryAll(stories);
+        ArrayList<UserApi.Story> userApiStories = transformToUserApiStoryAll(stories, id, sdf.format(currentTime));
         userApi.addWalk(id, sdf.format(currentTime), new UserApi.Walk(title, sdf.format(currentTime), name, map, userApiStories)).enqueue(new Callback<UserApi.Walk>() {
             @Override
             public void onResponse(Call<UserApi.Walk> call, Response<UserApi.Walk> response) {
@@ -101,16 +103,36 @@ public class GoOutRepository {
         });
     }
 
-    private ArrayList<UserApi.Story> transformToUserApiStoryAll(ArrayList<Story> stories) {
+    private ArrayList<UserApi.Story> transformToUserApiStoryAll(ArrayList<Story> stories,
+                                                                String id,
+                                                                String date) {
         ArrayList<UserApi.Story> res = new ArrayList<>();
         for (Story story : stories){
-            res.add(transformToUserApiStory(story));
+            res.add(transformToUserApiStory(story, id, date, stories.indexOf(story)));
         }
         return res;
     }
 
-    private UserApi.Story transformToUserApiStory(Story story) {
+    private UserApi.Story transformToUserApiStory(Story story,
+                                                  String id,
+                                                  String date,
+                                                  int i) {
         UserApi.Story apiStory = new UserApi.Story(story.getDescription());
+        apiStory.images = new ArrayList<>();
+        for (int j = 0; j < story.getUriImages().size(); j++ ){
+            StorageReference storageReference = FirebaseStorage.getInstance().getReference()
+                    .child("WalkMaps/" + id + "/" + date + "/stories/" + i + "/images/"
+                            + story.getUriImages().get(j).getLastPathSegment());
+            storageReference.putFile(story.getUriImages().get(j)).addOnCompleteListener(task -> {
+                if (task.isSuccessful()){
+                    logger.log("successfully added the image");
+                }
+                else {
+                    logger.errorLog("error in adding the image");
+                }
+            });
+            apiStory.images.add(storageReference.getPath());
+        }
         return apiStory;
     }
 

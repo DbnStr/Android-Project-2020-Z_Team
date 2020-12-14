@@ -2,11 +2,13 @@ package ru.mail.z_team.map;
 
 import android.net.Uri;
 
+import java.util.ArrayList;
+
 public class Story {
     private String description;
     private String place;
     private String rui;
-    private Uri uri = null;
+    private final ArrayList<Uri> uriImages = new ArrayList<>();
 
     public void setDescription(String description) {
         this.description = description;
@@ -20,8 +22,8 @@ public class Story {
         this.rui = rui;
     }
 
-    public void setUri(Uri uri) {
-        this.uri = uri;
+    public void addImage(Uri uri){
+        uriImages.add(uri);
     }
 
     public String getDescription() {
@@ -36,7 +38,7 @@ public class Story {
         return rui;
     }
 
-    public Uri getUri() {
-        return uri;
+    public ArrayList<Uri> getUriImages() {
+        return uriImages;
     }
 }

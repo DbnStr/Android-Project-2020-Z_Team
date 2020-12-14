@@ -72,6 +72,7 @@ public interface UserApi {
 
     class Story {
         public String description;
+        public ArrayList<String> images;
 
         public Story(String description) {
             this.description = description;
