@@ -22,7 +22,7 @@ public class Story {
         this.rui = rui;
     }
 
-    public void addImage(Uri uri){
+    public void addImage(Uri uri) {
         uriImages.add(uri);
     }
 

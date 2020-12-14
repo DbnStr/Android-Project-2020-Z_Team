@@ -37,8 +37,7 @@ public class SavingWalkFragment extends Fragment {
             if (title.equals("")) {
                 walkTitle.setError("Title can't be empty");
                 walkTitle.setFocusable(true);
-            }
-            else {
+            } else {
                 postWalk();
             }
         });
@@ -53,10 +52,9 @@ public class SavingWalkFragment extends Fragment {
         ArrayList<Story> stories = ((MapActivity) getActivity()).getStories();
         viewModel.postWalk(title, walk, stories);
         viewModel.getPostStatus().observe(getActivity(), s -> {
-            if (s == getString(R.string.SUCCESS)){
+            if (s == getString(R.string.SUCCESS)) {
                 Toast.makeText(getActivity(), "Posted successfully", Toast.LENGTH_LONG).show();
-            }
-            else {
+            } else {
                 Toast.makeText(getActivity(), "Failed post the walk", Toast.LENGTH_LONG).show();
             }
             getActivity().finish();

@@ -67,6 +67,8 @@ public class MapFragment extends Fragment {
     private final ArrayList<DirectionsRoute> routes = new ArrayList<>();
     private final ArrayList<Feature> walkList = new ArrayList<>();
 
+    private String curPlace;
+
     private FloatingActionButton saveMapButton;
 
     private boolean isInitialized = false;
@@ -178,6 +180,7 @@ public class MapFragment extends Fragment {
                 walkList.add(feature);
                 ((MapActivity) getActivity()).setWalkGeoJSON(FeatureCollection.fromFeatures(walkList));
 
+                logger.log("check cur place ... " + curPlace);
                 getActivity().getSupportFragmentManager()
                         .beginTransaction()
                         .replace(R.id.map_activity_container, new StoryFragment(storyPoint), STORY_TAG)

@@ -2,12 +2,17 @@ package ru.mail.z_team.icon_fragments.go_out;
 
 import android.content.Context;
 
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.mapbox.api.geocoding.v5.GeocodingCriteria;
+import com.mapbox.api.geocoding.v5.MapboxGeocoding;
+import com.mapbox.api.geocoding.v5.models.GeocodingResponse;
 import com.mapbox.geojson.FeatureCollection;
+import com.mapbox.geojson.Point;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -17,6 +22,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import ru.mail.z_team.Logger;
+import ru.mail.z_team.R;
 import ru.mail.z_team.icon_fragments.DatabaseCallback;
 import ru.mail.z_team.map.Story;
 import ru.mail.z_team.network.DatabaseApiRepository;
@@ -28,8 +34,10 @@ public class GoOutRepository {
     private final Logger logger;
 
     private final UserApi userApi;
+    private final Context context;
 
     private final MutableLiveData<GoOutRepository.PostStatus> postStatus = new MutableLiveData<>();
+    private final MutableLiveData<String> placeName = new MutableLiveData<>();
 
     SimpleDateFormat sdf =
             new SimpleDateFormat("EEE, MMM d, yyyy hh:mm:ss a z");
@@ -39,6 +47,7 @@ public class GoOutRepository {
     public GoOutRepository(Context context) {
         userApi = DatabaseApiRepository.from(context).getUserApi();
         logger = new Logger(LOG_TAG, true);
+        this.context = context;
     }
 
     public void postWalk(String title, FeatureCollection walk, ArrayList<Story> stories) {
@@ -107,7 +116,7 @@ public class GoOutRepository {
                                                                 String id,
                                                                 String date) {
         ArrayList<UserApi.Story> res = new ArrayList<>();
-        for (Story story : stories){
+        for (Story story : stories) {
             res.add(transformToUserApiStory(story, id, date, stories.indexOf(story)));
         }
         return res;
@@ -119,15 +128,14 @@ public class GoOutRepository {
                                                   int i) {
         UserApi.Story apiStory = new UserApi.Story(story.getDescription());
         apiStory.images = new ArrayList<>();
-        for (int j = 0; j < story.getUriImages().size(); j++ ){
+        for (int j = 0; j < story.getUriImages().size(); j++) {
             StorageReference storageReference = FirebaseStorage.getInstance().getReference()
                     .child("WalkMaps/" + id + "/" + date + "/stories/" + i + "/images/"
                             + story.getUriImages().get(j).getLastPathSegment());
             storageReference.putFile(story.getUriImages().get(j)).addOnCompleteListener(task -> {
-                if (task.isSuccessful()){
+                if (task.isSuccessful()) {
                     logger.log("successfully added the image");
-                }
-                else {
+                } else {
                     logger.errorLog("error in adding the image");
                 }
             });
@@ -156,6 +164,36 @@ public class GoOutRepository {
 
     public MutableLiveData<PostStatus> getPostStatus() {
         return postStatus;
+    }
+
+    public void updatePlaceName(Point point) {
+        MapboxGeocoding reverseGeocode = MapboxGeocoding.builder()
+                .accessToken(context.getString(R.string.mapbox_access_token))
+                .query(point)
+                .geocodingTypes(GeocodingCriteria.TYPE_ADDRESS)
+                .build();
+
+
+        reverseGeocode.enqueueCall(new Callback<GeocodingResponse>() {
+            @Override
+            public void onResponse(Call<GeocodingResponse> call, Response<GeocodingResponse> response) {
+                if (response.body() != null){
+                    placeName.postValue(response.body().features().get(0).placeName());
+                }
+                else {
+                    logger.errorLog("geocode response is empty");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<GeocodingResponse> call, Throwable t) {
+                logger.errorLog(t.getMessage());
+            }
+        });
+    }
+
+    public LiveData<String> getPlaceName() {
+        return placeName;
     }
 
     public enum PostStatus {

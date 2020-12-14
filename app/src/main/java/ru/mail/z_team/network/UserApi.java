@@ -25,19 +25,21 @@ public interface UserApi {
             this.friends = new ArrayList<>();
         }
 
-        public User(){}
+        public User() {
+        }
     }
 
     class Friend {
         public String name;
         public String id;
 
-        public Friend(String name, String id){
+        public Friend(String name, String id) {
             this.name = name;
             this.id = id;
         }
 
-        public Friend(){}
+        public Friend() {
+        }
     }
 
     class WalkInfo {

@@ -24,11 +24,13 @@ import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.mapbox.geojson.Point;
 
 import ru.mail.z_team.Logger;
 import ru.mail.z_team.R;
+import ru.mail.z_team.icon_fragments.go_out.GoOutViewModel;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -56,6 +58,8 @@ public class StoryFragment extends Fragment {
 
     private Uri imageRui = null;
 
+    private GoOutViewModel viewModel;
+
     public StoryFragment(Point storyPoint) {
         point = storyPoint;
         logger = new Logger(LOG_TAG, true);
@@ -76,7 +80,11 @@ public class StoryFragment extends Fragment {
         cameraPermissions = new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE};
         storagePermissions = new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE};
 
-        //TODO geocode request to determine a place
+        viewModel = new ViewModelProvider(this).get(GoOutViewModel.class);
+        viewModel.updatePlaceName(point);
+        viewModel.getPlaceName().observe(getActivity(), s -> {
+            place.setText(s);
+        });
 
         return view;
     }
@@ -238,8 +246,7 @@ public class StoryFragment extends Fragment {
                 photoCounter.setText(String.valueOf(photoCount));
             }
 
-        }
-        else {
+        } else {
             logger.errorLog("onActivityResult result code was not ok");
         }
         super.onActivityResult(requestCode, resultCode, data);
