@@ -6,6 +6,8 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 
+import com.mapbox.geojson.Point;
+
 public class WalkProfileViewModel extends AndroidViewModel{
 
     private static final String LOG_TAG = "WalkProfileViewModel";
@@ -25,5 +27,13 @@ public class WalkProfileViewModel extends AndroidViewModel{
 
     public LiveData<Walk> getCurrentDisplayedWalk() {
         return currentDisplayedWalk;
+    }
+
+    public void closeEnough(Point a, Point b) {
+        repository.closeEnough(a, b);
+    }
+
+    public LiveData<Boolean> getAnswer() {
+        return repository.getAnswer();
     }
 }

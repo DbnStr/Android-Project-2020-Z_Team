@@ -2,6 +2,7 @@ package ru.mail.z_team.map;
 
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.PointF;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -12,6 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.mapbox.api.directions.v5.DirectionsCriteria;
@@ -35,12 +37,15 @@ import com.mapbox.mapboxsdk.style.sources.GeoJsonSource;
 import com.mapbox.mapboxsdk.utils.BitmapUtils;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import ru.mail.z_team.Logger;
 import ru.mail.z_team.R;
+import ru.mail.z_team.icon_fragments.walks.StoryFragment;
+import ru.mail.z_team.icon_fragments.walks.WalkProfileViewModel;
 
 import static com.mapbox.core.constants.Constants.PRECISION_6;
 import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconAllowOverlap;
@@ -69,6 +74,8 @@ public class MapFragment extends Fragment {
 
     private boolean isInitialized = false;
 
+    private WalkProfileViewModel viewModel;
+
     public MapFragment() {
         logger = new Logger(LOG_TAG, true);
     }
@@ -82,6 +89,7 @@ public class MapFragment extends Fragment {
         Mapbox.getInstance(getContext(), getString(R.string.mapbox_access_token));
 
         View view = inflater.inflate(R.layout.fragment_map, container, false);
+        viewModel = new ViewModelProvider(this).get(WalkProfileViewModel.class);
 
         return view;
     }
@@ -169,16 +177,38 @@ public class MapFragment extends Fragment {
 
     private void onMapClicked(MapboxMap mapboxMap, LatLng point) {
         if (mapboxMap != null) {
-            mapboxMap.getStyle(style -> {
-                Point storyPoint = Point.fromLngLat(point.getLongitude(), point.getLatitude());
+            final PointF pixel = mapboxMap.getProjection().toScreenLocation(point);
+            List<Feature> features = mapboxMap.queryRenderedFeatures(pixel, SYMBOL_LAYER_ID);
 
-                getActivity().getSupportFragmentManager()
-                        .beginTransaction()
-                        .replace(R.id.map_activity_container, new SaveStoryFragment(storyPoint), STORY_TAG)
-                        .addToBackStack(null)
-                        .commit();
+            if (features.size() > 0) {
+                logger.log("pin was clicked");
+                for (Story story : ((MapActivity) getActivity()).getStories()) {
+                    Point a = Point.fromLngLat(point.getLongitude(), point.getLatitude());
+                    Point b = Point.fromJson(story.getPoint().geometry().toJson());
+                    viewModel.closeEnough(a, b);
+                    viewModel.getAnswer().observe(getActivity(), ans -> {
+                        if (ans) {
+                            getActivity().getSupportFragmentManager()
+                                    .beginTransaction()
+                                    .replace(R.id.map_activity_container, new StoryFragment(story), STORY_TAG)
+                                    .addToBackStack(null)
+                                    .commit();
+                        }
+                    });
+                }
+            }
+            else {
+                mapboxMap.getStyle(style -> {
+                    Point storyPoint = Point.fromLngLat(point.getLongitude(), point.getLatitude());
 
-            });
+                    getActivity().getSupportFragmentManager()
+                            .beginTransaction()
+                            .replace(R.id.map_activity_container, new SaveStoryFragment(storyPoint), STORY_TAG)
+                            .addToBackStack(null)
+                            .commit();
+
+                });
+            }
         }
     }
 

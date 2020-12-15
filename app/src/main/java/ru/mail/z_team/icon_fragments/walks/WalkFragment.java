@@ -60,6 +60,8 @@ public class WalkFragment extends Fragment {
     private static final String LOG_TAG = "WalkFragment";
     private final Logger logger;
 
+    private boolean flag;
+
     private WalkProfileViewModel viewModel;
 
     public WalkFragment(WalkAnnotation walkAnnotation) {
@@ -122,20 +124,31 @@ public class WalkFragment extends Fragment {
             mapboxMap.addOnMapClickListener(point -> {
                 final PointF pixel = mapboxMap.getProjection().toScreenLocation(point);
                 List<Feature> features = mapboxMap.queryRenderedFeatures(pixel, SYMBOL_LAYER_ID);
+
                 if (features.size() > 0) {
+                    logger.log("pin was clicked");
                     for (Story story : walk.getStories()) {
-                        if (story.getPoint().equals(point)) {
-                            getActivity().getSupportFragmentManager()
-                                    .beginTransaction()
-                                    .replace(R.id.map_activity_container, new StoryFragment(story), STORY_TAG)
-                                    .addToBackStack(null)
-                                    .commit();
-                        }
+                        Point a = Point.fromLngLat(point.getLongitude(), point.getLatitude());
+                        Point b = Point.fromJson(story.getPoint().geometry().toJson());
+                        closeEnough(a, b);
+                        viewModel.getAnswer().observe(getActivity(), ans -> {
+                            if (ans) {
+                                getActivity().getSupportFragmentManager()
+                                        .beginTransaction()
+                                        .replace(R.id.current_menu_container, new StoryFragment(story), STORY_TAG)
+                                        .addToBackStack(null)
+                                        .commit();
+                            }
+                        });
                     }
                 }
                 return false;
             });
         }));
+    }
+
+    private void closeEnough(Point a, Point b) {
+        viewModel.closeEnough(a, b);
     }
 
     private void addMarkers(MapboxMap mapboxMap) {
