@@ -14,7 +14,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -28,6 +27,8 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.mapbox.geojson.Feature;
 import com.mapbox.geojson.Point;
+
+import java.util.ArrayList;
 
 import ru.mail.z_team.Logger;
 import ru.mail.z_team.R;
@@ -57,6 +58,7 @@ public class SaveStoryFragment extends Fragment {
     private String[] cameraPermissions;
     private String[] storagePermissions;
 
+    private final ArrayList<Uri> imageRuis = new ArrayList<>();
     private Uri imageRui = null;
 
     private GoOutViewModel viewModel;
@@ -107,11 +109,8 @@ public class SaveStoryFragment extends Fragment {
             Story story = new Story();
             story.setDescription(descriptionText);
             story.setPlace(place.getText().toString());
-            if (imageRui == null) {
-                story.setRui("noImage");
-            } else {
-                story.setRui(String.valueOf(imageRui));
-                story.addImage(imageRui);
+            if (imageRuis.size() > 0){
+                story.setUriImages(imageRuis);
             }
 
             ((MapActivity) getActivity()).addStory(story);
@@ -233,9 +232,7 @@ public class SaveStoryFragment extends Fragment {
         if (resultCode == RESULT_OK) {
             if (requestCode == PICK_GALLERY_CODE) {
                 imageRui = data.getData();
-
-                ImageView imageView = new ImageView(getContext());
-                imageView.setImageURI(imageRui);
+                imageRuis.add(imageRui);
 
                 if (photoCount == 0) {
                     photoCounterLayout.setVisibility(View.VISIBLE);
@@ -243,8 +240,8 @@ public class SaveStoryFragment extends Fragment {
                 photoCount++;
                 photoCounter.setText(String.valueOf(photoCount));
             } else if (requestCode == PICK_CAMERA_CODE) {
-                ImageView imageView = new ImageView(getContext());
-                imageView.setImageURI(imageRui);
+                imageRui = (Uri) data.getExtras().get(MediaStore.EXTRA_OUTPUT);
+                imageRuis.add(imageRui);
 
                 if (photoCount == 0) {
                     photoCounterLayout.setVisibility(View.VISIBLE);

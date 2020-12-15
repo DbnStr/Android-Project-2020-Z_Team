@@ -11,6 +11,9 @@ import android.widget.TextView;
 import androidx.fragment.app.Fragment;
 
 import com.bumptech.glide.Glide;
+import com.firebase.ui.storage.images.FirebaseImageLoader;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import ru.mail.z_team.Logger;
 import ru.mail.z_team.R;
@@ -48,9 +51,11 @@ public class StoryFragment extends Fragment {
             for (String url : story.getUrlImages()) {
                 ImageView imageView = new ImageView(getActivity());
                 gallery.addView(imageView);
-                Glide.with(getActivity())
-                        .load(BASE_URL + url)
-                        .placeholder(R.drawable.ic_baseline_image_24)
+                StorageReference reference = FirebaseStorage.getInstance().getReferenceFromUrl(BASE_URL + url);
+                Glide.with(this.getContext())
+                        .using(new FirebaseImageLoader())
+                        .load(reference)
+                        .placeholder(getActivity().getDrawable(R.drawable.ic_baseline_photo_24))
                         .into(imageView);
             }
         }

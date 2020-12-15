@@ -9,7 +9,6 @@ import java.util.ArrayList;
 public class Story {
     private String description;
     private String place;
-    private String rui;
     private Feature point;
     private ArrayList<String> urlImages = new ArrayList<>();
     private final ArrayList<Uri> uriImages = new ArrayList<>();
@@ -22,12 +21,13 @@ public class Story {
         this.place = place;
     }
 
-    public void setRui(String rui) {
-        this.rui = rui;
-    }
-
     public void setPoint(Feature point) {
         this.point = point;
+    }
+
+    public void setUriImages(ArrayList<Uri> uris) {
+        uriImages.clear();
+        this.uriImages.addAll(uris);
     }
 
     public void setUrlImages(ArrayList<String> urlImages) {
