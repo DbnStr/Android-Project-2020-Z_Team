@@ -109,7 +109,7 @@ public class SaveStoryFragment extends Fragment {
             Story story = new Story();
             story.setDescription(descriptionText);
             story.setPlace(place.getText().toString());
-            if (imageRuis.size() > 0){
+            if (imageRuis.size() > 0) {
                 story.setUriImages(imageRuis);
             }
 
@@ -180,9 +180,8 @@ public class SaveStoryFragment extends Fragment {
     }
 
     private boolean checkStoragePermission() {
-        boolean res = ContextCompat.checkSelfPermission(getContext(),
+        return ContextCompat.checkSelfPermission(getContext(),
                 storagePermissions[0]) == (PackageManager.PERMISSION_GRANTED);
-        return res;
     }
 
     private void requestStoragePermission() {
@@ -190,10 +189,8 @@ public class SaveStoryFragment extends Fragment {
     }
 
     private boolean checkCameraPermission() {
-        logger.log("checkCameraPermission");
-        boolean res = ContextCompat.checkSelfPermission(getContext(),
+        return ContextCompat.checkSelfPermission(getContext(),
                 cameraPermissions[0]) == (PackageManager.PERMISSION_GRANTED) && checkStoragePermission();
-        return res;
     }
 
     private void requestCameraPermission() {
@@ -237,26 +234,18 @@ public class SaveStoryFragment extends Fragment {
             if (requestCode == PICK_GALLERY_CODE) {
                 imageRui = data.getData();
                 imageRuis.add(imageRui);
-
-                if (photoCount == 0) {
-                    photoCounterLayout.setVisibility(View.VISIBLE);
-                }
-                photoCount++;
-                photoCounter.setText(String.valueOf(photoCount));
             } else if (requestCode == PICK_CAMERA_CODE) {
                 imageRuis.add(imageRui);
-
-                if (photoCount == 0) {
-                    photoCounterLayout.setVisibility(View.VISIBLE);
-                }
-                photoCount++;
-                photoCounter.setText(String.valueOf(photoCount));
             }
+            if (photoCount == 0) {
+                photoCounterLayout.setVisibility(View.VISIBLE);
+            }
+            photoCount++;
+            photoCounter.setText(String.valueOf(photoCount));
 
         } else {
             logger.errorLog("onActivityResult result code was not ok");
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
-
 }
