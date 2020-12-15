@@ -88,6 +88,7 @@ public class WalkProfileRepository {
         Story story = new Story();
         story.setDescription(apiStory.description);
         story.setPlace(apiStory.place);
+        story.setId(apiStory.id);
         story.setUrlImages(apiStory.images);
         story.setPoint(Feature.fromJson(apiStory.point));
         return story;

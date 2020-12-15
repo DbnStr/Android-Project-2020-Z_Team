@@ -116,7 +116,11 @@ public class SaveStoryFragment extends Fragment {
             ((MapActivity) getActivity()).addStory(story);
             Feature walkPointGeoJSON = Feature.fromGeometry(point);
             story.setPoint(walkPointGeoJSON);
+            String timeStamp = String.valueOf(System.currentTimeMillis());
+            story.setId(timeStamp);
+
             walkPointGeoJSON.addStringProperty("markerType", "storyMarker");
+            walkPointGeoJSON.addStringProperty("id", timeStamp);
             walkPointGeoJSON.addStringProperty("placeName", place.getText().toString());
             ((MapActivity) getActivity()).addToWalkGeoJSON(walkPointGeoJSON);
 

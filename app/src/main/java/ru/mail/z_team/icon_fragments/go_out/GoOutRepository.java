@@ -128,6 +128,7 @@ public class GoOutRepository {
                                                   int i) {
         UserApi.Story apiStory = new UserApi.Story(story.getDescription());
         apiStory.place = story.getPlace();
+        apiStory.id = story.getId();
         apiStory.images = new ArrayList<>();
         apiStory.point = story.getPoint().toJson();
         for (int j = 0; j < story.getUriImages().size(); j++) {

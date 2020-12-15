@@ -10,6 +10,7 @@ public class Story {
     private String description;
     private String place;
     private Feature point;
+    private String id;
     private ArrayList<String> urlImages = new ArrayList<>();
     private final ArrayList<Uri> uriImages = new ArrayList<>();
 
@@ -30,6 +31,10 @@ public class Story {
         this.uriImages.addAll(uris);
     }
 
+    public void setId(String id) {
+        this.id = id;
+    }
+
     public void setUrlImages(ArrayList<String> urlImages) {
         this.urlImages = urlImages;
     }
@@ -44,6 +49,10 @@ public class Story {
 
     public String getPlace() {
         return place;
+    }
+
+    public String getId() {
+        return id;
     }
 
     public Feature getPoint() {

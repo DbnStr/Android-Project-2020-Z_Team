@@ -93,8 +93,6 @@ public class WalkFragment extends Fragment {
                 onMapCreated();
             }
         });
-
-
     }
 
     private void onMapCreated() {
@@ -128,8 +126,8 @@ public class WalkFragment extends Fragment {
                 if (features.size() > 0 && features.get(0).getStringProperty("markerType").equals("storyMarker")) {
                     logger.log("pin was clicked");
                     for (Story story : walk.getStories()) {
-                        logger.log("places: " + features.get(0).getStringProperty("placeName") +  " vs " + story.getPlace());
-                        if (features.get(0).getStringProperty("placeName").equals(story.getPlace())){
+                        logger.log("ids: " + features.get(0).getStringProperty("id") +  " vs " + story.getId());
+                        if (features.get(0).getStringProperty("id").equals(story.getId())){
                             getActivity().getSupportFragmentManager()
                                     .beginTransaction()
                                     .replace(R.id.current_menu_container, new StoryFragment(story), STORY_TAG)

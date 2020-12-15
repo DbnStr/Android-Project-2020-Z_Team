@@ -77,6 +77,7 @@ public interface UserApi {
         public ArrayList<String> images;
         public String place;
         public String point;
+        public String id;
 
         public Story(String description) {
             this.description = description;
