@@ -126,7 +126,7 @@ public class MapFragment extends Fragment {
                 mapboxMap.animateCamera(CameraUpdateFactory.newCameraPosition(position), 7000);
             }
             initLayers(style);
-            if (isInitialized){
+            if (isInitialized) {
                 showWalk(mapboxMap);
                 addMarkers(mapboxMap);
             }
@@ -180,21 +180,18 @@ public class MapFragment extends Fragment {
             final PointF pixel = mapboxMap.getProjection().toScreenLocation(point);
             List<Feature> features = mapboxMap.queryRenderedFeatures(pixel, SYMBOL_LAYER_ID);
 
-            if (features.size() > 0) {
+            if (features.size() > 0 && features.get(0).getStringProperty("markerType").equals("storyMarker")) {
                 logger.log("pin was clicked");
                 for (Story story : ((MapActivity) getActivity()).getStories()) {
-                    Point a = Point.fromLngLat(point.getLongitude(), point.getLatitude());
-                    Point b = Point.fromJson(story.getPoint().geometry().toJson());
-                    viewModel.closeEnough(a, b);
-                    viewModel.getAnswer().observe(getActivity(), ans -> {
-                        if (ans) {
-                            getActivity().getSupportFragmentManager()
-                                    .beginTransaction()
-                                    .replace(R.id.map_activity_container, new StoryFragment(story), STORY_TAG)
-                                    .addToBackStack(null)
-                                    .commit();
-                        }
-                    });
+                    logger.log("places: " + features.get(0).getStringProperty("placeName") + " vs " + story.getPlace());
+                    if (features.get(0).getStringProperty("placeName").equals(story.getPlace())) {
+                        getActivity().getSupportFragmentManager()
+                                .beginTransaction()
+                                .replace(R.id.map_activity_container, new StoryFragment(story), STORY_TAG)
+                                .addToBackStack(null)
+                                .commit();
+                    }
+                    break;
                 }
             }
             else {
@@ -216,7 +213,7 @@ public class MapFragment extends Fragment {
         mapboxMap.getStyle(style -> {
             GeoJsonSource source = style.getSourceAs(SYMBOL_SOURCE_ID);
 
-            if (source != null){
+            if (source != null) {
                 source.setGeoJson(((MapActivity) getActivity())
                         .getWalkGeoJSON());
             }
@@ -228,7 +225,7 @@ public class MapFragment extends Fragment {
         mapboxMap.getStyle(style -> {
             GeoJsonSource source = style.getSourceAs(SYMBOL_SOURCE_ID);
 
-            if (source != null){
+            if (source != null) {
                 Feature walkPointGeoJSON = Feature.fromGeometry(Point.fromLngLat(point.getLongitude(),
                         point.getLatitude()));
                 walkPointGeoJSON.addStringProperty("markerType", "routeMarker");

@@ -115,7 +115,7 @@ public class WalkFragment extends Fragment {
             LatLngBounds latLngBounds = new LatLngBounds.Builder()
                     .includes(routeLatLngs)
                     .build();
-            mapboxMap.animateCamera(CameraUpdateFactory.newLatLngBounds(latLngBounds, 10), 7000);
+            mapboxMap.animateCamera(CameraUpdateFactory.newLatLngBounds(latLngBounds, 10));
 
             initLayers(style);
             showWalk(mapboxMap);
@@ -125,30 +125,23 @@ public class WalkFragment extends Fragment {
                 final PointF pixel = mapboxMap.getProjection().toScreenLocation(point);
                 List<Feature> features = mapboxMap.queryRenderedFeatures(pixel, SYMBOL_LAYER_ID);
 
-                if (features.size() > 0) {
+                if (features.size() > 0 && features.get(0).getStringProperty("markerType").equals("storyMarker")) {
                     logger.log("pin was clicked");
                     for (Story story : walk.getStories()) {
-                        Point a = Point.fromLngLat(point.getLongitude(), point.getLatitude());
-                        Point b = Point.fromJson(story.getPoint().geometry().toJson());
-                        closeEnough(a, b);
-                        viewModel.getAnswer().observe(getActivity(), ans -> {
-                            if (ans) {
-                                getActivity().getSupportFragmentManager()
-                                        .beginTransaction()
-                                        .replace(R.id.current_menu_container, new StoryFragment(story), STORY_TAG)
-                                        .addToBackStack(null)
-                                        .commit();
-                            }
-                        });
+                        logger.log("places: " + features.get(0).getStringProperty("placeName") +  " vs " + story.getPlace());
+                        if (features.get(0).getStringProperty("placeName").equals(story.getPlace())){
+                            getActivity().getSupportFragmentManager()
+                                    .beginTransaction()
+                                    .replace(R.id.current_menu_container, new StoryFragment(story), STORY_TAG)
+                                    .addToBackStack(null)
+                                    .commit();
+                            break;
+                        }
                     }
                 }
                 return false;
             });
         }));
-    }
-
-    private void closeEnough(Point a, Point b) {
-        viewModel.closeEnough(a, b);
     }
 
     private void addMarkers(MapboxMap mapboxMap) {
