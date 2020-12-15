@@ -244,7 +244,6 @@ public class SaveStoryFragment extends Fragment {
                 photoCount++;
                 photoCounter.setText(String.valueOf(photoCount));
             } else if (requestCode == PICK_CAMERA_CODE) {
-                imageRui = (Uri) data.getExtras().get(MediaStore.EXTRA_OUTPUT);
                 imageRuis.add(imageRui);
 
                 if (photoCount == 0) {

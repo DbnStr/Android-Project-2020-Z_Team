@@ -8,12 +8,12 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
-import com.bumptech.glide.Glide;
-import com.firebase.ui.storage.images.FirebaseImageLoader;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.squareup.picasso.Picasso;
 
 import ru.mail.z_team.Logger;
 import ru.mail.z_team.R;
@@ -52,11 +52,14 @@ public class StoryFragment extends Fragment {
                 ImageView imageView = new ImageView(getActivity());
                 gallery.addView(imageView);
                 StorageReference reference = FirebaseStorage.getInstance().getReferenceFromUrl(BASE_URL + url);
-                Glide.with(this.getContext())
-                        .using(new FirebaseImageLoader())
-                        .load(reference)
-                        .placeholder(getActivity().getDrawable(R.drawable.ic_baseline_photo_24))
-                        .into(imageView);
+                reference.getDownloadUrl().addOnSuccessListener(uri -> {
+                    Picasso.get()
+                            .load(uri)
+                            .placeholder(ContextCompat.getDrawable(getActivity(), R.drawable.ic_baseline_photo_24))
+                            .into(imageView);
+                }).addOnFailureListener(e -> {
+                    logger.errorLog(e.getMessage());
+                });
             }
         }
 
