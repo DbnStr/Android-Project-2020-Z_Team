@@ -77,6 +77,12 @@ public interface UserApi {
     @PUT("/Users/{id}/friends/{num}.json")
     Call<Friend> addFriend(@Path("id") String id, @Path("num") int num, @Body Friend friend);
 
+    @PUT("/FriendRequest/{id}/{num}.json")
+    Call<Friend> addFriendToFriendsRequest(@Path("id") String id, @Path("num") int num, @Body Friend friend);
+
+    @GET("/FriendRequest/{id}.json")
+    Call<ArrayList<Friend>> getFriendRequestList(@Path("id") String id);
+
     @PATCH("/Users/{id}.json")
     Call<User> changeUserInformation(@Path("id") String id, @Body User user);
 }

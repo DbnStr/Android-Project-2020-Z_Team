@@ -12,6 +12,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import java.util.ArrayList;
 import java.util.List;
 
+import retrofit2.Call;
 import retrofit2.Response;
 import ru.mail.z_team.ApplicationModified;
 import ru.mail.z_team.Logger;
@@ -160,43 +161,36 @@ public class FriendsRepository {
         return userExistence;
     }
 
-    public void addFriendToCurrentUser(String id, int num) {
+    public void addFriendToCurrentUser(String newFriendId, int num) {
         logger.log("addFriend");
         String curUserId = FirebaseAuth.getInstance().getUid();
 
-        userApi.getUserById(id).enqueue(new DatabaseCallback<UserApi.User>(LOG_TAG) {
+        userApi.getUserById(newFriendId).enqueue(new DatabaseCallback<UserApi.User>(LOG_TAG) {
             @Override
             public void onNullResponse(Response<UserApi.User> response) {
-                logger.errorLog("Failed to get " + id + " user");
+                logger.errorLog("Failed to get " + newFriendId + " user");
             }
 
             @Override
             public void onSuccessResponse(Response<UserApi.User> response) {
                 UserApi.Friend friend = transformToUserApiFriend(response.body());
-                if (response.body().friends == null) {
-                    count = 0;
-                } else {
-                    count = response.body().friends.size();
-                }
+
+                userApi.getUserById(curUserId).enqueue(new DatabaseCallback<UserApi.User>(LOG_TAG) {
+                    @Override
+                    public void onNullResponse(Response<UserApi.User> response) {
+                        logger.errorLog("failed to load " + curUserId + " user");
+                    }
+
+                    @Override
+                    public void onSuccessResponse(Response<UserApi.User> response) {
+                        UserApi.Friend friendsReq = transformToUserApiFriend(response.body());
+                        addFriendToFriendRequest(newFriendId, friendsReq);
+                    }
+                });
 
                 addFriendToUser(curUserId, num, friend);
 
                 addFriendIdToFriendsIdsList(curUserId, num, friend.id);
-            }
-        });
-        userApi.getUserById(curUserId).enqueue(new DatabaseCallback<UserApi.User>(LOG_TAG) {
-            @Override
-            public void onNullResponse(Response<UserApi.User> response) {
-                logger.errorLog("Failed to get " + curUserId + " user");
-            }
-
-            @Override
-            public void onSuccessResponse(Response<UserApi.User> response) {
-                UserApi.Friend friend = transformToUserApiFriend(response.body());
-
-                addFriendToUser(id, count, friend);
-
-                addFriendIdToFriendsIdsList(id, count, friend.id);
             }
         });
     }
@@ -206,6 +200,42 @@ public class FriendsRepository {
         result.id = user.id;
         result.name = user.name;
         return result;
+    }
+
+    private void addFriendToFriendRequest(final String userId, final UserApi.Friend friend) {
+        userApi.getFriendRequestList(userId).enqueue(new DatabaseCallback<ArrayList<UserApi.Friend>>(LOG_TAG) {
+            @Override
+            public void onNullResponse(Response<ArrayList<UserApi.Friend>> response) {
+                logger.errorLog("failed to load friendRequestList");
+                userApi.addFriendToFriendsRequest(userId, 0, friend).enqueue(new DatabaseCallback<UserApi.Friend>(LOG_TAG) {
+                    @Override
+                    public void onNullResponse(Response<UserApi.Friend> response) {
+                        logger.errorLog("failed to add new friendRequest " + friend.id);
+                    }
+
+                    @Override
+                    public void onSuccessResponse(Response<UserApi.Friend> response) {
+                        logger.log("successfully add friend " + friend.id + " to friendRequest");
+                    }
+                });
+            }
+
+            @Override
+            public void onSuccessResponse(Response<ArrayList<UserApi.Friend>> response) {
+                final int number = response.body().size();
+                userApi.addFriendToFriendsRequest(userId, number, friend).enqueue(new DatabaseCallback<UserApi.Friend>(LOG_TAG) {
+                    @Override
+                    public void onNullResponse(Response<UserApi.Friend> response) {
+                        logger.errorLog("failed to add new friendRequest " + friend.id);
+                    }
+
+                    @Override
+                    public void onSuccessResponse(Response<UserApi.Friend> response) {
+                        logger.log("successfully add friend " + friend.id + " to friendRequest");
+                    }
+                });
+            }
+        });
     }
 
     private void addFriendIdToFriendsIdsList(final String user, final int number, final String friendId) {
