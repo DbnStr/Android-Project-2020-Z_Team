@@ -38,12 +38,11 @@ public class FriendsRepository {
     private final LocalDatabase localDatabase;
 
     private final MutableLiveData<ArrayList<Friend>> currentUserFriends = new MutableLiveData<>();
+    private final MutableLiveData<ArrayList<Friend>> currentUserFriendRequestList = new MutableLiveData<>();
     private final MutableLiveData<Boolean> userExistence = new MutableLiveData<>();
 
-    private int count;
-
     public FriendsRepository(Context context) {
-        this.context= context;
+        this.context = context;
 
         userApi = ApiRepository.from(context).getUserApi();
 
@@ -57,11 +56,15 @@ public class FriendsRepository {
         return currentUserFriends;
     }
 
+    public LiveData<ArrayList<Friend>> getCurrentUserFriendsRequestList() {
+        return currentUserFriendRequestList;
+    }
+
     public void updateCurrentUserFriends() {
         String currentUserId = FirebaseAuth.getInstance().getUid();
 
         logger.log("update user - " + currentUserId);
-        if(isOnline(context)) {
+        if (isOnline(context)) {
             userApi.getUserById(currentUserId).enqueue(new DatabaseCallback<UserApi.User>(LOG_TAG) {
                 @Override
                 public void onNullResponse(Response<UserApi.User> response) {
@@ -88,7 +91,7 @@ public class FriendsRepository {
 
     private ArrayList<Friend> transformToFriendAll(List<UserFriend> friends) {
         ArrayList<Friend> result = new ArrayList<>();
-        for(UserFriend friend : friends) {
+        for (UserFriend friend : friends) {
             result.add(transformToFriend(friend));
         }
         return result;
@@ -108,9 +111,7 @@ public class FriendsRepository {
         }
         ArrayList<Friend> userFriends = new ArrayList<>();
         if (user.friends != null) {
-            for (UserApi.Friend friend : user.friends) {
-                userFriends.add(transformToFriend(friend));
-            }
+            userFriends.addAll(transformToFriendAll(user.friends));
         }
         return new User(
                 name,
@@ -122,7 +123,7 @@ public class FriendsRepository {
 
     private List<ru.mail.z_team.local_storage.Friend> transformToLocalDBFriendALl(List<Friend> friends, String currentUserId) {
         List<ru.mail.z_team.local_storage.Friend> result = new ArrayList<>();
-        for(Friend friend : friends) {
+        for (Friend friend : friends) {
             result.add(transformToLocalDBFriend(friend, currentUserId));
         }
         return result;
@@ -136,8 +137,36 @@ public class FriendsRepository {
         );
     }
 
+    private ArrayList<Friend> transformToFriendAll(ArrayList<UserApi.Friend> friends) {
+        ArrayList<Friend> result = new ArrayList<>();
+        for(UserApi.Friend friend : friends) {
+            result.add(transformToFriend(friend));
+        }
+        return result;
+    }
+
     private Friend transformToFriend(UserApi.Friend friend) {
         return new Friend(friend.name, friend.id);
+    }
+
+    public void updateCurrentUserFriendRequestList() {
+        final String currentUserId = FirebaseAuth.getInstance().getUid();
+
+        userApi.getFriendRequestList(currentUserId).enqueue(new DatabaseCallback<ArrayList<UserApi.Friend>>(LOG_TAG) {
+            @Override
+            public void onNullResponse(Response<ArrayList<UserApi.Friend>> response) {
+                logger.log("the current user has no new friend requests");
+
+                currentUserFriendRequestList.postValue(new ArrayList<>());
+            }
+
+            @Override
+            public void onSuccessResponse(Response<ArrayList<UserApi.Friend>> response) {
+                logger.log("the current user has " + response.body().size() + " friend requests");
+
+                currentUserFriendRequestList.postValue(transformToFriendAll(response.body()));
+            }
+        });
     }
 
     public void checkUserExistence(String id) {
@@ -206,34 +235,27 @@ public class FriendsRepository {
         userApi.getFriendRequestList(userId).enqueue(new DatabaseCallback<ArrayList<UserApi.Friend>>(LOG_TAG) {
             @Override
             public void onNullResponse(Response<ArrayList<UserApi.Friend>> response) {
-                logger.errorLog("failed to load friendRequestList");
-                userApi.addFriendToFriendsRequest(userId, 0, friend).enqueue(new DatabaseCallback<UserApi.Friend>(LOG_TAG) {
-                    @Override
-                    public void onNullResponse(Response<UserApi.Friend> response) {
-                        logger.errorLog("failed to add new friendRequest " + friend.id);
-                    }
-
-                    @Override
-                    public void onSuccessResponse(Response<UserApi.Friend> response) {
-                        logger.log("successfully add friend " + friend.id + " to friendRequest");
-                    }
-                });
+                addFriendToFriendRequestListAtNumber(userId, 0, friend);
             }
 
             @Override
             public void onSuccessResponse(Response<ArrayList<UserApi.Friend>> response) {
                 final int number = response.body().size();
-                userApi.addFriendToFriendsRequest(userId, number, friend).enqueue(new DatabaseCallback<UserApi.Friend>(LOG_TAG) {
-                    @Override
-                    public void onNullResponse(Response<UserApi.Friend> response) {
-                        logger.errorLog("failed to add new friendRequest " + friend.id);
-                    }
+                addFriendToFriendRequestListAtNumber(userId, number, friend);
+            }
+        });
+    }
 
-                    @Override
-                    public void onSuccessResponse(Response<UserApi.Friend> response) {
-                        logger.log("successfully add friend " + friend.id + " to friendRequest");
-                    }
-                });
+    private void addFriendToFriendRequestListAtNumber(final String userId, final int numberOnList, final UserApi.Friend friend) {
+        userApi.addFriendToFriendsRequest(userId, numberOnList, friend).enqueue(new DatabaseCallback<UserApi.Friend>(LOG_TAG) {
+            @Override
+            public void onNullResponse(Response<UserApi.Friend> response) {
+                logger.errorLog("failed to add new friendRequest " + friend.id);
+            }
+
+            @Override
+            public void onSuccessResponse(Response<UserApi.Friend> response) {
+                logger.log("successfully add friend " + friend.id + " to friendRequest");
             }
         });
     }
@@ -261,7 +283,7 @@ public class FriendsRepository {
 
             @Override
             public void onSuccessResponse(Response<UserApi.Friend> response) {
-               updateCurrentUserFriends();
+                updateCurrentUserFriends();
             }
         });
     }

@@ -29,4 +29,7 @@
     <string name="name_text">NAME</string>
     <string name="age_text">AGE</string>
     <string name="save_changes">SAVE CHANGES</string>
+    <string name="friend_request">Friend Request</string>
+    <string name="friends_list">friends list</string>
+    <string name="you_have_no_friend_requests">You have no friend requests</string>
 </resources>

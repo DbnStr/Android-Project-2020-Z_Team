@@ -9,6 +9,7 @@ import androidx.lifecycle.LiveData;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 
+import ru.mail.z_team.AuthRepository;
 import ru.mail.z_team.Logger;
 import ru.mail.z_team.user.Friend;
 import ru.mail.z_team.user.User;
@@ -21,20 +22,30 @@ public class FriendsViewModel extends AndroidViewModel {
     private final FriendsRepository repository;
 
     private final LiveData<ArrayList<Friend>> currentUserFriends;
+    private final LiveData<ArrayList<Friend>> currentUserFriendRequestList;
 
     public FriendsViewModel(@NonNull Application application) {
         super(application);
         logger = new Logger(LOG_TAG, true);
         repository = new FriendsRepository(getApplication());
         currentUserFriends = repository.getCurrentUserFriends();
+        currentUserFriendRequestList = repository.getCurrentUserFriendsRequestList();
     }
 
     public LiveData<ArrayList<Friend>> getCurrentUserFriends() {
         return currentUserFriends;
     }
 
+    public LiveData<ArrayList<Friend>> getCurrentUserFriendRequestList() {
+        return currentUserFriendRequestList;
+    }
+
     public void updateCurrentUserFriends() {
         repository.updateCurrentUserFriends();
+    }
+
+    public void updateCurrentUserFriendRequestList() {
+        repository.updateCurrentUserFriendRequestList();
     }
 
     public void checkUserExistence(final String id) {
