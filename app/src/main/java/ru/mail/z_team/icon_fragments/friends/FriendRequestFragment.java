@@ -27,7 +27,7 @@ public class FriendRequestFragment extends Fragment {
     private Button backToFriendsListBtn;
     private TextView noFriendRequests;
 
-    private FriendAdapter adapter;
+    private FriendRequestAdapter adapter;
 
     private FriendsViewModel friendsViewModel;
 
@@ -61,10 +61,11 @@ public class FriendRequestFragment extends Fragment {
         final RecyclerView recyclerView = view.findViewById(R.id.recycler_friend_request);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-        adapter = new FriendAdapter(getActivity());
+        friendsViewModel = new ViewModelProvider(this).get(FriendsViewModel.class);
+
+        adapter = new FriendRequestAdapter(getActivity(), friendsViewModel);
         recyclerView.setAdapter(adapter);
 
-        friendsViewModel = new ViewModelProvider(this).get(FriendsViewModel.class);
         friendsViewModel.updateCurrentUserFriendRequestList();
         friendsViewModel.getCurrentUserFriendRequestList()
                 .observe(getActivity(), friends -> {
@@ -73,8 +74,8 @@ public class FriendRequestFragment extends Fragment {
                         noFriendRequests.setVisibility(View.VISIBLE);
                     } else {
                         noFriendRequests.setVisibility(View.INVISIBLE);
-                        adapter.setFriends(friends);
                     }
+                    adapter.setFriends(friends);
                 });
 
         backToFriendsListBtn.setOnClickListener(v -> {

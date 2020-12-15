@@ -48,6 +48,10 @@ public class FriendsViewModel extends AndroidViewModel {
         repository.updateCurrentUserFriendRequestList();
     }
 
+    public void acceptFriendRequest(final int number) {
+        repository.acceptFriendRequest(number);
+    }
+
     public void checkUserExistence(final String id) {
         logger.log("checkUserExistence");
         repository.checkUserExistence(id);

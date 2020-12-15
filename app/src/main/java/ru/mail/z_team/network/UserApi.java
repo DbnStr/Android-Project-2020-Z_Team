@@ -1,10 +1,13 @@
 package ru.mail.z_team.network;
 
+import androidx.room.Delete;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.http.Body;
+import retrofit2.http.DELETE;
 import retrofit2.http.GET;
 import retrofit2.http.PATCH;
 import retrofit2.http.PUT;
@@ -79,6 +82,12 @@ public interface UserApi {
 
     @PUT("/FriendRequest/{id}/{num}.json")
     Call<Friend> addFriendToFriendsRequest(@Path("id") String id, @Path("num") int num, @Body Friend friend);
+
+    @GET("/FriendRequest/{id}/{num}.json")
+    Call<Friend> getFriendsRequest(@Path("id") String id, @Path("num") int num);
+
+    @DELETE("/FriendRequest/{id}/{num}.json")
+    Call<Friend> deleteFriendRequest(@Path("id") String id, @Path("num") int num);
 
     @GET("/FriendRequest/{id}.json")
     Call<ArrayList<Friend>> getFriendRequestList(@Path("id") String id);

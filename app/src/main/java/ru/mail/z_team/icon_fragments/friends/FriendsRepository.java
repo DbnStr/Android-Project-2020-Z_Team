@@ -149,6 +149,47 @@ public class FriendsRepository {
         return new Friend(friend.name, friend.id);
     }
 
+    public void acceptFriendRequest(int number) {
+        String currentUserId = FirebaseAuth.getInstance().getUid();
+        userApi.getFriendsRequest(currentUserId, number).enqueue(new DatabaseCallback<UserApi.Friend>(LOG_TAG) {
+            @Override
+            public void onNullResponse(Response<UserApi.Friend> response) {
+                logger.log("Friend request no longer exists");
+            }
+
+            @Override
+            public void onSuccessResponse(Response<UserApi.Friend> response) {
+                UserApi.Friend newFriend = response.body();
+                userApi.getUserFriendsById(currentUserId).enqueue(new DatabaseCallback<List<UserApi.Friend>>(LOG_TAG) {
+                    @Override
+                    public void onNullResponse(Response<List<UserApi.Friend>> response) {
+                        addFriendToUser(currentUserId, 0, newFriend);
+                        updateCurrentUserFriends();
+                    }
+
+                    @Override
+                    public void onSuccessResponse(Response<List<UserApi.Friend>> response) {
+                        addFriendToUser(currentUserId, response.body().size(), newFriend);
+                        updateCurrentUserFriends();
+                    }
+                });
+
+                userApi.deleteFriendRequest(currentUserId, number).enqueue(new DatabaseCallback<UserApi.Friend>(LOG_TAG) {
+                    @Override
+                    public void onNullResponse(Response<UserApi.Friend> response) {
+                        logger.log("Successfully delete friend request");
+                        updateCurrentUserFriendRequestList();
+                    }
+
+                    @Override
+                    public void onSuccessResponse(Response<UserApi.Friend> response) {
+
+                    }
+                });
+            }
+        });
+    }
+
     public void updateCurrentUserFriendRequestList() {
         final String currentUserId = FirebaseAuth.getInstance().getUid();
 
