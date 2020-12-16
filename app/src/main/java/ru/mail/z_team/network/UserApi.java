@@ -99,6 +99,9 @@ public interface UserApi {
     @GET("/FriendsIds/{id}.json")
     Call<ArrayList<String>> getUserFriendsIds(@Path("id") String id);
 
+    @GET("/Users/{id}/friends.json")
+    Call<ArrayList<Friend>> getUserFriendsById(@Path("id") String id);
+
     @PUT("/Users/{id}.json")
     Call<User> addUser(@Path("id") String id, @Body User user);
 

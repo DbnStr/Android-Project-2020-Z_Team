@@ -7,14 +7,13 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.google.firebase.auth.FirebaseAuth;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 
 import retrofit2.Response;
 import ru.mail.z_team.Logger;
 import ru.mail.z_team.icon_fragments.DatabaseCallback;
+import ru.mail.z_team.icon_fragments.Transformer;
 import ru.mail.z_team.icon_fragments.walks.WalkAnnotation;
 import ru.mail.z_team.network.DatabaseApiRepository;
 import ru.mail.z_team.network.UserApi;
@@ -27,9 +26,6 @@ public class NewsRepository {
     private final UserApi userApi;
 
     private final MutableLiveData<ArrayList<WalkAnnotation>> currentUserNews = new MutableLiveData<>();
-
-    SimpleDateFormat sdf =
-            new SimpleDateFormat("EEE, MMM d, yyyy hh:mm:ss a z");
 
     public NewsRepository(Context context) {
         userApi = DatabaseApiRepository.from(context).getUserApi();
@@ -74,32 +70,11 @@ public class NewsRepository {
                 @Override
                 public void onSuccessResponse(Response<ArrayList<UserApi.WalkInfo>> response) {
                     logger.log(id + " have walks");
-                    news.addAll(transformToWalkAnnotationAll(response.body()));
+                    news.addAll(Transformer.transformToWalkAnnotationAll(response.body()));
                     Collections.sort(news);
                     currentUserNews.postValue(news);
                 }
             });
         }
-    }
-
-    private ArrayList<WalkAnnotation> transformToWalkAnnotationAll(ArrayList<UserApi.WalkInfo> walks) {
-        ArrayList<WalkAnnotation> result = new ArrayList<>();
-        for (UserApi.WalkInfo walk : walks) {
-            result.add(transformToWalkAnnotation(walk));
-        }
-        return result;
-    }
-
-    private WalkAnnotation transformToWalkAnnotation(UserApi.WalkInfo walk) {
-        WalkAnnotation transformed = new WalkAnnotation();
-        transformed.setTitle(walk.title);
-        transformed.setAuthor(walk.author);
-        transformed.setAuthorId(walk.id);
-        try {
-            transformed.setDate(sdf.parse(walk.date));
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        return transformed;
     }
 }

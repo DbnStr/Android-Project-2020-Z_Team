@@ -2,6 +2,9 @@ package ru.mail.z_team.icon_fragments;
 
 import android.annotation.SuppressLint;
 
+import com.mapbox.geojson.Feature;
+import com.mapbox.geojson.FeatureCollection;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -9,7 +12,9 @@ import java.util.Date;
 import java.util.List;
 
 import ru.mail.z_team.icon_fragments.walks.Walk;
+import ru.mail.z_team.icon_fragments.walks.WalkAnnotation;
 import ru.mail.z_team.local_storage.UserFriend;
+import ru.mail.z_team.map.Story;
 import ru.mail.z_team.network.UserApi;
 import ru.mail.z_team.user.Friend;
 import ru.mail.z_team.user.User;
@@ -85,28 +90,15 @@ public class Transformer {
 
     /* default Walk result */
 
-    public static ArrayList<Walk> transformToWalkAll(ArrayList<UserApi.Walk> walks) {
-        ArrayList<Walk> result = new ArrayList<>();
-        for (UserApi.Walk walk : walks) {
-            result.add(transformToWalk(walk));
-        }
-        return result;
-    }
-
     public static Walk transformToWalk(UserApi.Walk walk) {
         Walk transformed = new Walk();
         transformed.setTitle(walk.title);
         transformed.setAuthor(walk.author);
+        FeatureCollection map = FeatureCollection.fromJson(walk.walk);
+        transformed.setMap(map);
+        transformed.setStories(transformToStoryAll(walk.stories));
         transformed.setDate(getDate(walk.date));
         return transformed;
-    }
-
-    public static ArrayList<Walk> transformToWalkAll(List<ru.mail.z_team.local_storage.UserWalk> walks) {
-        ArrayList<Walk> result = new ArrayList<>();
-        for (ru.mail.z_team.local_storage.UserWalk walk : walks) {
-            result.add(Transformer.transformToWalk(walk));
-        }
-        return result;
     }
 
     public static Walk transformToWalk(ru.mail.z_team.local_storage.UserWalk walk) {
@@ -205,5 +197,50 @@ public class Transformer {
             e.printStackTrace();
         }
         return result;
+    }
+
+    /* default Story */
+
+    public static ArrayList<Story> transformToStoryAll(ArrayList<UserApi.Story> stories) {
+        ArrayList<Story> transformed = new ArrayList<>();
+        if (stories != null) {
+            for (UserApi.Story apiStory : stories) {
+                transformed.add(transformToStory(apiStory));
+            }
+        }
+        return transformed;
+    }
+
+    public static Story transformToStory(UserApi.Story apiStory) {
+        Story story = new Story();
+        story.setDescription(apiStory.description);
+        story.setPlace(apiStory.place);
+        story.setId(apiStory.id);
+        story.setUrlImages(apiStory.images);
+        story.setPoint(Feature.fromJson(apiStory.point));
+        return story;
+    }
+
+    /* Walk Annotation */
+
+    public static ArrayList<WalkAnnotation> transformToWalkAnnotationAll(ArrayList<UserApi.WalkInfo> walks) {
+        ArrayList<WalkAnnotation> result = new ArrayList<>();
+        for (UserApi.WalkInfo walk : walks) {
+            result.add(transformToWalkAnnotation(walk));
+        }
+        return result;
+    }
+
+    public static WalkAnnotation transformToWalkAnnotation(UserApi.WalkInfo walk) {
+        WalkAnnotation transformed = new WalkAnnotation();
+        transformed.setTitle(walk.title);
+        transformed.setAuthor(walk.author);
+        transformed.setAuthorId(walk.id);
+        try {
+            transformed.setDate(sdf.parse(walk.date));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return transformed;
     }
 }

@@ -20,12 +20,10 @@ import ru.mail.z_team.icon_fragments.Transformer;
 import ru.mail.z_team.local_storage.LocalDatabase;
 import ru.mail.z_team.local_storage.UserDao;
 import ru.mail.z_team.local_storage.UserFriend;
-import ru.mail.z_team.network.ApiRepository;
+import ru.mail.z_team.network.DatabaseApiRepository;
 import ru.mail.z_team.network.UserApi;
 import ru.mail.z_team.user.Friend;
 import ru.mail.z_team.user.User;
-
-import static ru.mail.z_team.icon_fragments.Transformer.transformToLocalDBFriend;
 
 public class ProfileRepository {
 
@@ -43,7 +41,7 @@ public class ProfileRepository {
     public ProfileRepository(Context context) {
         this.context = context;
 
-        userApi = ApiRepository.from(context).getUserApi();
+        userApi = DatabaseApiRepository.from(context).getUserApi();
 
         logger = new Logger(LOG_TAG, true);
 

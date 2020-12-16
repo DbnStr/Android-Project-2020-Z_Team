@@ -6,7 +6,6 @@ import android.content.Context;
 import androidx.room.Room;
 
 import ru.mail.z_team.local_storage.LocalDatabase;
-import ru.mail.z_team.network.ApiRepository;
 import ru.mail.z_team.network.DatabaseApiRepository;
 
 public class ApplicationModified extends Application {

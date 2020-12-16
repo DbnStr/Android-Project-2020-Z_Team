@@ -10,19 +10,15 @@ import androidx.lifecycle.MutableLiveData;
 import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.ArrayList;
-import java.util.List;
 
-import retrofit2.Call;
 import retrofit2.Response;
 import ru.mail.z_team.ApplicationModified;
 import ru.mail.z_team.Logger;
 import ru.mail.z_team.icon_fragments.DatabaseCallback;
-import ru.mail.z_team.network.DatabaseApiRepository;
 import ru.mail.z_team.icon_fragments.Transformer;
 import ru.mail.z_team.local_storage.LocalDatabase;
 import ru.mail.z_team.local_storage.UserDao;
-import ru.mail.z_team.local_storage.UserFriend;
-import ru.mail.z_team.network.ApiRepository;
+import ru.mail.z_team.network.DatabaseApiRepository;
 import ru.mail.z_team.network.UserApi;
 import ru.mail.z_team.user.Friend;
 import ru.mail.z_team.user.User;
@@ -100,15 +96,15 @@ public class FriendsRepository {
             @Override
             public void onSuccessResponse(Response<UserApi.Friend> response) {
                 UserApi.Friend newFriend = response.body();
-                userApi.getUserFriendsById(currentUserId).enqueue(new DatabaseCallback<List<UserApi.Friend>>(LOG_TAG) {
+                userApi.getUserFriendsById(currentUserId).enqueue(new DatabaseCallback<ArrayList<UserApi.Friend>>(LOG_TAG) {
                     @Override
-                    public void onNullResponse(Response<List<UserApi.Friend>> response) {
+                    public void onNullResponse(Response<ArrayList<UserApi.Friend>> response) {
                         addFriendToUser(currentUserId, 0, newFriend);
                         updateCurrentUserFriends();
                     }
 
                     @Override
-                    public void onSuccessResponse(Response<List<UserApi.Friend>> response) {
+                    public void onSuccessResponse(Response<ArrayList<UserApi.Friend>> response) {
                         addFriendToUser(currentUserId, response.body().size(), newFriend);
                         updateCurrentUserFriends();
                     }
