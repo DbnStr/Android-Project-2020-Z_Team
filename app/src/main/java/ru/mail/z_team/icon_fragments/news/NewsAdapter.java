@@ -14,13 +14,14 @@ import java.util.Date;
 import java.util.TimeZone;
 
 import ru.mail.z_team.Logger;
+import ru.mail.z_team.MainMenuActivity;
 import ru.mail.z_team.R;
-import ru.mail.z_team.icon_fragments.walks.Walk;
+import ru.mail.z_team.icon_fragments.walks.WalkAnnotation;
 
 public class NewsAdapter extends RecyclerView.Adapter<NewsViewHolder> {
     private static final String LOG_TAG = "NewsAdapter";
     private final Logger logger;
-    private ArrayList<Walk> walks;
+    private ArrayList<WalkAnnotation> walks;
     private final Context context;
 
     public NewsAdapter(Context context) {
@@ -49,6 +50,13 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsViewHolder> {
                 new SimpleDateFormat("EEE, MMM d, yyyy hh:mm:ss a z");
         sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
         holder.newsDate.setText(sdf.format(date));
+
+        holder.newsBody.setOnClickListener(v -> {
+            logger.log("clicked on holder.body");
+            if (context instanceof MainMenuActivity){
+                ((MainMenuActivity) context).openWalkProfile(walks.get(position));
+            }
+        });
     }
 
     @Override
@@ -56,7 +64,7 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsViewHolder> {
         return walks.size();
     }
 
-    public void setWalks(ArrayList<Walk> walks) {
+    public void setWalks(ArrayList<WalkAnnotation> walks) {
         this.walks = walks;
         this.notifyItemRangeChanged(0, this.walks.size());
     }

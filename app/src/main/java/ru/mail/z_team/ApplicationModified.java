@@ -3,22 +3,22 @@ package ru.mail.z_team;
 import android.app.Application;
 import android.content.Context;
 
-import ru.mail.z_team.network.ApiRepository;
+import ru.mail.z_team.network.DatabaseApiRepository;
 
 public class ApplicationModified extends Application {
 
-    private ApiRepository apiRepository;
+    private DatabaseApiRepository databaseApiRepository;
     private AuthRepository authRepository;
 
     @Override
     public void onCreate() {
         super.onCreate();
-        apiRepository = new ApiRepository();
-        authRepository = new AuthRepository(apiRepository);
+        databaseApiRepository = new DatabaseApiRepository();
+        authRepository = new AuthRepository(databaseApiRepository);
     }
 
-    public ApiRepository getApis() {
-        return apiRepository;
+    public DatabaseApiRepository getApis() {
+        return databaseApiRepository;
     }
 
     public AuthRepository getAuthRepository() {

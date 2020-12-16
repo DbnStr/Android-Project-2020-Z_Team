@@ -7,8 +7,14 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MediatorLiveData;
 
+import com.mapbox.geojson.FeatureCollection;
+import com.mapbox.geojson.Point;
+
+import java.util.ArrayList;
+
 import ru.mail.z_team.Logger;
 import ru.mail.z_team.R;
+import ru.mail.z_team.map.Story;
 
 public class GoOutViewModel extends AndroidViewModel {
 
@@ -16,6 +22,7 @@ public class GoOutViewModel extends AndroidViewModel {
     private final Logger logger;
     private final GoOutRepository repository;
     MediatorLiveData<String> postWalkStatus = new MediatorLiveData<>();
+    MediatorLiveData<String> placeName = new MediatorLiveData<>();
 
     public GoOutViewModel(@NonNull Application application) {
         super(application);
@@ -23,9 +30,9 @@ public class GoOutViewModel extends AndroidViewModel {
         repository = new GoOutRepository(getApplication());
     }
 
-    public void postWalk(String title) {
+    public void postWalk(String title, FeatureCollection walk, ArrayList<Story> stories) {
         logger.log("postWalk");
-        repository.postWalk(title);
+        repository.postWalk(title, walk, stories);
         postWalkStatus.addSource(repository.getPostStatus(), postStatus -> {
             if (postStatus == GoOutRepository.PostStatus.FAILED){
                 postWalkStatus.postValue(getApplication().getString(R.string.FAILED));
@@ -38,5 +45,16 @@ public class GoOutViewModel extends AndroidViewModel {
 
     public LiveData<String> getPostStatus(){
         return postWalkStatus;
+    }
+
+    public void updatePlaceName(Point point) {
+        repository.updatePlaceName(point);
+        placeName.addSource(repository.getPlaceName(), place -> {
+            placeName.postValue(place);
+        });
+    }
+
+    public LiveData<String> getPlaceName() {
+        return placeName;
     }
 }

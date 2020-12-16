@@ -13,7 +13,7 @@ public class WalksViewModel extends AndroidViewModel {
     private static final String LOG_TAG = "ProfileViewModel";
     private final WalksRepository repository;
 
-    private final LiveData<ArrayList<Walk>> currentUserWalks;
+    private final LiveData<ArrayList<WalkAnnotation>> currentUserWalks;
 
     public WalksViewModel(@NonNull Application application) {
         super(application);
@@ -25,7 +25,7 @@ public class WalksViewModel extends AndroidViewModel {
         repository.updateCurrentUserWalks();
     }
 
-    public LiveData<ArrayList<Walk>> getCurrentUserWalks() {
+    public LiveData<ArrayList<WalkAnnotation>> getCurrentUserWalks() {
         return currentUserWalks;
     }
 }

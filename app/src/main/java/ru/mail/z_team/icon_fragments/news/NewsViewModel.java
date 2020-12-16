@@ -9,7 +9,7 @@ import androidx.lifecycle.LiveData;
 import java.util.ArrayList;
 
 import ru.mail.z_team.Logger;
-import ru.mail.z_team.icon_fragments.walks.Walk;
+import ru.mail.z_team.icon_fragments.walks.WalkAnnotation;
 
 public class NewsViewModel extends AndroidViewModel {
 
@@ -17,7 +17,7 @@ public class NewsViewModel extends AndroidViewModel {
     private final Logger logger;
 
     private final NewsRepository repository;
-    private final LiveData<ArrayList<Walk>> currentUserNews;
+    private final LiveData<ArrayList<WalkAnnotation>> currentUserNews;
 
     public NewsViewModel(@NonNull Application application) {
         super(application);
@@ -33,7 +33,7 @@ public class NewsViewModel extends AndroidViewModel {
         repository.updateCurrentUserNews();
     }
 
-    public LiveData<ArrayList<Walk>> getCurrentUserNews() {
+    public LiveData<ArrayList<WalkAnnotation>> getCurrentUserNews() {
         logger.log("getNews");
         return currentUserNews;
     }

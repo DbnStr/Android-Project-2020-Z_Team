@@ -1,38 +1,28 @@
 package ru.mail.z_team.icon_fragments.walks;
 
-import java.util.Date;
+import com.mapbox.geojson.FeatureCollection;
 
-public class Walk implements Comparable<Walk>{
-    String title;
-    String author;
-    Date date;
+import java.util.ArrayList;
 
-    public void setAuthor(String author) {
-        this.author = author;
+import ru.mail.z_team.map.Story;
+
+public class Walk extends WalkAnnotation{
+    FeatureCollection map;
+    ArrayList<Story> stories;
+
+    public void setMap(FeatureCollection map) {
+        this.map = map;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
+    public void setStories(ArrayList<Story> stories) {
+        this.stories = stories;
     }
 
-    public void setDate(Date date) {
-        this.date = date;
+    public FeatureCollection getMap() {
+        return map;
     }
 
-    public String getAuthor() {
-        return author;
-    }
-
-    public Date getDate() {
-        return date;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    @Override
-    public int compareTo(Walk o) {
-        return -date.compareTo(o.date);
+    public ArrayList<Story> getStories() {
+        return stories;
     }
 }

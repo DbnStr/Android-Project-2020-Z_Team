@@ -1,7 +1,6 @@
 package ru.mail.z_team.network;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.http.Body;
@@ -26,41 +25,73 @@ public interface UserApi {
             this.friends = new ArrayList<>();
         }
 
-        public User(){}
+        public User() {
+        }
     }
 
     class Friend {
         public String name;
         public String id;
 
-        public Friend(String name, String id){
+        public Friend(String name, String id) {
             this.name = name;
             this.id = id;
         }
 
-        public Friend(){}
+        public Friend() {
+        }
+    }
+
+    class WalkInfo {
+        public String title;
+        public String author;
+        public String date;
+        public String id;
+
+        public WalkInfo(String title, String date, String author, String id) {
+            this.title = title;
+            this.date = date;
+            this.author = author;
+            this.id = id;
+        }
     }
 
     class Walk {
         public String title;
         public String author;
         public String date;
+        public String walk;
+        public ArrayList<Story> stories;
 
-        public Walk(String title, String date, String author) {
+        public Walk(String title, String date, String author, String walk, ArrayList<Story> stories) {
             this.title = title;
             this.date = date;
             this.author = author;
+            this.walk = walk;
+            this.stories = stories;
+        }
+    }
+
+    class Story {
+        public String description;
+        public ArrayList<String> images;
+        public String place;
+        public String point;
+        public String id;
+
+        public Story(String description) {
+            this.description = description;
         }
     }
 
     @GET("/Users/{id}.json")
     Call<User> getUserById(@Path("id") String id);
 
-    @GET("/Users/{id}/friends.json")
-    Call<List<Friend>> getUserFriendsById(@Path("id") String id);
+    @GET("/WalkInfo/{id}.json")
+    Call<ArrayList<WalkInfo>> getUserWalksById(@Path("id") String id);
 
-    @GET("/Walks/{id}.json")
-    Call<ArrayList<Walk>> getUserWalksById(@Path("id") String id);
+    @GET("/WalkMaps/{id}/{date}.json")
+    Call<Walk> getWalkByDateAndId(@Path("id") String id, @Path("date") String date);
 
     @GET("/FriendsIds/{id}.json")
     Call<ArrayList<String>> getUserFriendsIds(@Path("id") String id);
@@ -68,8 +99,11 @@ public interface UserApi {
     @PUT("/Users/{id}.json")
     Call<User> addUser(@Path("id") String id, @Body User user);
 
-    @PUT("/Walks/{id}/{num}.json")
-    Call<User> addWalk(@Path("id") String id, @Path("num") int num, @Body Walk walk);
+    @PUT("/WalkInfo/{id}/{num}.json")
+    Call<WalkInfo> addWalkInfo(@Path("id") String id, @Path("num") int num, @Body WalkInfo walk);
+
+    @PUT("/WalkMaps/{id}/{num}.json")
+    Call<Walk> addWalk(@Path("id") String id, @Path("num") String num, @Body Walk walk);
 
     @PUT("/FriendsIds/{id}/{num}.json")
     Call<String> addFriendId(@Path("id") String id, @Path("num") int num, @Body String friendId);

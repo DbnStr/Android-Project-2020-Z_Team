@@ -6,13 +6,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <Button
-        android:id="@+id/create_walk_btn"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Create Walk"
-        app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginTop="20dp"/>
-    <Button
         android:id="@+id/map_activity_btn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
