@@ -1,5 +1,6 @@
 package ru.mail.z_team.map;
 
+import android.annotation.SuppressLint;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.PointF;
@@ -28,6 +29,8 @@ import com.mapbox.mapboxsdk.camera.CameraPosition;
 import com.mapbox.mapboxsdk.camera.CameraUpdateFactory;
 import com.mapbox.mapboxsdk.geometry.LatLng;
 import com.mapbox.mapboxsdk.geometry.LatLngBounds;
+import com.mapbox.mapboxsdk.location.LocationComponent;
+import com.mapbox.mapboxsdk.location.LocationComponentActivationOptions;
 import com.mapbox.mapboxsdk.maps.MapView;
 import com.mapbox.mapboxsdk.maps.MapboxMap;
 import com.mapbox.mapboxsdk.maps.Style;
@@ -66,6 +69,7 @@ public class MapFragment extends Fragment {
     private static final String SAVE_TAG = "save-walk";
     private static final String STORY_TAG = "story";
 
+    private LocationComponent locationComponent;
     private MapView mapView = null;
     private Point startPos = null, destinationPos = null;
     private final ArrayList<DirectionsRoute> routes = new ArrayList<>();
@@ -101,6 +105,7 @@ public class MapFragment extends Fragment {
         mapView = view.findViewById(R.id.map_view);
         mapView.onCreate(savedInstanceState);
         mapView.getMapAsync(mapboxMap -> mapboxMap.setStyle(Style.MAPBOX_STREETS, style -> {
+            initLocationComponent(mapboxMap, style);
             if (isInitialized) {
                 ArrayList<Point> routePoints = new ArrayList<>();
                 for (Feature feature : ((MapActivity) getActivity()).getWalkGeoJSON().features()) {
@@ -118,11 +123,14 @@ public class MapFragment extends Fragment {
                         .build();
                 mapboxMap.animateCamera(CameraUpdateFactory.newLatLngBounds(latLngBounds, 10));
             } else {
+                LatLng target = new LatLng(locationComponent.getLastKnownLocation().getLatitude(),
+                        locationComponent.getLastKnownLocation().getLongitude());
                 CameraPosition position = new CameraPosition.Builder()
-                        .target(new LatLng(55.765762, 37.685479))
+                        .target(target)
                         .zoom(14)
                         .tilt(20)
                         .build();
+                //new LatLng(55.765762, 37.685479)
                 mapboxMap.animateCamera(CameraUpdateFactory.newCameraPosition(position), 7000);
             }
             initLayers(style);
@@ -155,6 +163,18 @@ public class MapFragment extends Fragment {
 
             isInitialized = true;
         }));
+    }
+
+    @SuppressLint("MissingPermission")
+    private void initLocationComponent(MapboxMap mapboxMap, Style style) {
+        locationComponent = mapboxMap.getLocationComponent();
+        locationComponent.activateLocationComponent(
+                LocationComponentActivationOptions.builder(getContext(), style).build());
+
+        locationComponent.setLocationComponentEnabled(true);
+
+//        locationComponent.setCameraMode(CameraMode.TRACKING);
+//        locationComponent.setRenderMode(RenderMode.COMPASS);
     }
 
     private void showWalk(MapboxMap mapboxMap) {
@@ -193,8 +213,7 @@ public class MapFragment extends Fragment {
                     }
                     break;
                 }
-            }
-            else {
+            } else {
                 mapboxMap.getStyle(style -> {
                     Point storyPoint = Point.fromLngLat(point.getLongitude(), point.getLatitude());
 
