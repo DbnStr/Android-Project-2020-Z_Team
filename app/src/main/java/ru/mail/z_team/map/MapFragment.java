@@ -1,6 +1,7 @@
 package ru.mail.z_team.map;
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.PointF;
@@ -31,6 +32,7 @@ import com.mapbox.mapboxsdk.geometry.LatLng;
 import com.mapbox.mapboxsdk.geometry.LatLngBounds;
 import com.mapbox.mapboxsdk.location.LocationComponent;
 import com.mapbox.mapboxsdk.location.LocationComponentActivationOptions;
+import com.mapbox.mapboxsdk.location.modes.RenderMode;
 import com.mapbox.mapboxsdk.maps.MapView;
 import com.mapbox.mapboxsdk.maps.MapboxMap;
 import com.mapbox.mapboxsdk.maps.Style;
@@ -74,7 +76,9 @@ public class MapFragment extends Fragment {
     private Point startPos = null, destinationPos = null;
     private final ArrayList<DirectionsRoute> routes = new ArrayList<>();
 
-    private FloatingActionButton saveMapButton;
+    private boolean isMapClickable;
+
+    private FloatingActionButton saveMapButton, addStoryButton;
 
     private boolean isInitialized = false;
 
@@ -151,9 +155,14 @@ public class MapFragment extends Fragment {
                 }
                 return true;
             });
+
+            addStoryButton = view.findViewById(R.id.add_story_btn);
             saveMapButton = view.findViewById(R.id.save_map_btn);
+            addStoryButton.setOnClickListener(v -> {
+                addStory(mapboxMap);
+            });
             saveMapButton.setOnClickListener(v -> {
-                mapView.setVisibility(View.GONE);
+                //mapView.setVisibility(View.GONE);
                 getActivity().getSupportFragmentManager()
                         .beginTransaction()
                         .replace(R.id.map_activity_container, new SavingWalkFragment(), SAVE_TAG)
@@ -165,6 +174,25 @@ public class MapFragment extends Fragment {
         }));
     }
 
+    private void addStory(MapboxMap mapboxMap) {
+        String[] options = {"My location", "Click on map"};
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setTitle("Choose story location ...");
+        builder.setItems(options, (dialog, which) -> {
+            if (which == 0) {
+                LatLng point = new LatLng(locationComponent.getLastKnownLocation().getLatitude(),
+                        locationComponent.getLastKnownLocation().getLongitude());
+                openStoryFragment(mapboxMap, point);
+            }
+            if (which == 1) {
+                isMapClickable = true;
+            }
+        });
+
+        builder.create().show();
+    }
+
     @SuppressLint("MissingPermission")
     private void initLocationComponent(MapboxMap mapboxMap, Style style) {
         locationComponent = mapboxMap.getLocationComponent();
@@ -173,8 +201,7 @@ public class MapFragment extends Fragment {
 
         locationComponent.setLocationComponentEnabled(true);
 
-//        locationComponent.setCameraMode(CameraMode.TRACKING);
-//        locationComponent.setRenderMode(RenderMode.COMPASS);
+        locationComponent.setRenderMode(RenderMode.COMPASS);
     }
 
     private void showWalk(MapboxMap mapboxMap) {
@@ -195,6 +222,19 @@ public class MapFragment extends Fragment {
         }
     }
 
+    public void openStoryFragment(MapboxMap mapboxMap, LatLng point) {
+        mapboxMap.getStyle(style -> {
+            Point storyPoint = Point.fromLngLat(point.getLongitude(), point.getLatitude());
+
+            getActivity().getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.map_activity_container, new SaveStoryFragment(storyPoint), STORY_TAG)
+                    .addToBackStack(null)
+                    .commit();
+
+        });
+    }
+
     private void onMapClicked(MapboxMap mapboxMap, LatLng point) {
         if (mapboxMap != null) {
             final PointF pixel = mapboxMap.getProjection().toScreenLocation(point);
@@ -213,17 +253,10 @@ public class MapFragment extends Fragment {
                     }
                     break;
                 }
-            } else {
-                mapboxMap.getStyle(style -> {
-                    Point storyPoint = Point.fromLngLat(point.getLongitude(), point.getLatitude());
-
-                    getActivity().getSupportFragmentManager()
-                            .beginTransaction()
-                            .replace(R.id.map_activity_container, new SaveStoryFragment(storyPoint), STORY_TAG)
-                            .addToBackStack(null)
-                            .commit();
-
-                });
+            }
+            else if (isMapClickable) {
+                isMapClickable = false;
+                openStoryFragment(mapboxMap, point);
             }
         }
     }
