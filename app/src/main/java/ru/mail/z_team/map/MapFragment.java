@@ -50,7 +50,6 @@ import retrofit2.Response;
 import ru.mail.z_team.Logger;
 import ru.mail.z_team.R;
 import ru.mail.z_team.icon_fragments.walks.StoryFragment;
-import ru.mail.z_team.icon_fragments.walks.WalkProfileViewModel;
 
 import static com.mapbox.core.constants.Constants.PRECISION_6;
 import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconAllowOverlap;
@@ -80,9 +79,9 @@ public class MapFragment extends Fragment {
 
     private FloatingActionButton saveMapButton, addStoryButton;
 
-    private boolean isInitialized = false;
+    private boolean isFeatureListEmpty = false;
 
-    private WalkProfileViewModel viewModel;
+    private MapViewModel viewModel;
 
     public MapFragment() {
         logger = new Logger(LOG_TAG, true);
@@ -95,9 +94,19 @@ public class MapFragment extends Fragment {
         logger.log("onCreateView");
 
         Mapbox.getInstance(getContext(), getString(R.string.mapbox_access_token));
-
         View view = inflater.inflate(R.layout.fragment_map, container, false);
-        viewModel = new ViewModelProvider(this).get(WalkProfileViewModel.class);
+        viewModel = new ViewModelProvider(this).get(MapViewModel.class);
+        if (savedInstanceState != null){
+            viewModel.getStartPos().observe(getActivity(), point -> {
+                startPos = point;
+            });
+            viewModel.getDestinationPos().observe(getActivity(), point -> {
+                destinationPos = point;
+            });
+            viewModel.getIsClickable().observe(getActivity(), b -> {
+                isMapClickable = b;
+            });
+        }
 
         return view;
     }
@@ -110,12 +119,16 @@ public class MapFragment extends Fragment {
         mapView.onCreate(savedInstanceState);
         mapView.getMapAsync(mapboxMap -> mapboxMap.setStyle(Style.MAPBOX_STREETS, style -> {
             initLocationComponent(mapboxMap, style);
-            if (isInitialized) {
+            isFeatureListEmpty = ((MapActivity) getActivity()).getWalkGeoJSON().features().isEmpty();
+            if (!isFeatureListEmpty) {
                 ArrayList<Point> routePoints = new ArrayList<>();
                 for (Feature feature : ((MapActivity) getActivity()).getWalkGeoJSON().features()) {
                     if (feature.geometry() instanceof LineString) {
-                        routePoints = (ArrayList<Point>) ((LineString) feature
-                                .geometry()).coordinates();
+                        routePoints.addAll (((LineString) feature
+                                .geometry()).coordinates());
+                    }
+                    else if (feature.geometry() instanceof Point) {
+                        routePoints.add((Point) feature.geometry());
                     }
                 }
                 ArrayList<LatLng> routeLatLngs = new ArrayList<>();
@@ -138,16 +151,16 @@ public class MapFragment extends Fragment {
                 mapboxMap.animateCamera(CameraUpdateFactory.newCameraPosition(position), 7000);
             }
             initLayers(style);
-            if (isInitialized) {
-                showWalk(mapboxMap);
-                addMarkers(mapboxMap);
-            }
+            showWalk(mapboxMap);
+
             mapboxMap.addOnMapClickListener(point -> {
                 if (startPos == null) {
                     startPos = Point.fromLngLat(point.getLongitude(), point.getLatitude());
+                    viewModel.setStartPos(startPos);
                     addMarker(mapboxMap, point);
                 } else if (destinationPos == null) {
                     destinationPos = Point.fromLngLat(point.getLongitude(), point.getLatitude());
+                    viewModel.setDestinationPos(destinationPos);
                     addMarker(mapboxMap, point);
                     getRoute(mapboxMap, startPos, destinationPos);
                 } else {
@@ -169,8 +182,6 @@ public class MapFragment extends Fragment {
                         .addToBackStack(null)
                         .commitAllowingStateLoss();
             });
-
-            isInitialized = true;
         }));
     }
 
@@ -187,6 +198,7 @@ public class MapFragment extends Fragment {
             }
             if (which == 1) {
                 isMapClickable = true;
+                viewModel.setIsClickable(true);
             }
         });
 
@@ -256,20 +268,10 @@ public class MapFragment extends Fragment {
             }
             else if (isMapClickable) {
                 isMapClickable = false;
+                viewModel.setIsClickable(false);
                 openStoryFragment(mapboxMap, point);
             }
         }
-    }
-
-    private void addMarkers(MapboxMap mapboxMap) {
-        mapboxMap.getStyle(style -> {
-            GeoJsonSource source = style.getSourceAs(SYMBOL_SOURCE_ID);
-
-            if (source != null) {
-                source.setGeoJson(((MapActivity) getActivity())
-                        .getWalkGeoJSON());
-            }
-        });
     }
 
     private void addMarker(MapboxMap mapboxMap, LatLng point) {

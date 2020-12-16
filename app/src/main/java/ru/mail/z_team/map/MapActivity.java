@@ -6,6 +6,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.mapbox.android.core.permissions.PermissionsListener;
 import com.mapbox.android.core.permissions.PermissionsManager;
@@ -31,6 +32,9 @@ public class MapActivity extends AppCompatActivity implements PermissionsListene
 
     private PermissionsManager permissionsManager;
     private FragmentManager fragmentManager;
+
+    private MapViewModel viewModel;
+
     private int container;
 
     public MapActivity() {
@@ -46,6 +50,8 @@ public class MapActivity extends AppCompatActivity implements PermissionsListene
         fragmentManager = getSupportFragmentManager();
         container = R.id.map_activity_container;
 
+        viewModel = new ViewModelProvider(this).get(MapViewModel.class);
+
         if (PermissionsManager.areLocationPermissionsGranted(this)) {
             openMapFragment();
         } else {
@@ -53,6 +59,16 @@ public class MapActivity extends AppCompatActivity implements PermissionsListene
             permissionsManager.requestLocationPermissions(this);
         }
 
+        if (savedInstanceState != null){
+            viewModel.getWalkList().observe(this, fc -> {
+                walkList.clear();
+                walkList.addAll(fc);
+            });
+            viewModel.getStories().observe(this, s -> {
+                stories.clear();
+                stories.addAll(s);
+            });
+        }
     }
 
     public void openMapFragment() {
@@ -66,9 +82,11 @@ public class MapActivity extends AppCompatActivity implements PermissionsListene
 
     public void addStory(Story story) {
         stories.add(story);
+        viewModel.setStories(stories);
     }
 
     public FeatureCollection getWalkGeoJSON() {
+        walkGeoJSON = FeatureCollection.fromFeatures(walkList);
         return walkGeoJSON;
     }
 
@@ -80,6 +98,7 @@ public class MapActivity extends AppCompatActivity implements PermissionsListene
         logger.log("addToWalkGeoJSON ... " + walkList.size());
         walkList.add(walkPointGeoJSON);
         walkGeoJSON = FeatureCollection.fromFeatures(walkList);
+        viewModel.setWalkList(walkList);
     }
 
     @Override
@@ -101,5 +120,10 @@ public class MapActivity extends AppCompatActivity implements PermissionsListene
             Toast.makeText(this, "sth got wrong with location permission", Toast.LENGTH_LONG).show();
             finish();
         }
+    }
+
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
     }
 }
