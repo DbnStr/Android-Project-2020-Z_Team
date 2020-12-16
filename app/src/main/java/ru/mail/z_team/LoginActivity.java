@@ -22,6 +22,7 @@ import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
 
 public class LoginActivity extends AppCompatActivity implements LifecycleOwner {
@@ -31,7 +32,7 @@ public class LoginActivity extends AppCompatActivity implements LifecycleOwner {
 
     Button signInBtn;
     TextView toRegistration, recoverPassword;
-    EditText emailEt, passwordEt;
+    TextInputLayout emailEt, passwordEt;
     ProgressDialog progressDialog;
 
     private FirebaseAuth mAuth;
@@ -102,8 +103,8 @@ public class LoginActivity extends AppCompatActivity implements LifecycleOwner {
         signInBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String email = emailEt.getText().toString().trim();
-                String password = passwordEt.getText().toString().trim();
+                String email = emailEt.getEditText().getText().toString().trim();
+                String password = passwordEt.getEditText().getText().toString().trim();
                 if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
                     emailEt.setError("Invalid Email");
                 } else {

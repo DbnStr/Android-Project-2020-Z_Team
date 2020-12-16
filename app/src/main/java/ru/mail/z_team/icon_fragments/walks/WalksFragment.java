@@ -1,5 +1,6 @@
 package ru.mail.z_team.icon_fragments.walks;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,8 +14,11 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
 import ru.mail.z_team.Logger;
 import ru.mail.z_team.R;
+import ru.mail.z_team.map.MapActivity;
 
 public class WalksFragment extends Fragment {
 
@@ -23,6 +27,7 @@ public class WalksFragment extends Fragment {
     WalkAdapter adapter;
     private WalksViewModel viewModel;
     TextView noWalks;
+    FloatingActionButton toMapBtn;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -36,7 +41,10 @@ public class WalksFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_walks, container, false);
 
+        logger.log("create view");
         noWalks = view.findViewById(R.id.no_walks_tv);
+        toMapBtn = view.findViewById(R.id.map_activity_btn);
+        toMapBtn.setOnClickListener(v -> startActivity(new Intent(requireActivity(), MapActivity.class)));
 
         return view;
     }

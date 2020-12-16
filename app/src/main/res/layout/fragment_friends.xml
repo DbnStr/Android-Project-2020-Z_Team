@@ -29,7 +29,7 @@
             android:id="@+id/add_friend_by_id_et"
             android:hint="Enter User ID"
             android:layout_width="362dp"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"/>
         <Button
             android:id="@+id/add_friend_by_id_btn"
             android:layout_width="wrap_content"

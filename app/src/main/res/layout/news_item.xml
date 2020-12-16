@@ -13,7 +13,7 @@
             android:layout_width="55dp"
             android:layout_height="55dp"
             android:layout_margin="2.5dp"
-            android:background="@drawable/user_icon"/>
+            android:background="@drawable/ic_person"/>
         <TextView
             android:id="@+id/news_item_author"
             android:layout_width="match_parent"

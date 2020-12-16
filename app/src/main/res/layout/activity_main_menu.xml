@@ -16,80 +16,18 @@
         android:orientation="vertical"
         android:text="@string/some_menu"
         android:textSize="100sp"
-        app:layout_constraintBottom_toTopOf="@id/icon_layout"
         app:layout_constraintTop_toTopOf="parent">
 
     </LinearLayout>
 
-    <LinearLayout
-        android:id="@+id/icon_layout"
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottom_navigation"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="5"
-        app:layout_constraintBottom_toBottomOf="parent"
-        android:orientation="horizontal"
-        android:stretchColumns="*">
-
-        <TextView
-            android:id="@+id/news_feed_icon"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:clickable="true"
-            android:focusable="true"
-            android:gravity="center"
-            android:text="@string/news"
-            tools:ignore="NestedWeights">
-
-        </TextView>
-
-        <TextView
-            android:id="@+id/walks_icon"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:clickable="true"
-            android:focusable="true"
-            android:gravity="center"
-            android:text="@string/walks">
-
-        </TextView>
-
-        <TextView
-            android:id="@+id/go_out_icon"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:clickable="true"
-            android:focusable="true"
-            android:gravity="center"
-            android:text="@string/go_out">
-
-        </TextView>
-
-        <TextView
-            android:id="@+id/friends_icon"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:clickable="true"
-            android:focusable="true"
-            android:gravity="center"
-            android:text="@string/friends">
-
-        </TextView>
-
-        <TextView
-            android:id="@+id/profile_icon"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:clickable="true"
-            android:focusable="true"
-            android:gravity="center"
-            android:text="@string/profile">
-
-        </TextView>
-    </LinearLayout>
+        android:layout_height="wrap_content"
+        android:layout_weight="0"
+        app:itemBackground="@color/primaryLightColor"
+        app:itemTextColor="@color/secondaryDarkColor"
+        app:layout_constraintTop_toTopOf="parent"
+        app:menu="@menu/bottom_navigation_menu" />
 
 </LinearLayout>

@@ -6,11 +6,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 
+import com.google.android.material.textfield.TextInputLayout;
 import com.mapbox.geojson.FeatureCollection;
 
 import java.util.ArrayList;
@@ -22,7 +22,7 @@ public class SavingWalkFragment extends Fragment {
 
     private static final String LOG_TAG = "SavingWalkFragment";
     Button addWalk;
-    EditText walkTitle;
+    TextInputLayout walkTitle;
     String title;
     GoOutViewModel viewModel;
 
@@ -33,7 +33,7 @@ public class SavingWalkFragment extends Fragment {
         addWalk = view.findViewById(R.id.add_walk_btn);
         walkTitle = view.findViewById(R.id.walk_title_et);
         addWalk.setOnClickListener(v -> {
-            title = walkTitle.getText().toString().trim();
+            title = walkTitle.getEditText().getText().toString().trim();
             if (title.equals("")) {
                 walkTitle.setError("Title can't be empty");
                 walkTitle.setFocusable(true);
