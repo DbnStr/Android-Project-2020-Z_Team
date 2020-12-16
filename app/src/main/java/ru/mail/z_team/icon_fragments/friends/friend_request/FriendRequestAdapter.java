@@ -1,4 +1,4 @@
-package ru.mail.z_team.icon_fragments.friends;
+package ru.mail.z_team.icon_fragments.friends.friend_request;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -12,6 +12,7 @@ import java.util.ArrayList;
 
 import ru.mail.z_team.Logger;
 import ru.mail.z_team.R;
+import ru.mail.z_team.icon_fragments.friends.FriendsViewModel;
 import ru.mail.z_team.user.Friend;
 
 public class FriendRequestAdapter extends RecyclerView.Adapter<FriendRequestViewHolder> {

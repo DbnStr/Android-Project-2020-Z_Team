@@ -17,6 +17,7 @@ import retrofit2.Response;
 import ru.mail.z_team.ApplicationModified;
 import ru.mail.z_team.Logger;
 import ru.mail.z_team.icon_fragments.DatabaseCallback;
+import ru.mail.z_team.icon_fragments.Transformer;
 import ru.mail.z_team.local_storage.LocalDatabase;
 import ru.mail.z_team.local_storage.UserDao;
 import ru.mail.z_team.local_storage.UserFriend;
@@ -73,80 +74,20 @@ public class FriendsRepository {
 
                 @Override
                 public void onSuccessResponse(Response<UserApi.User> response) {
-                    currentUserFriends.postValue(transformToUser(response.body()).getFriends());
+                    currentUserFriends.postValue(Transformer.transformToUser(response.body()).getFriends());
 
                     localDatabase.databaseWriteExecutor.execute(() -> {
-                        User currentUser = transformToUser(response.body());
+                        User currentUser = Transformer.transformToUser(response.body());
                         ArrayList<Friend> friends = currentUser.getFriends();
-                        userDao.deleteAllFriendsAndAddNew(transformToLocalDBFriendALl(friends, currentUserId));
+                        userDao.deleteAllFriendsAndAddNew(Transformer.transformToLocalDBFriendALl(friends, currentUserId));
                     });
                 }
             });
         } else {
             localDatabase.databaseWriteExecutor.execute(() -> {
-                currentUserFriends.postValue(transformToFriendAll(userDao.getUserFriends()));
+                currentUserFriends.postValue(Transformer.transformToFriendAll(userDao.getUserFriends()));
             });
         }
-    }
-
-    private ArrayList<Friend> transformToFriendAll(List<UserFriend> friends) {
-        ArrayList<Friend> result = new ArrayList<>();
-        for (UserFriend friend : friends) {
-            result.add(transformToFriend(friend));
-        }
-        return result;
-    }
-
-    private Friend transformToFriend(ru.mail.z_team.local_storage.UserFriend friend) {
-        return new Friend(
-                friend.name,
-                friend.id
-        );
-    }
-
-    private User transformToUser(UserApi.User user) {
-        String name = user.name;
-        if (name == null) {
-            name = "Anonymous";
-        }
-        ArrayList<Friend> userFriends = new ArrayList<>();
-        if (user.friends != null) {
-            userFriends.addAll(transformToFriendAll(user.friends));
-        }
-        return new User(
-                name,
-                user.age,
-                user.id,
-                userFriends
-        );
-    }
-
-    private List<ru.mail.z_team.local_storage.Friend> transformToLocalDBFriendALl(List<Friend> friends, String currentUserId) {
-        List<ru.mail.z_team.local_storage.Friend> result = new ArrayList<>();
-        for (Friend friend : friends) {
-            result.add(transformToLocalDBFriend(friend, currentUserId));
-        }
-        return result;
-    }
-
-    private ru.mail.z_team.local_storage.Friend transformToLocalDBFriend(Friend friend, String currentUserId) {
-        return new ru.mail.z_team.local_storage.Friend(
-                friend.name,
-                friend.id,
-                currentUserId
-        );
-    }
-
-    private ArrayList<Friend> transformToFriendAll(ArrayList<UserApi.Friend> friends) {
-        ArrayList<Friend> result = new ArrayList<>();
-        for(UserApi.Friend friend : friends) {
-            result.add(transformToFriend(friend));
-        }
-        return result;
-    }
-
-    private Friend transformToFriend(UserApi.Friend friend) {
-        return new Friend(friend.name, friend.id);
     }
 
     public void acceptFriendRequest(int number) {
@@ -205,7 +146,7 @@ public class FriendsRepository {
             public void onSuccessResponse(Response<ArrayList<UserApi.Friend>> response) {
                 logger.log("the current user has " + response.body().size() + " friend requests");
 
-                currentUserFriendRequestList.postValue(transformToFriendAll(response.body()));
+                currentUserFriendRequestList.postValue(Transformer.transformToFriendAll(response.body()));
             }
         });
     }
@@ -243,7 +184,7 @@ public class FriendsRepository {
 
             @Override
             public void onSuccessResponse(Response<UserApi.User> response) {
-                UserApi.Friend friend = transformToUserApiFriend(response.body());
+                UserApi.Friend friend = Transformer.transformToUserApiFriend(response.body());
 
                 userApi.getUserById(curUserId).enqueue(new DatabaseCallback<UserApi.User>(LOG_TAG) {
                     @Override
@@ -253,7 +194,7 @@ public class FriendsRepository {
 
                     @Override
                     public void onSuccessResponse(Response<UserApi.User> response) {
-                        UserApi.Friend friendsReq = transformToUserApiFriend(response.body());
+                        UserApi.Friend friendsReq = Transformer.transformToUserApiFriend(response.body());
                         addFriendToFriendRequest(newFriendId, friendsReq);
                     }
                 });
@@ -263,13 +204,6 @@ public class FriendsRepository {
                 addFriendIdToFriendsIdsList(curUserId, num, friend.id);
             }
         });
-    }
-
-    private UserApi.Friend transformToUserApiFriend(UserApi.User user) {
-        UserApi.Friend result = new UserApi.Friend();
-        result.id = user.id;
-        result.name = user.name;
-        return result;
     }
 
     private void addFriendToFriendRequest(final String userId, final UserApi.Friend friend) {

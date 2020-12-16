@@ -15,6 +15,7 @@ import java.util.Collections;
 import retrofit2.Response;
 import ru.mail.z_team.Logger;
 import ru.mail.z_team.icon_fragments.DatabaseCallback;
+import ru.mail.z_team.icon_fragments.Transformer;
 import ru.mail.z_team.icon_fragments.walks.Walk;
 import ru.mail.z_team.network.ApiRepository;
 import ru.mail.z_team.network.UserApi;
@@ -27,9 +28,6 @@ public class NewsRepository {
     private final UserApi userApi;
 
     private final MutableLiveData<ArrayList<Walk>> currentUserNews = new MutableLiveData<>();
-
-    SimpleDateFormat sdf =
-            new SimpleDateFormat("EEE, MMM d, yyyy hh:mm:ss a z");
 
     public NewsRepository(Context context) {
         userApi = ApiRepository.from(context).getUserApi();
@@ -74,31 +72,11 @@ public class NewsRepository {
                 @Override
                 public void onSuccessResponse(Response<ArrayList<UserApi.Walk>> response) {
                     logger.log(id + " have walks");
-                    news.addAll(transformToWalkAll(response.body()));
+                    news.addAll(Transformer.transformToWalkAll(response.body()));
                     Collections.sort(news);
                     currentUserNews.postValue(news);
                 }
             });
         }
-    }
-
-    private ArrayList<Walk> transformToWalkAll(ArrayList<UserApi.Walk> walks) {
-        ArrayList<Walk> result = new ArrayList<>();
-        for (UserApi.Walk walk : walks) {
-            result.add(transformToWalk(walk));
-        }
-        return result;
-    }
-
-    private Walk transformToWalk(UserApi.Walk walk) {
-        Walk transformed = new Walk();
-        transformed.setTitle(walk.title);
-        transformed.setAuthor(walk.author);
-        try {
-            transformed.setDate(sdf.parse(walk.date));
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        return transformed;
     }
 }

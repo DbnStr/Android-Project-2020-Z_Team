@@ -16,6 +16,7 @@ import retrofit2.Response;
 import ru.mail.z_team.ApplicationModified;
 import ru.mail.z_team.Logger;
 import ru.mail.z_team.icon_fragments.DatabaseCallback;
+import ru.mail.z_team.icon_fragments.Transformer;
 import ru.mail.z_team.local_storage.LocalDatabase;
 import ru.mail.z_team.local_storage.UserDao;
 import ru.mail.z_team.local_storage.UserFriend;
@@ -23,6 +24,8 @@ import ru.mail.z_team.network.ApiRepository;
 import ru.mail.z_team.network.UserApi;
 import ru.mail.z_team.user.Friend;
 import ru.mail.z_team.user.User;
+
+import static ru.mail.z_team.icon_fragments.Transformer.transformToLocalDBFriend;
 
 public class ProfileRepository {
 
@@ -66,15 +69,15 @@ public class ProfileRepository {
 
                 @Override
                 public void onSuccessResponse(Response<UserApi.User> response) {
-                    currentUserData.postValue(transformToUser(response.body()));
+                    currentUserData.postValue(Transformer.transformToUser(response.body()));
 
                     localDatabase.databaseWriteExecutor.execute(() -> {
-                        userDao.insert(transformToLocalDBUser(response.body()));
+                        userDao.insert(Transformer.transformToLocalDBUser(response.body()));
 
-                        User currentUser = transformToUser(response.body());
+                        User currentUser = Transformer.transformToUser(response.body());
                         ArrayList<Friend> friends = currentUser.getFriends();
                         for (Friend friend : friends) {
-                            userDao.insert(transformToLocalDBFriend(friend, currentUserId));
+                            userDao.insert(Transformer.transformToLocalDBFriend(friend, currentUserId));
                         }
 
                         List<UserFriend> fr = userDao.getUserFriends();
@@ -85,63 +88,14 @@ public class ProfileRepository {
             });
         } else {
             localDatabase.databaseWriteExecutor.execute(() -> {
-                currentUserData.postValue(transformToUser(userDao.getById(currentUserId)));
+                currentUserData.postValue(Transformer.transformToUser(userDao.getById(currentUserId)));
             });
         }
     }
 
-    private User transformToUser(ru.mail.z_team.local_storage.User user) {
-        return new User(
-                user.name,
-                user.age,
-                user.id,
-                new ArrayList<>()
-        );
-    }
-
-    private ru.mail.z_team.local_storage.Friend transformToLocalDBFriend(Friend friend, String currentUserId) {
-        return new ru.mail.z_team.local_storage.Friend(
-                friend.name,
-                friend.id,
-                currentUserId
-        );
-    }
-
-    private ru.mail.z_team.local_storage.User transformToLocalDBUser(UserApi.User user) {
-        ru.mail.z_team.local_storage.User result = new ru.mail.z_team.local_storage.User();
-        String name = user.name;
-        if (name == null) {
-            name = "Anonymous";
-        }
-        result.name = name;
-        result.id = user.id;
-        result.age = user.age;
-
-        return result;
-    }
-
-    private User transformToUser(UserApi.User user) {
-        String name = user.name;
-        if (name == null) {
-            name = "Anonymous";
-        }
-        ArrayList<Friend> userFriends = new ArrayList<>();
-        if (user.friends != null) {
-            for (UserApi.Friend friend : user.friends) {
-                userFriends.add(transformToFriend(friend));
-            }
-        }
-        return new User(
-                name,
-                user.age,
-                user.id,
-                userFriends
-        );
-    }
-
     public void changeCurrentUserInformation(User newInformation) {
         String currentUserId = FirebaseAuth.getInstance().getUid();
-        userApi.changeUserInformation(currentUserId, transformToUserApiUser(newInformation)).enqueue(new DatabaseCallback<UserApi.User>(LOG_TAG) {
+        userApi.changeUserInformation(currentUserId, Transformer.transformToUserApiUser(newInformation)).enqueue(new DatabaseCallback<UserApi.User>(LOG_TAG) {
             @Override
             public void onNullResponse(Response<UserApi.User> response) {
                 logger.errorLog("Failed with change information about " + currentUserId);
@@ -152,31 +106,10 @@ public class ProfileRepository {
                 logger.log("Change information about " + currentUserId);
 
                 localDatabase.databaseWriteExecutor.execute(() -> {
-                    userDao.insert(transformToLocalDBUser(newInformation));
+                    userDao.insert(Transformer.transformToLocalDBUser(newInformation));
                 });
             }
         });
-    }
-
-    private UserApi.User transformToUserApiUser(User user) {
-        UserApi.User result = new UserApi.User();
-        result.id = user.getId();
-        result.name = user.getName();
-        result.age = user.getAge();
-        return result;
-    }
-
-    private ru.mail.z_team.local_storage.User transformToLocalDBUser(User user) {
-        ru.mail.z_team.local_storage.User result = new ru.mail.z_team.local_storage.User();
-        result.name = user.name;
-        result.id = user.id;
-        result.age = user.age;
-
-        return result;
-    }
-
-    private Friend transformToFriend(UserApi.Friend friend) {
-        return new Friend(friend.name, friend.id);
     }
 
     public static boolean isOnline(Context context) {

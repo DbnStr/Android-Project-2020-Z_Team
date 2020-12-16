@@ -1,4 +1,4 @@
-package ru.mail.z_team.icon_fragments.friends;
+package ru.mail.z_team.icon_fragments.friends.friend_request;
 
 import android.view.View;
 import android.widget.Button;

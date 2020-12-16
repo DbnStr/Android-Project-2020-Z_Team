@@ -19,6 +19,7 @@ import retrofit2.Response;
 import ru.mail.z_team.ApplicationModified;
 import ru.mail.z_team.Logger;
 import ru.mail.z_team.icon_fragments.DatabaseCallback;
+import ru.mail.z_team.icon_fragments.Transformer;
 import ru.mail.z_team.local_storage.LocalDatabase;
 import ru.mail.z_team.local_storage.UserDao;
 import ru.mail.z_team.network.ApiRepository;
@@ -37,9 +38,6 @@ public class WalksRepository {
     private final LocalDatabase localDatabase;
 
     private final MutableLiveData<ArrayList<Walk>> currentUserWalks = new MutableLiveData<>();
-
-    SimpleDateFormat sdf =
-            new SimpleDateFormat("EEE, MMM d, yyyy hh:mm:ss a z");
 
     public WalksRepository(Context context) {
         this.context = context;
@@ -69,76 +67,19 @@ public class WalksRepository {
                 @Override
                 public void onSuccessResponse(Response<ArrayList<UserApi.Walk>> response) {
                     logger.log("Successful update current user walks");
-                    ArrayList<Walk> walks = transformToWalkAll(response.body());
+                    ArrayList<Walk> walks = Transformer.transformToWalkAll(response.body());
                     currentUserWalks.postValue(walks);
 
                     localDatabase.databaseWriteExecutor.execute(() -> {
-                        userDao.deleteAllWalksAndAddNew(transformToLocalDBWalkAll(walks));
+                        userDao.deleteAllWalksAndAddNew(Transformer.transformToLocalDBWalkAll(walks));
                     });
                 }
             });
         } else {
             localDatabase.databaseWriteExecutor.execute(() -> {
-                currentUserWalks.postValue(transformToWalkAll(userDao.getUserWalks()));
+                currentUserWalks.postValue(Transformer.transformToWalkAll(userDao.getUserWalks()));
             });
         }
-    }
-
-    private ArrayList<Walk> transformToWalkAll(List<ru.mail.z_team.local_storage.UserWalk> walks) {
-        ArrayList<Walk> result = new ArrayList<>();
-        for (ru.mail.z_team.local_storage.UserWalk walk : walks) {
-            result.add(transformToWalk(walk));
-        }
-        return result;
-    }
-
-    private Walk transformToWalk(ru.mail.z_team.local_storage.UserWalk walk) {
-        Walk result = new Walk();
-        result.setAuthor(walk.author);
-        result.setTitle(walk.title);
-        result.setDate(getDate(walk.date));
-        return result;
-    }
-
-    private Date getDate(String date) {
-        Date result;
-        try {
-            result = sdf.parse(date);
-        } catch (ParseException e) {
-            result = new Date();
-            e.printStackTrace();
-        }
-        return result;
-    }
-    private List<ru.mail.z_team.local_storage.Walk> transformToLocalDBWalkAll(List<Walk> walks) {
-        List<ru.mail.z_team.local_storage.Walk> result = new ArrayList<>();
-        for(Walk walk : walks) {
-            result.add(transformToLocalDBWalk(walk));
-        }
-        return result;
-    }
-    private ru.mail.z_team.local_storage.Walk transformToLocalDBWalk(Walk walk) {
-        return new ru.mail.z_team.local_storage.Walk(
-                walk.title,
-                walk.author,
-                walk.date.toString()
-        );
-    }
-
-    private ArrayList<Walk> transformToWalkAll(ArrayList<UserApi.Walk> walks) {
-        ArrayList<Walk> result = new ArrayList<>();
-        for (UserApi.Walk walk : walks) {
-            result.add(transformToWalk(walk));
-        }
-        return result;
-    }
-
-    private Walk transformToWalk(UserApi.Walk walk) {
-        Walk transformed = new Walk();
-        transformed.setTitle(walk.title);
-        transformed.setAuthor(walk.author);
-        transformed.setDate(getDate(walk.date));
-        return transformed;
     }
 
     public static boolean isOnline(Context context) {

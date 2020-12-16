@@ -19,6 +19,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import ru.mail.z_team.Logger;
 import ru.mail.z_team.R;
+import ru.mail.z_team.icon_fragments.friends.friend_request.FriendRequestFragment;
 
 public class FriendsFragment extends Fragment {
 
