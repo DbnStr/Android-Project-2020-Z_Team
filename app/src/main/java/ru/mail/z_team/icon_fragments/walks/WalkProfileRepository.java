@@ -28,7 +28,7 @@ public class WalkProfileRepository {
     private final Context context;
 
     private final MutableLiveData<Walk> currentDisplayedWalk = new MutableLiveData<>();
-    private final MutableLiveData<Boolean> isCloseEnough = new MutableLiveData<>();
+    private final MutableLiveData<WalkAnnotation> annotation = new MutableLiveData<>();
 
     SimpleDateFormat sdf =
             new SimpleDateFormat("EEE, MMM d, yyyy hh:mm:ss a z");
@@ -92,5 +92,13 @@ public class WalkProfileRepository {
         story.setUrlImages(apiStory.images);
         story.setPoint(Feature.fromJson(apiStory.point));
         return story;
+    }
+
+    public void setAnnotation(WalkAnnotation walkAnnotation) {
+        annotation.postValue(walkAnnotation);
+    }
+
+    public LiveData<WalkAnnotation> getAnnotation() {
+        return annotation;
     }
 }

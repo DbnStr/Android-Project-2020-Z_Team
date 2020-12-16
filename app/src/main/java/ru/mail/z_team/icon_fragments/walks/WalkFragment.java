@@ -46,7 +46,7 @@ import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.lineWidth;
 
 public class WalkFragment extends Fragment {
 
-    private final WalkAnnotation walkAnnotation;
+    private WalkAnnotation walkAnnotation;
     private Walk walk;
     private MapView mapView;
 
@@ -58,26 +58,30 @@ public class WalkFragment extends Fragment {
 
     private static final String STORY_TAG = "open story fragment";
     private static final String LOG_TAG = "WalkFragment";
-    private final Logger logger;
-
-    private boolean flag;
+    private Logger logger;
 
     private WalkProfileViewModel viewModel;
 
+    public WalkFragment() { }
+
     public WalkFragment(WalkAnnotation walkAnnotation) {
         this.walkAnnotation = walkAnnotation;
-        logger = new Logger(LOG_TAG, true);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        logger = new Logger(LOG_TAG, true);
+
         logger.log("onCreateView");
         Mapbox.getInstance(getActivity(), getString(R.string.mapbox_access_token));
         View view = inflater.inflate(R.layout.fragment_walk, container, false);
 
         mapView = view.findViewById(R.id.walk_map_view);
         mapView.onCreate(savedInstanceState);
+
+        viewModel = new ViewModelProvider(this).get(WalkProfileViewModel.class);
+
         return view;
     }
 
@@ -85,14 +89,27 @@ public class WalkFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        viewModel = new ViewModelProvider(this).get(WalkProfileViewModel.class);
-        viewModel.updateCurrentDisplayedWalk(walkAnnotation);
-        viewModel.getCurrentDisplayedWalk().observe(getActivity(), walk -> {
-            if (walk != null) {
-                this.walk = walk;
-                onMapCreated();
-            }
-        });
+        if (savedInstanceState != null) {
+            viewModel.getAnnotation().observe(getActivity(), annotation -> {
+                walkAnnotation = annotation;
+                viewModel.updateCurrentDisplayedWalk(walkAnnotation);
+                viewModel.getCurrentDisplayedWalk().observe(getActivity(), walk -> {
+                    if (walk != null) {
+                        this.walk = walk;
+                        onMapCreated();
+                    }
+                });
+            });
+        }
+        else {
+            viewModel.updateCurrentDisplayedWalk(walkAnnotation);
+            viewModel.getCurrentDisplayedWalk().observe(getActivity(), walk -> {
+                if (walk != null) {
+                    this.walk = walk;
+                    onMapCreated();
+                }
+            });
+        }
     }
 
     private void onMapCreated() {
@@ -216,6 +233,7 @@ public class WalkFragment extends Fragment {
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         mapView.onSaveInstanceState(outState);
+        viewModel.setAnnotation(walkAnnotation);
     }
 
     @Override
