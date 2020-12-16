@@ -1,4 +1,4 @@
-package ru.mail.z_team.icon_fragments.go_out;
+package ru.mail.z_team.map;
 
 import android.os.Bundle;
 import android.util.Log;
@@ -11,11 +11,16 @@ import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 
+import com.mapbox.geojson.FeatureCollection;
+
+import java.util.ArrayList;
+
 import ru.mail.z_team.R;
+import ru.mail.z_team.icon_fragments.go_out.GoOutViewModel;
 
 public class SavingWalkFragment extends Fragment {
 
-    private static final String LOG_TAG = "AddWalkActivity";
+    private static final String LOG_TAG = "SavingWalkFragment";
     Button addWalk;
     EditText walkTitle;
     String title;
@@ -32,8 +37,7 @@ public class SavingWalkFragment extends Fragment {
             if (title.equals("")) {
                 walkTitle.setError("Title can't be empty");
                 walkTitle.setFocusable(true);
-            }
-            else {
+            } else {
                 postWalk();
             }
         });
@@ -44,12 +48,13 @@ public class SavingWalkFragment extends Fragment {
 
     private void postWalk() {
         Log.d(LOG_TAG, "postWalk");
-        viewModel.postWalk(title);
+        FeatureCollection walk = ((MapActivity) getActivity()).getWalkGeoJSON();
+        ArrayList<Story> stories = ((MapActivity) getActivity()).getStories();
+        viewModel.postWalk(title, walk, stories);
         viewModel.getPostStatus().observe(getActivity(), s -> {
-            if (s == getString(R.string.SUCCESS)){
+            if (s == getString(R.string.SUCCESS)) {
                 Toast.makeText(getActivity(), "Posted successfully", Toast.LENGTH_LONG).show();
-            }
-            else {
+            } else {
                 Toast.makeText(getActivity(), "Failed post the walk", Toast.LENGTH_LONG).show();
             }
             getActivity().finish();

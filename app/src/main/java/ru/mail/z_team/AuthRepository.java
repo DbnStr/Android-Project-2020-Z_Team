@@ -19,7 +19,7 @@ import java.util.concurrent.Executor;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import ru.mail.z_team.network.ApiRepository;
+import ru.mail.z_team.network.DatabaseApiRepository;
 import ru.mail.z_team.network.UserApi;
 
 public class AuthRepository implements Executor{
@@ -35,9 +35,9 @@ public class AuthRepository implements Executor{
 
     private MutableLiveData<Pair<AuthProgress, String>> mAuthProgress;
 
-    public AuthRepository(ApiRepository apiRepository) {
+    public AuthRepository(DatabaseApiRepository databaseApiRepository) {
         mAuth = FirebaseAuth.getInstance();
-        userApi = apiRepository.getUserApi();
+        userApi = databaseApiRepository.getUserApi();
         logger = new Logger(LOG_TAG, true);
     }
 

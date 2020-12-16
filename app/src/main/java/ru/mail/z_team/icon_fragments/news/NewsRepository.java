@@ -15,9 +15,8 @@ import java.util.Collections;
 import retrofit2.Response;
 import ru.mail.z_team.Logger;
 import ru.mail.z_team.icon_fragments.DatabaseCallback;
-import ru.mail.z_team.icon_fragments.Transformer;
-import ru.mail.z_team.icon_fragments.walks.Walk;
-import ru.mail.z_team.network.ApiRepository;
+import ru.mail.z_team.icon_fragments.walks.WalkAnnotation;
+import ru.mail.z_team.network.DatabaseApiRepository;
 import ru.mail.z_team.network.UserApi;
 
 public class NewsRepository {
@@ -27,14 +26,17 @@ public class NewsRepository {
 
     private final UserApi userApi;
 
-    private final MutableLiveData<ArrayList<Walk>> currentUserNews = new MutableLiveData<>();
+    private final MutableLiveData<ArrayList<WalkAnnotation>> currentUserNews = new MutableLiveData<>();
+
+    SimpleDateFormat sdf =
+            new SimpleDateFormat("EEE, MMM d, yyyy hh:mm:ss a z");
 
     public NewsRepository(Context context) {
-        userApi = ApiRepository.from(context).getUserApi();
+        userApi = DatabaseApiRepository.from(context).getUserApi();
         logger = new Logger(LOG_TAG, true);
     }
 
-    public LiveData<ArrayList<Walk>> getNews() {
+    public LiveData<ArrayList<WalkAnnotation>> getNews() {
         logger.log("get news " + currentUserNews.toString());
         return currentUserNews;
     }
@@ -58,25 +60,46 @@ public class NewsRepository {
     }
 
     private void compileNewsAndPostInCurrentNews(ArrayList<String> ids) {
-        ArrayList<Walk> news = new ArrayList<>();
+        ArrayList<WalkAnnotation> news = new ArrayList<>();
 
         logger.log("Compile news");
         for (String id : ids) {
             logger.log("Compile news... " + ids.indexOf(id));
-            userApi.getUserWalksById(id).enqueue(new DatabaseCallback<ArrayList<UserApi.Walk>>(LOG_TAG) {
+            userApi.getUserWalksById(id).enqueue(new DatabaseCallback<ArrayList<UserApi.WalkInfo>>(LOG_TAG) {
                 @Override
-                public void onNullResponse(Response<ArrayList<UserApi.Walk>> response) {
+                public void onNullResponse(Response<ArrayList<UserApi.WalkInfo>> response) {
                     logger.log(id + " doesn't have walks");
                 }
 
                 @Override
-                public void onSuccessResponse(Response<ArrayList<UserApi.Walk>> response) {
+                public void onSuccessResponse(Response<ArrayList<UserApi.WalkInfo>> response) {
                     logger.log(id + " have walks");
-                    news.addAll(Transformer.transformToWalkAll(response.body()));
+                    news.addAll(transformToWalkAnnotationAll(response.body()));
                     Collections.sort(news);
                     currentUserNews.postValue(news);
                 }
             });
         }
+    }
+
+    private ArrayList<WalkAnnotation> transformToWalkAnnotationAll(ArrayList<UserApi.WalkInfo> walks) {
+        ArrayList<WalkAnnotation> result = new ArrayList<>();
+        for (UserApi.WalkInfo walk : walks) {
+            result.add(transformToWalkAnnotation(walk));
+        }
+        return result;
+    }
+
+    private WalkAnnotation transformToWalkAnnotation(UserApi.WalkInfo walk) {
+        WalkAnnotation transformed = new WalkAnnotation();
+        transformed.setTitle(walk.title);
+        transformed.setAuthor(walk.author);
+        transformed.setAuthorId(walk.id);
+        try {
+            transformed.setDate(sdf.parse(walk.date));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return transformed;
     }
 }

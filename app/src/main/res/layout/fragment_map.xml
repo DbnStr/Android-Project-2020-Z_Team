@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".map.MapActivity"
+    xmlns:mapbox="http://schemas.android.com/tools">
+
+    <com.mapbox.mapboxsdk.maps.MapView
+        android:id="@+id/map_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        mapbox:mapbox_cameraBearing="34.33"
+        mapbox:mapbox_cameraTargetLat="-36.84"
+        mapbox:mapbox_cameraTargetLng="174.76"
+        mapbox:mapbox_cameraTilt="50.25"
+        mapbox:mapbox_cameraZoom="10"
+        mapbox:mapbox_cameraZoomMax="12.41"
+        mapbox:mapbox_cameraZoomMin="6"
+        mapbox:mapbox_uiRotateGestures="false"
+        tools:layout_editor_absoluteX="16dp"
+        tools:layout_editor_absoluteY="29dp">
+    </com.mapbox.mapboxsdk.maps.MapView>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/save_map_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="15dp"
+        app:srcCompat="@drawable/ic_baseline_save_alt_24"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

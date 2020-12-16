@@ -17,6 +17,7 @@ import retrofit2.Response;
 import ru.mail.z_team.ApplicationModified;
 import ru.mail.z_team.Logger;
 import ru.mail.z_team.icon_fragments.DatabaseCallback;
+import ru.mail.z_team.network.DatabaseApiRepository;
 import ru.mail.z_team.icon_fragments.Transformer;
 import ru.mail.z_team.local_storage.LocalDatabase;
 import ru.mail.z_team.local_storage.UserDao;
@@ -44,9 +45,7 @@ public class FriendsRepository {
 
     public FriendsRepository(Context context) {
         this.context = context;
-
-        userApi = ApiRepository.from(context).getUserApi();
-
+        userApi = DatabaseApiRepository.from(context).getUserApi();
         logger = new Logger(LOG_TAG, true);
 
         localDatabase = ApplicationModified.from(context).getLocalDatabase();

@@ -7,24 +7,25 @@ import androidx.room.Room;
 
 import ru.mail.z_team.local_storage.LocalDatabase;
 import ru.mail.z_team.network.ApiRepository;
+import ru.mail.z_team.network.DatabaseApiRepository;
 
 public class ApplicationModified extends Application {
 
-    private ApiRepository apiRepository;
+    private DatabaseApiRepository databaseApiRepository;
     private AuthRepository authRepository;
     private LocalDatabase localDatabase;
 
     @Override
     public void onCreate() {
         super.onCreate();
-        apiRepository = new ApiRepository();
-        authRepository = new AuthRepository(apiRepository);
+        databaseApiRepository = new DatabaseApiRepository();
+        authRepository = new AuthRepository(databaseApiRepository);
         localDatabase = Room.databaseBuilder(this, LocalDatabase.class, "LocalDatabase")
                 .build();
     }
 
-    public ApiRepository getApis() {
-        return apiRepository;
+    public DatabaseApiRepository getApis() {
+        return databaseApiRepository;
     }
 
     public AuthRepository getAuthRepository() {
