@@ -10,11 +10,14 @@
         android:text="Add your first friend"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:layout_marginTop="16dp"
         app:layout_constraintTop_toBottomOf="@+id/add_friend_by_id_layout" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_friends"
         android:layout_width="match_parent"
+        android:layout_marginStart="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/add_friend_by_id_layout"
         android:layout_height="0dp" />
@@ -25,16 +28,31 @@
         android:layout_height="wrap_content"
         app:layout_constraintTop_toTopOf="parent">
 
-        <EditText
+        <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/add_friend_by_id_et"
-            android:hint="Enter User ID"
-            android:layout_width="362dp"
-            android:layout_height="wrap_content"/>
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="0dp"
+            app:startIconDrawable="@drawable/add_friend"
+            app:layout_constraintTop_toTopOf="parent"
+            android:hint="Enter User ID">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
         <Button
             android:id="@+id/add_friend_by_id_btn"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:background="@drawable/add_friend"/>
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:background="@drawable/ic_search"/>
 
     </LinearLayout>
 
