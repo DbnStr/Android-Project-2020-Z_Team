@@ -2,17 +2,12 @@ package ru.mail.z_team.icon_fragments.go_out;
 
 import android.content.Context;
 
-import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-import com.mapbox.api.geocoding.v5.GeocodingCriteria;
-import com.mapbox.api.geocoding.v5.MapboxGeocoding;
-import com.mapbox.api.geocoding.v5.models.GeocodingResponse;
 import com.mapbox.geojson.FeatureCollection;
-import com.mapbox.geojson.Point;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -22,7 +17,6 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import ru.mail.z_team.Logger;
-import ru.mail.z_team.R;
 import ru.mail.z_team.icon_fragments.DatabaseCallback;
 import ru.mail.z_team.map.Story;
 import ru.mail.z_team.network.DatabaseApiRepository;
@@ -37,7 +31,6 @@ public class GoOutRepository {
     private final Context context;
 
     private final MutableLiveData<GoOutRepository.PostStatus> postStatus = new MutableLiveData<>();
-    private final MutableLiveData<String> placeName = new MutableLiveData<>();
 
     SimpleDateFormat sdf =
             new SimpleDateFormat("EEE, MMM d, yyyy hh:mm:ss a z");
@@ -167,36 +160,6 @@ public class GoOutRepository {
 
     public MutableLiveData<PostStatus> getPostStatus() {
         return postStatus;
-    }
-
-    public void updatePlaceName(Point point) {
-        MapboxGeocoding reverseGeocode = MapboxGeocoding.builder()
-                .accessToken(context.getString(R.string.mapbox_access_token))
-                .query(point)
-                .geocodingTypes(GeocodingCriteria.TYPE_ADDRESS)
-                .build();
-
-
-        reverseGeocode.enqueueCall(new Callback<GeocodingResponse>() {
-            @Override
-            public void onResponse(Call<GeocodingResponse> call, Response<GeocodingResponse> response) {
-                if (response.body() != null){
-                    placeName.postValue(response.body().features().get(0).placeName());
-                }
-                else {
-                    logger.errorLog("geocode response is empty");
-                }
-            }
-
-            @Override
-            public void onFailure(Call<GeocodingResponse> call, Throwable t) {
-                logger.errorLog(t.getMessage());
-            }
-        });
-    }
-
-    public LiveData<String> getPlaceName() {
-        return placeName;
     }
 
     public enum PostStatus {

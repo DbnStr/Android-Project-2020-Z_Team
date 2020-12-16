@@ -34,6 +34,10 @@ public class FriendsFragment extends Fragment {
     EditText fieldAddFriend;
     TextView noFriends;
 
+    public FriendsFragment() {
+
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         logger = new Logger(LOG_TAG, true);

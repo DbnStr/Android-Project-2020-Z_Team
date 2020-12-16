@@ -17,7 +17,7 @@ public class ApplicationModified extends Application {
         super.onCreate();
         databaseApiRepository = new DatabaseApiRepository();
         authRepository = new AuthRepository(databaseApiRepository);
-        mapRepository = new MapRepository();
+        mapRepository = new MapRepository(getApplicationContext());
     }
 
     public DatabaseApiRepository getApis() {

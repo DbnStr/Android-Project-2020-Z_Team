@@ -25,6 +25,7 @@ public class FriendsRepository {
     private final UserApi userApi;
 
     private final MutableLiveData<User> currentUserData = new MutableLiveData<>();
+    private final MutableLiveData<User> currentUserProfileData = new MutableLiveData<>();
     private final MutableLiveData<Boolean> userExistence = new MutableLiveData<>();
 
     private int count;
@@ -36,6 +37,14 @@ public class FriendsRepository {
 
     public LiveData<User> getCurrentUser() {
         return currentUserData;
+    }
+
+    public void setCurrentUserProfileData(User user) {
+        currentUserProfileData.postValue(user);
+    }
+
+    public LiveData<User> getCurrentUserProfileData() {
+        return currentUserProfileData;
     }
 
     public void updateCurrentUser() {

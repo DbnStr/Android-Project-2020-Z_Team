@@ -252,7 +252,9 @@ public class MapFragment extends Fragment {
             final PointF pixel = mapboxMap.getProjection().toScreenLocation(point);
             List<Feature> features = mapboxMap.queryRenderedFeatures(pixel, SYMBOL_LAYER_ID);
 
-            if (features.size() > 0 && features.get(0).getStringProperty("markerType").equals("storyMarker")) {
+            if (features.size() > 0 &&
+                    features.get(0).hasProperty("markerType") &&
+                    features.get(0).getStringProperty("markerType").equals("storyMarker")) {
                 logger.log("pin was clicked");
                 for (Story story : ((MapActivity) getActivity()).getStories()) {
                     logger.log("places: " + features.get(0).getStringProperty("placeName") + " vs " + story.getPlace());
@@ -385,14 +387,18 @@ public class MapFragment extends Fragment {
     public void onSaveInstanceState(Bundle outState) {
         logger.log("onSaveInstance");
         super.onSaveInstanceState(outState);
-        mapView.onSaveInstanceState(outState);
+        if (mapView != null){
+            mapView.onSaveInstanceState(outState);
+        }
     }
 
     @Override
     public void onDestroy() {
         logger.log("onDestroy");
         super.onDestroy();
-        mapView.onDestroy();
+        if (mapView != null) {
+            mapView.onDestroy();
+        }
     }
 
     @Override

@@ -52,4 +52,12 @@ public class FriendsViewModel extends AndroidViewModel {
             logger.errorLog("Friend already added");
         }
     }
+
+    public void setUser(User user){
+        repository.setCurrentUserProfileData(user);
+    }
+
+    public LiveData<User> getUserProfileData() {
+        return  repository.getCurrentUserProfileData();
+    }
 }

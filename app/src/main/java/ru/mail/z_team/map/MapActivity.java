@@ -51,11 +51,11 @@ public class MapActivity extends AppCompatActivity implements PermissionsListene
         container = R.id.map_activity_container;
 
         viewModel = new ViewModelProvider(this).get(MapViewModel.class);
+        permissionsManager = new PermissionsManager(this);
 
         if (PermissionsManager.areLocationPermissionsGranted(this)) {
             openMapFragment();
         } else {
-            permissionsManager = new PermissionsManager(this);
             permissionsManager.requestLocationPermissions(this);
         }
 
