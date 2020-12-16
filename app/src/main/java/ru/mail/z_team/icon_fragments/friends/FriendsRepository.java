@@ -1,8 +1,6 @@
 package ru.mail.z_team.icon_fragments.friends;
 
 import android.content.Context;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -15,13 +13,13 @@ import retrofit2.Response;
 import ru.mail.z_team.ApplicationModified;
 import ru.mail.z_team.Logger;
 import ru.mail.z_team.icon_fragments.DatabaseCallback;
+import ru.mail.z_team.icon_fragments.DatabaseNetworkControlExecutor;
 import ru.mail.z_team.icon_fragments.Transformer;
 import ru.mail.z_team.local_storage.LocalDatabase;
 import ru.mail.z_team.local_storage.UserDao;
 import ru.mail.z_team.network.DatabaseApiRepository;
 import ru.mail.z_team.network.UserApi;
 import ru.mail.z_team.user.Friend;
-import ru.mail.z_team.user.User;
 
 public class FriendsRepository {
 
@@ -41,7 +39,9 @@ public class FriendsRepository {
 
     public FriendsRepository(Context context) {
         this.context = context;
+
         userApi = DatabaseApiRepository.from(context).getUserApi();
+
         logger = new Logger(LOG_TAG, true);
 
         localDatabase = ApplicationModified.from(context).getLocalDatabase();
@@ -60,29 +60,43 @@ public class FriendsRepository {
         String currentUserId = FirebaseAuth.getInstance().getUid();
 
         logger.log("update user - " + currentUserId);
-        if (isOnline(context)) {
-            userApi.getUserById(currentUserId).enqueue(new DatabaseCallback<UserApi.User>(LOG_TAG) {
-                @Override
-                public void onNullResponse(Response<UserApi.User> response) {
-                    logger.errorLog("Fail with update");
-                }
+        DatabaseNetworkControlExecutor executor = new DatabaseNetworkControlExecutor(context) {
+            @Override
+            public void networkRun() {
+                getUserFriendsFromRemoteDBAndAddTheseInLocalDB(currentUserId);
+            }
 
-                @Override
-                public void onSuccessResponse(Response<UserApi.User> response) {
-                    currentUserFriends.postValue(Transformer.transformToUser(response.body()).getFriends());
+            @Override
+            public void noNetworkRun() {
+                getCurrentUserFriendsFromLocalDB();
+            }
+        };
+        executor.run();
+    }
 
-                    localDatabase.databaseWriteExecutor.execute(() -> {
-                        User currentUser = Transformer.transformToUser(response.body());
-                        ArrayList<Friend> friends = currentUser.getFriends();
-                        userDao.deleteAllFriendsAndAddNew(Transformer.transformToLocalDBFriendALl(friends, currentUserId));
-                    });
-                }
-            });
-        } else {
-            localDatabase.databaseWriteExecutor.execute(() -> {
-                currentUserFriends.postValue(Transformer.transformToFriendAll(userDao.getUserFriends()));
-            });
-        }
+    private void getUserFriendsFromRemoteDBAndAddTheseInLocalDB(final String userId) {
+        userApi.getUserById(userId).enqueue(new DatabaseCallback<UserApi.User>(LOG_TAG) {
+            @Override
+            public void onNullResponse(Response<UserApi.User> response) {
+                logger.errorLog("Fail with update");
+            }
+
+            @Override
+            public void onSuccessResponse(Response<UserApi.User> response) {
+                currentUserFriends.postValue(Transformer.transformToUser(response.body()).getFriends());
+
+                replaceOldFriendsListInDbWithNew(Transformer.transformToUser(response.body()).getFriends(), userId);
+            }
+        });
+    }
+
+    private void replaceOldFriendsListInDbWithNew(final ArrayList<Friend> newFriends, final String userId) {
+        localDatabase.databaseWriteExecutor.execute(() -> userDao.deleteAllFriendsAndAddNew(Transformer.transformToLocalDBFriendALl(newFriends, userId)));
+    }
+
+    private void getCurrentUserFriendsFromLocalDB() {
+        localDatabase.databaseWriteExecutor.execute(() ->
+                currentUserFriends.postValue(Transformer.transformToFriendAll(userDao.getUserFriends())));
     }
 
     public void acceptFriendRequest(int number) {
@@ -96,32 +110,40 @@ public class FriendsRepository {
             @Override
             public void onSuccessResponse(Response<UserApi.Friend> response) {
                 UserApi.Friend newFriend = response.body();
-                userApi.getUserFriendsById(currentUserId).enqueue(new DatabaseCallback<ArrayList<UserApi.Friend>>(LOG_TAG) {
-                    @Override
-                    public void onNullResponse(Response<ArrayList<UserApi.Friend>> response) {
-                        addFriendToUser(currentUserId, 0, newFriend);
-                        updateCurrentUserFriends();
-                    }
+                addFriendToUserWithoutNumber(currentUserId, newFriend);
 
-                    @Override
-                    public void onSuccessResponse(Response<ArrayList<UserApi.Friend>> response) {
-                        addFriendToUser(currentUserId, response.body().size(), newFriend);
-                        updateCurrentUserFriends();
-                    }
-                });
+                deleteFriendRequest(currentUserId, number);
+            }
+        });
+    }
 
-                userApi.deleteFriendRequest(currentUserId, number).enqueue(new DatabaseCallback<UserApi.Friend>(LOG_TAG) {
-                    @Override
-                    public void onNullResponse(Response<UserApi.Friend> response) {
-                        logger.log("Successfully delete friend request");
-                        updateCurrentUserFriendRequestList();
-                    }
+    private void addFriendToUserWithoutNumber(final String userId, final UserApi.Friend newFriend) {
+        userApi.getUserFriendsById(userId).enqueue(new DatabaseCallback<ArrayList<UserApi.Friend>>(LOG_TAG) {
+            @Override
+            public void onNullResponse(Response<ArrayList<UserApi.Friend>> response) {
+                addFriendToUserByNumberOnFriendList(userId, 0, newFriend);
+                updateCurrentUserFriends();
+            }
 
-                    @Override
-                    public void onSuccessResponse(Response<UserApi.Friend> response) {
+            @Override
+            public void onSuccessResponse(Response<ArrayList<UserApi.Friend>> response) {
+                addFriendToUserByNumberOnFriendList(userId, response.body().size(), newFriend);
+                updateCurrentUserFriends();
+            }
+        });
+    }
 
-                    }
-                });
+    private void deleteFriendRequest(final String userId, final int numberOnList) {
+        userApi.deleteFriendRequest(userId, numberOnList).enqueue(new DatabaseCallback<UserApi.Friend>(LOG_TAG) {
+            @Override
+            public void onNullResponse(Response<UserApi.Friend> response) {
+                logger.log("Successfully delete friend request");
+                updateCurrentUserFriendRequestList();
+            }
+
+            @Override
+            public void onSuccessResponse(Response<UserApi.Friend> response) {
+
             }
         });
     }
@@ -167,7 +189,7 @@ public class FriendsRepository {
         return userExistence;
     }
 
-    public void addFriendToCurrentUser(String newFriendId, int num) {
+    public void addFriendToCurrentUserAndAddFriendRequestToFriend(String newFriendId, int num) {
         logger.log("addFriend");
         String curUserId = FirebaseAuth.getInstance().getUid();
 
@@ -194,7 +216,7 @@ public class FriendsRepository {
                     }
                 });
 
-                addFriendToUser(curUserId, num, friend);
+                addFriendToUserByNumberOnFriendList(curUserId, num, friend);
 
                 addFriendIdToFriendsIdsList(curUserId, num, friend.id);
             }
@@ -244,7 +266,7 @@ public class FriendsRepository {
         });
     }
 
-    private void addFriendToUser(final String userId, final int number, final UserApi.Friend friend) {
+    private void addFriendToUserByNumberOnFriendList(final String userId, final int number, final UserApi.Friend friend) {
         userApi.addFriend(userId, number, friend).enqueue(new DatabaseCallback<UserApi.Friend>(LOG_TAG) {
             @Override
             public void onNullResponse(Response<UserApi.Friend> response) {
@@ -256,15 +278,5 @@ public class FriendsRepository {
                 updateCurrentUserFriends();
             }
         });
-    }
-
-    public static boolean isOnline(Context context) {
-        ConnectivityManager cm =
-                (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo netInfo = cm.getActiveNetworkInfo();
-        if (netInfo != null && netInfo.isConnectedOrConnecting()) {
-            return true;
-        }
-        return false;
     }
 }

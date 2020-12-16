@@ -66,7 +66,7 @@ public class FriendsViewModel extends AndroidViewModel {
         logger.log("addFriend");
         ArrayList<Friend> friends = currentUserFriends.getValue();
         if (! isFriendWithIDAdded(friends, id)) {
-            repository.addFriendToCurrentUser(id, friends.size());
+            repository.addFriendToCurrentUserAndAddFriendRequestToFriend(id, friends.size());
         } else {
             logger.errorLog("Friend already added");
         }

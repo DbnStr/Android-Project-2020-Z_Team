@@ -1,8 +1,6 @@
 package ru.mail.z_team.icon_fragments.profile;
 
 import android.content.Context;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -16,6 +14,7 @@ import retrofit2.Response;
 import ru.mail.z_team.ApplicationModified;
 import ru.mail.z_team.Logger;
 import ru.mail.z_team.icon_fragments.DatabaseCallback;
+import ru.mail.z_team.icon_fragments.DatabaseNetworkControlExecutor;
 import ru.mail.z_team.icon_fragments.Transformer;
 import ru.mail.z_team.local_storage.LocalDatabase;
 import ru.mail.z_team.local_storage.UserDao;
@@ -57,38 +56,54 @@ public class ProfileRepository {
         String currentUserId = FirebaseAuth.getInstance().getUid();
 
         logger.log("update user - " + currentUserId);
+        DatabaseNetworkControlExecutor executor = new DatabaseNetworkControlExecutor(context) {
+            @Override
+            public void networkRun() {
+                getUserFromRemoteDBAndAddHimInLocalDB(currentUserId);
+            }
 
-        if (isOnline(context)) {
-            userApi.getUserById(currentUserId).enqueue(new DatabaseCallback<UserApi.User>(LOG_TAG) {
-                @Override
-                public void onNullResponse(Response<UserApi.User> response) {
-                    logger.errorLog("Fail with update");
-                }
+            @Override
+            public void noNetworkRun() {
+                getUserFromLocalDB(currentUserId);
+            }
+        };
+        executor.run();
+    }
 
-                @Override
-                public void onSuccessResponse(Response<UserApi.User> response) {
-                    currentUserData.postValue(Transformer.transformToUser(response.body()));
+    private void getUserFromRemoteDBAndAddHimInLocalDB(final String userId) {
+        userApi.getUserById(userId).enqueue(new DatabaseCallback<UserApi.User>(LOG_TAG) {
+            @Override
+            public void onNullResponse(Response<UserApi.User> response) {
+                logger.errorLog("Fail with update");
+            }
 
-                    localDatabase.databaseWriteExecutor.execute(() -> {
-                        userDao.insert(Transformer.transformToLocalDBUser(response.body()));
+            @Override
+            public void onSuccessResponse(Response<UserApi.User> response) {
+                currentUserData.postValue(Transformer.transformToUser(response.body()));
 
-                        User currentUser = Transformer.transformToUser(response.body());
-                        ArrayList<Friend> friends = currentUser.getFriends();
-                        for (Friend friend : friends) {
-                            userDao.insert(Transformer.transformToLocalDBFriend(friend, currentUserId));
-                        }
+                addUserInLocalDB(response.body());
+            }
+        });
+    }
 
-                        List<UserFriend> fr = userDao.getUserFriends();
-                        logger.log(fr.get(0).name);
-                    });
 
-                }
-            });
-        } else {
-            localDatabase.databaseWriteExecutor.execute(() -> {
-                currentUserData.postValue(Transformer.transformToUser(userDao.getById(currentUserId)));
-            });
-        }
+    private void addUserInLocalDB(final UserApi.User user) {
+        localDatabase.databaseWriteExecutor.execute(() -> {
+            userDao.insert(Transformer.transformToLocalDBUser(user));
+
+            User currentUser = Transformer.transformToUser(user);
+            ArrayList<Friend> friends = currentUser.getFriends();
+            for (Friend friend : friends) {
+                userDao.insert(Transformer.transformToLocalDBFriend(friend, user.id));
+            }
+
+            List<UserFriend> fr = userDao.getUserFriends();
+            logger.log(fr.get(0).name);
+        });
+    }
+
+    private void getUserFromLocalDB(final String userID) {
+        localDatabase.databaseWriteExecutor.execute(() -> currentUserData.postValue(Transformer.transformToUser(userDao.getById(userID))));
     }
 
     public void changeCurrentUserInformation(User newInformation) {
@@ -103,20 +118,8 @@ public class ProfileRepository {
             public void onSuccessResponse(Response<UserApi.User> response) {
                 logger.log("Change information about " + currentUserId);
 
-                localDatabase.databaseWriteExecutor.execute(() -> {
-                    userDao.insert(Transformer.transformToLocalDBUser(newInformation));
-                });
+                localDatabase.databaseWriteExecutor.execute(() -> userDao.insert(Transformer.transformToLocalDBUser(newInformation)));
             }
         });
-    }
-
-    public static boolean isOnline(Context context) {
-        ConnectivityManager cm =
-                (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo netInfo = cm.getActiveNetworkInfo();
-        if (netInfo != null && netInfo.isConnectedOrConnecting()) {
-            return true;
-        }
-        return false;
     }
 }
