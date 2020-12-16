@@ -80,14 +80,14 @@ public class WalkFragment extends Fragment {
         mapView = view.findViewById(R.id.walk_map_view);
         mapView.onCreate(savedInstanceState);
 
-        viewModel = new ViewModelProvider(this).get(WalkProfileViewModel.class);
-
         return view;
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        viewModel = new ViewModelProvider(this).get(WalkProfileViewModel.class);
 
         if (savedInstanceState != null) {
             viewModel.getAnnotation().observe(getActivity(), annotation -> {
@@ -232,19 +232,27 @@ public class WalkFragment extends Fragment {
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        mapView.onSaveInstanceState(outState);
-        viewModel.setAnnotation(walkAnnotation);
+        if (mapView != null) {
+            mapView.onSaveInstanceState(outState);
+        }
+        if (viewModel != null) {
+            viewModel.setAnnotation(walkAnnotation);
+        }
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        mapView.onDestroy();
+        if (mapView != null){
+            mapView.onDestroy();
+        }
     }
 
     @Override
     public void onLowMemory() {
         super.onLowMemory();
-        mapView.onLowMemory();
+        if (mapView != null) {
+            mapView.onLowMemory();
+        }
     }
 }
