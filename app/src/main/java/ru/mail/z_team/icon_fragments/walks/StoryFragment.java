@@ -8,8 +8,10 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -23,13 +25,18 @@ public class StoryFragment extends Fragment {
 
     private static final String LOG_TAG = "StoryFragment";
 
-    private final Story story;
+    private Story story;
     private TextView place, description;
     private LinearLayout gallery;
+
+    private WalkProfileViewModel viewModel;
 
     private Logger logger;
 
     private static final String BASE_URL = "gs://android-project-2020-zteam.appspot.com";
+
+    public StoryFragment() {
+    }
 
     public StoryFragment(Story story) {
         this.story = story;
@@ -45,6 +52,21 @@ public class StoryFragment extends Fragment {
         description = view.findViewById(R.id.displayed_story_description);
         gallery = view.findViewById(R.id.displayed_story_gallery);
 
+        viewModel = new ViewModelProvider(this).get(WalkProfileViewModel.class);
+
+        if (savedInstanceState != null) {
+            viewModel.getStory().observe(getActivity(), s -> {
+                story = s;
+                showStory();
+            });
+        } else {
+            showStory();
+        }
+
+        return view;
+    }
+
+    private void showStory() {
         place.setText(story.getPlace());
         description.setText(story.getDescription());
         if (story.getUrlImages() != null) {
@@ -62,7 +84,11 @@ public class StoryFragment extends Fragment {
                 });
             }
         }
+    }
 
-        return view;
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        viewModel.setStory(story);
     }
 }

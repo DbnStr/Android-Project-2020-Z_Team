@@ -59,4 +59,20 @@ public class WalkProfileRepository {
             }
         });
     }
+
+    public void setAnnotation(WalkAnnotation walkAnnotation) {
+        annotation.postValue(walkAnnotation);
+    }
+
+    public LiveData<WalkAnnotation> getAnnotation() {
+        return annotation;
+    }
+
+    public void setStory(Story story) {
+        currentDisplayedStory.postValue(story);
+    }
+
+    public LiveData<Story> getStory() {
+        return currentDisplayedStory;
+    }
 }
