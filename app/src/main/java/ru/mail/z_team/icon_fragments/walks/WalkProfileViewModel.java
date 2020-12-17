@@ -6,7 +6,9 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 
-public class WalkProfileViewModel extends AndroidViewModel{
+import ru.mail.z_team.map.Story;
+
+public class WalkProfileViewModel extends AndroidViewModel {
 
     private static final String LOG_TAG = "WalkProfileViewModel";
     private final WalkProfileRepository repository;
@@ -25,5 +27,21 @@ public class WalkProfileViewModel extends AndroidViewModel{
 
     public LiveData<Walk> getCurrentDisplayedWalk() {
         return currentDisplayedWalk;
+    }
+
+    public void setAnnotation(WalkAnnotation walkAnnotation) {
+        repository.setAnnotation(walkAnnotation);
+    }
+
+    public LiveData<WalkAnnotation> getAnnotation() {
+        return repository.getAnnotation();
+    }
+
+    public void setStory(Story story) {
+        repository.setStory(story);
+    }
+
+    public LiveData<Story> getStory() {
+        return repository.getStory();
     }
 }

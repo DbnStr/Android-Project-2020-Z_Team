@@ -32,13 +32,12 @@ import java.util.ArrayList;
 
 import ru.mail.z_team.Logger;
 import ru.mail.z_team.R;
-import ru.mail.z_team.icon_fragments.go_out.GoOutViewModel;
 
 import static android.app.Activity.RESULT_OK;
 
 public class SaveStoryFragment extends Fragment {
 
-    private final Point point;
+    private Point point;
     private TextView place, photoCounter;
     private EditText description;
     private Button addPhotoBtn, uploadBtn;
@@ -47,7 +46,7 @@ public class SaveStoryFragment extends Fragment {
     private int photoCount = 0;
 
     private static final String LOG_TAG = "SaveStoryFragment";
-    private final Logger logger;
+    private Logger logger;
 
     private static final int CAMERA_REQUEST_CODE = 100;
     private static final int STORAGE_REQUEST_CODE = 200;
@@ -61,17 +60,20 @@ public class SaveStoryFragment extends Fragment {
     private final ArrayList<Uri> imageRuis = new ArrayList<>();
     private Uri imageRui = null;
 
-    private GoOutViewModel viewModel;
+    private MapViewModel viewModel;
+
+    public SaveStoryFragment() {
+    }
 
     public SaveStoryFragment(Point storyPoint) {
         point = storyPoint;
-        logger = new Logger(LOG_TAG, true);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_save_story, container, false);
+        logger = new Logger(LOG_TAG, true);
 
         addPhotoBtn = view.findViewById(R.id.story_add_photo);
         uploadBtn = view.findViewById(R.id.story_upload);
@@ -83,13 +85,41 @@ public class SaveStoryFragment extends Fragment {
         cameraPermissions = new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE};
         storagePermissions = new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE};
 
-        viewModel = new ViewModelProvider(this).get(GoOutViewModel.class);
-        viewModel.updatePlaceName(point);
+        viewModel = new ViewModelProvider(this).get(MapViewModel.class);
+
+        if (savedInstanceState != null) {
+            restoreSaveStoryFragment();
+        } else {
+            viewModel.updatePlaceName(point);
+            viewModel.getPlaceName().observe(getActivity(), s -> {
+                place.setText(s);
+            });
+        }
+
+        return view;
+    }
+
+    public void restoreSaveStoryFragment() {
+        viewModel.getStoryPoint().observe(getActivity(), p -> {
+            point = p;
+        });
+        viewModel.getDescription().observe(getActivity(), text -> {
+            description.setText(text);
+        });
         viewModel.getPlaceName().observe(getActivity(), s -> {
             place.setText(s);
         });
-
-        return view;
+        viewModel.getImageUris().observe(getActivity(), uris -> {
+            imageRuis.clear();
+            imageRuis.addAll(uris);
+        });
+        viewModel.getImageCount().observe(getActivity(), count -> {
+            photoCount = count;
+            if (count > 0) {
+                photoCounter.setText(String.valueOf(count));
+                photoCounterLayout.setVisibility(View.VISIBLE);
+            }
+        });
     }
 
     @Override
@@ -97,32 +127,7 @@ public class SaveStoryFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         uploadBtn.setOnClickListener(v -> {
-            logger.log("uploadBtn clicked");
-            String descriptionText = description.getText().toString().trim();
-
-            if (TextUtils.isEmpty(descriptionText)) {
-                description.setError("Enter description");
-                description.setFocusable(true);
-                return;
-            }
-
-            Story story = new Story();
-            story.setDescription(descriptionText);
-            story.setPlace(place.getText().toString());
-            if (imageRuis.size() > 0) {
-                story.setUriImages(imageRuis);
-            }
-
-            ((MapActivity) getActivity()).addStory(story);
-            Feature walkPointGeoJSON = Feature.fromGeometry(point);
-            story.setPoint(walkPointGeoJSON);
-            String timeStamp = String.valueOf(System.currentTimeMillis());
-            story.setId(timeStamp);
-
-            walkPointGeoJSON.addStringProperty("markerType", "storyMarker");
-            walkPointGeoJSON.addStringProperty("id", timeStamp);
-            walkPointGeoJSON.addStringProperty("placeName", place.getText().toString());
-            ((MapActivity) getActivity()).addToWalkGeoJSON(walkPointGeoJSON);
+            saveStory();
 
             getActivity().getSupportFragmentManager().popBackStack();
         });
@@ -130,6 +135,35 @@ public class SaveStoryFragment extends Fragment {
         addPhotoBtn.setOnClickListener(v -> {
             showImagePickDialog();
         });
+    }
+
+    private void saveStory() {
+        String descriptionText = description.getText().toString().trim();
+
+        if (TextUtils.isEmpty(descriptionText)) {
+            description.setError("Enter description");
+            description.setFocusable(true);
+            return;
+        }
+
+        Story story = new Story();
+        story.setDescription(descriptionText);
+        story.setPlace(place.getText().toString());
+        if (imageRuis.size() > 0) {
+            story.setUriImages(imageRuis);
+        }
+
+        ((MapActivity) getActivity()).addStory(story);
+        Feature walkPointGeoJSON = Feature.fromGeometry(point);
+        story.setPoint(walkPointGeoJSON);
+
+        String timeStamp = String.valueOf(System.currentTimeMillis());
+        story.setId(timeStamp);
+
+        walkPointGeoJSON.addStringProperty("markerType", "storyMarker");
+        walkPointGeoJSON.addStringProperty("id", timeStamp);
+        walkPointGeoJSON.addStringProperty("placeName", place.getText().toString());
+        ((MapActivity) getActivity()).addToWalkGeoJSON(walkPointGeoJSON);
     }
 
     private void showImagePickDialog() {
@@ -247,5 +281,14 @@ public class SaveStoryFragment extends Fragment {
             logger.errorLog("onActivityResult result code was not ok");
         }
         super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        viewModel.setStoryPoint(point);
+        viewModel.setDescription(description.getText().toString());
+        viewModel.setImageUris(imageRuis);
+        viewModel.setImageCount(photoCount);
     }
 }
