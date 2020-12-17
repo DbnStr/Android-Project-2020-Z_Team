@@ -62,7 +62,8 @@ public class SaveStoryFragment extends Fragment {
 
     private MapViewModel viewModel;
 
-    public SaveStoryFragment() { }
+    public SaveStoryFragment() {
+    }
 
     public SaveStoryFragment(Point storyPoint) {
         point = storyPoint;
@@ -88,8 +89,7 @@ public class SaveStoryFragment extends Fragment {
 
         if (savedInstanceState != null) {
             restoreSaveStoryFragment();
-        }
-        else {
+        } else {
             viewModel.updatePlaceName(point);
             viewModel.getPlaceName().observe(getActivity(), s -> {
                 place.setText(s);

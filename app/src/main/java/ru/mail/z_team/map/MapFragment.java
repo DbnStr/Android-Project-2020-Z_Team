@@ -96,7 +96,7 @@ public class MapFragment extends Fragment {
         Mapbox.getInstance(getContext(), getString(R.string.mapbox_access_token));
         View view = inflater.inflate(R.layout.fragment_map, container, false);
         viewModel = new ViewModelProvider(this).get(MapViewModel.class);
-        if (savedInstanceState != null){
+        if (savedInstanceState != null) {
             restoreMapFragment();
         }
 
@@ -160,16 +160,15 @@ public class MapFragment extends Fragment {
         }));
     }
 
-    private void animateCamera(MapboxMap mapboxMap){
+    private void animateCamera(MapboxMap mapboxMap) {
         isFeatureListEmpty = ((MapActivity) getActivity()).getWalkGeoJSON().features().isEmpty();
         if (!isFeatureListEmpty) {
             ArrayList<Point> routePoints = new ArrayList<>();
             for (Feature feature : ((MapActivity) getActivity()).getWalkGeoJSON().features()) {
                 if (feature.geometry() instanceof LineString) {
-                    routePoints.addAll (((LineString) feature
+                    routePoints.addAll(((LineString) feature
                             .geometry()).coordinates());
-                }
-                else if (feature.geometry() instanceof Point) {
+                } else if (feature.geometry() instanceof Point) {
                     routePoints.add((Point) feature.geometry());
                 }
             }
@@ -261,9 +260,9 @@ public class MapFragment extends Fragment {
             final PointF pixel = mapboxMap.getProjection().toScreenLocation(point);
             List<Feature> features = mapboxMap.queryRenderedFeatures(pixel, SYMBOL_LAYER_ID);
 
-            if (features.size() > 0 &&
-                    features.get(0).hasProperty("markerType") &&
-                    features.get(0).getStringProperty("markerType").equals("storyMarker")) {
+            if (features.size() > 0
+                    && features.get(0).hasProperty("markerType")
+                    && features.get(0).getStringProperty("markerType").equals("storyMarker")) {
                 logger.log("pin was clicked");
                 for (Story story : ((MapActivity) getActivity()).getStories()) {
                     logger.log("places: " + features.get(0).getStringProperty("placeName") + " vs " + story.getPlace());
@@ -276,8 +275,7 @@ public class MapFragment extends Fragment {
                     }
                     break;
                 }
-            }
-            else if (isMapClickable) {
+            } else if (isMapClickable) {
                 isMapClickable = false;
                 viewModel.setIsClickable(false);
                 openStoryFragment(mapboxMap, point);
@@ -396,7 +394,7 @@ public class MapFragment extends Fragment {
     public void onSaveInstanceState(Bundle outState) {
         logger.log("onSaveInstance");
         super.onSaveInstanceState(outState);
-        if (mapView != null){
+        if (mapView != null) {
             mapView.onSaveInstanceState(outState);
         }
     }

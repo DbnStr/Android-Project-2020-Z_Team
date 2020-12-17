@@ -27,7 +27,7 @@ public class MapViewModel extends AndroidViewModel {
 
     //--------------------- MapFragment
 
-    public LiveData<Boolean> getIsClickable(){
+    public LiveData<Boolean> getIsClickable() {
         return repository.getIsClickable();
     }
 
@@ -47,7 +47,7 @@ public class MapViewModel extends AndroidViewModel {
         return repository.getStories();
     }
 
-    public void setIsClickable(boolean b){
+    public void setIsClickable(boolean b) {
         repository.setIsClickable(b);
     }
 
@@ -84,7 +84,7 @@ public class MapViewModel extends AndroidViewModel {
         repository.setPoint(p);
     }
 
-    public LiveData<Point> getStoryPoint (){
+    public LiveData<Point> getStoryPoint() {
         return repository.getStoryPoint();
     }
 
