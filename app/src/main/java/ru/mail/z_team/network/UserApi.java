@@ -47,15 +47,15 @@ public interface UserApi {
 
     class WalkInfo {
         public String title;
-        public String author;
+        public String authorName;
+        public String authorId;
         public String date;
-        public String id;
 
-        public WalkInfo(String title, String date, String author, String id) {
+        public WalkInfo(String title, String date, String authorName, String authorId) {
             this.title = title;
             this.date = date;
-            this.author = author;
-            this.id = id;
+            this.authorName = authorName;
+            this.authorId = authorId;
         }
     }
 

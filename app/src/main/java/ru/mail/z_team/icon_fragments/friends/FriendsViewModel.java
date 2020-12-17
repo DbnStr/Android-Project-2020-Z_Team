@@ -80,4 +80,12 @@ public class FriendsViewModel extends AndroidViewModel {
         }
         return false;
     }
+
+    public void setUser(User user){
+        repository.setCurrentUserProfileData(user);
+    }
+
+    public LiveData<User> getUserProfileData() {
+        return  repository.getCurrentUserProfileData();
+    }
 }

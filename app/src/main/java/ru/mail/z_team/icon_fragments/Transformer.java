@@ -2,6 +2,8 @@ package ru.mail.z_team.icon_fragments;
 
 import android.annotation.SuppressLint;
 
+import androidx.lifecycle.LiveData;
+
 import com.mapbox.geojson.Feature;
 import com.mapbox.geojson.FeatureCollection;
 
@@ -12,8 +14,10 @@ import java.util.Date;
 import java.util.List;
 
 import ru.mail.z_team.icon_fragments.walks.Walk;
-import ru.mail.z_team.icon_fragments.walks.WalkAnnotation;
+import ru.mail.z_team.icon_fragments.walks.WalkAdapter;
 import ru.mail.z_team.local_storage.UserFriend;
+import ru.mail.z_team.local_storage.UserWalkAnnotation;
+import ru.mail.z_team.local_storage.WalkAnnotation;
 import ru.mail.z_team.map.Story;
 import ru.mail.z_team.network.UserApi;
 import ru.mail.z_team.user.Friend;
@@ -22,7 +26,7 @@ import ru.mail.z_team.user.User;
 public class Transformer {
     /*
         function order
-        for result : User -> Friend -> Walk
+        for result : User -> Friend -> WalkAnnotation
         for type of result: default type -> userApi type -> local_storage type
         for type of arguments : default type -> userApi type -> local_storage type
      */
@@ -63,7 +67,7 @@ public class Transformer {
 
     public static ArrayList<Friend> transformToFriendAll(ArrayList<UserApi.Friend> friends) {
         ArrayList<Friend> result = new ArrayList<>();
-        for(UserApi.Friend friend : friends) {
+        for (UserApi.Friend friend : friends) {
             result.add(transformToFriend(friend));
         }
         return result;
@@ -88,12 +92,12 @@ public class Transformer {
         );
     }
 
-    /* default Walk result */
+    /* default WalkAnnotation result */
 
     public static Walk transformToWalk(UserApi.Walk walk) {
         Walk transformed = new Walk();
         transformed.setTitle(walk.title);
-        transformed.setAuthor(walk.author);
+        transformed.setAuthorName(walk.author);
         FeatureCollection map = FeatureCollection.fromJson(walk.walk);
         transformed.setMap(map);
         transformed.setStories(transformToStoryAll(walk.stories));
@@ -101,10 +105,11 @@ public class Transformer {
         return transformed;
     }
 
-    public static Walk transformToWalk(ru.mail.z_team.local_storage.UserWalk walk) {
+    public static ru.mail.z_team.icon_fragments.walks.WalkAnnotation transformToWalk(UserWalkAnnotation walk) {
         Walk result = new Walk();
-        result.setAuthor(walk.author);
         result.setTitle(walk.title);
+        result.setAuthorName(walk.authorName);
+        result.setAuthorId(walk.authorId);
         result.setDate(getDate(walk.date));
         return result;
     }
@@ -170,20 +175,21 @@ public class Transformer {
         );
     }
 
-    /* LocalDB Walk result */
+    /* LocalDB WalkAnnotation result */
 
-    public static List<ru.mail.z_team.local_storage.Walk> transformToLocalDBWalkAll(List<Walk> walks) {
-        List<ru.mail.z_team.local_storage.Walk> result = new ArrayList<>();
-        for(Walk walk : walks) {
+    public static List<WalkAnnotation> transformToLocalDBWalkAll(List<Walk> walks) {
+        List<WalkAnnotation> result = new ArrayList<>();
+        for (Walk walk : walks) {
             result.add(transformToLocalDBWalk(walk));
         }
         return result;
     }
 
-    public static ru.mail.z_team.local_storage.Walk transformToLocalDBWalk(Walk walk) {
-        return new ru.mail.z_team.local_storage.Walk(
+    public static WalkAnnotation transformToLocalDBWalk(Walk walk) {
+        return new WalkAnnotation(
                 walk.getTitle(),
-                walk.getAuthor(),
+                walk.getAuthorName(),
+                walk.getAuthorId(),
                 walk.getDate().toString()
         );
     }
@@ -221,26 +227,61 @@ public class Transformer {
         return story;
     }
 
-    /* Walk Annotation */
+    /* WalkAnnotation result */
 
-    public static ArrayList<WalkAnnotation> transformToWalkAnnotationAll(ArrayList<UserApi.WalkInfo> walks) {
-        ArrayList<WalkAnnotation> result = new ArrayList<>();
+    public static ArrayList<ru.mail.z_team.icon_fragments.walks.WalkAnnotation> transformToWalkAnnotationAll(ArrayList<UserApi.WalkInfo> walks) {
+        ArrayList<ru.mail.z_team.icon_fragments.walks.WalkAnnotation> result = new ArrayList<>();
         for (UserApi.WalkInfo walk : walks) {
             result.add(transformToWalkAnnotation(walk));
         }
         return result;
     }
 
-    public static WalkAnnotation transformToWalkAnnotation(UserApi.WalkInfo walk) {
-        WalkAnnotation transformed = new WalkAnnotation();
+    public static ru.mail.z_team.icon_fragments.walks.WalkAnnotation transformToWalkAnnotation(UserApi.WalkInfo walk) {
+        ru.mail.z_team.icon_fragments.walks.WalkAnnotation transformed = new ru.mail.z_team.icon_fragments.walks.WalkAnnotation();
         transformed.setTitle(walk.title);
-        transformed.setAuthor(walk.author);
-        transformed.setAuthorId(walk.id);
+        transformed.setAuthorName(walk.authorName);
+        transformed.setAuthorId(walk.authorId);
         try {
             transformed.setDate(sdf.parse(walk.date));
         } catch (ParseException e) {
             e.printStackTrace();
         }
         return transformed;
+    }
+
+    public static ArrayList<ru.mail.z_team.icon_fragments.walks.WalkAnnotation> transformToWalkAnnotationAll(List<UserWalkAnnotation> walksAnnotations) {
+        ArrayList<ru.mail.z_team.icon_fragments.walks.WalkAnnotation> result = new ArrayList<>();
+        for (UserWalkAnnotation walksAnnotation : walksAnnotations) {
+            result.add(transformToWalkAnnotation(walksAnnotation));
+        }
+        return result;
+    }
+
+    public static ru.mail.z_team.icon_fragments.walks.WalkAnnotation transformToWalkAnnotation(UserWalkAnnotation walkAnnotation) {
+        ru.mail.z_team.icon_fragments.walks.WalkAnnotation result = new ru.mail.z_team.icon_fragments.walks.WalkAnnotation();
+        result.setTitle(walkAnnotation.title);
+        result.setAuthorName(walkAnnotation.authorName);
+        result.setAuthorId(walkAnnotation.authorId);
+        result.setDate(getDate(walkAnnotation.date));
+        return result;
+    }
+
+    /* WalkAnnotation LocalDB */
+
+    public static List<WalkAnnotation> transformToLocalDBWalkAnnotationAll(List<UserApi.WalkInfo> walksAnnotations) {
+        List<WalkAnnotation> result = new ArrayList<>();
+        for (UserApi.WalkInfo walkInfo : walksAnnotations) {
+            result.add(transformToLocalDBWalkAnnotation(walkInfo));
+        }
+        return result;
+    }
+
+    public static WalkAnnotation transformToLocalDBWalkAnnotation(UserApi.WalkInfo walkAnnotation) {
+        return new WalkAnnotation(
+                walkAnnotation.title,
+                walkAnnotation.authorName,
+                walkAnnotation.authorId,
+                walkAnnotation.date);
     }
 }

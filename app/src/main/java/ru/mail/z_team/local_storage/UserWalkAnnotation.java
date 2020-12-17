@@ -5,11 +5,13 @@ import androidx.room.PrimaryKey;
 
 import java.util.Date;
 
-public class UserWalk {
+public class UserWalkAnnotation {
 
     public String title;
 
-    public String date;
+    public String authorName;
 
-    public String author;
+    public String authorId;
+
+    public String date;
 }

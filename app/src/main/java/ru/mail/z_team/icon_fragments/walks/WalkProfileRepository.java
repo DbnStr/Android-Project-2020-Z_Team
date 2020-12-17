@@ -29,7 +29,8 @@ public class WalkProfileRepository {
     private final Context context;
 
     private final MutableLiveData<Walk> currentDisplayedWalk = new MutableLiveData<>();
-    private final MutableLiveData<Boolean> isCloseEnough = new MutableLiveData<>();
+    private final MutableLiveData<WalkAnnotation> annotation = new MutableLiveData<>();
+    private final MutableLiveData<Story> currentDisplayedStory = new MutableLiveData<>();
 
     SimpleDateFormat sdf =
             new SimpleDateFormat("EEE, MMM d, yyyy hh:mm:ss a z");

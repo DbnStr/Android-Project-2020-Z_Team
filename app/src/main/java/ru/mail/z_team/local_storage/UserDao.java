@@ -18,19 +18,19 @@ public abstract class UserDao {
     public abstract void insert(Friend friend);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    public abstract void insert(Walk walk);
+    public abstract void insert(WalkAnnotation walkAnnotation);
 
     @Query("DELETE FROM Friend")
     public abstract void deleteAllFriends();
 
-    @Query("DELETE FROM Walk")
-    public abstract void deleteAllWalks();
+    @Query("DELETE FROM WalkAnnotation")
+    public abstract void deleteAllWalksAnnotations();
 
     @Transaction
-    public void deleteAllWalksAndAddNew(List<Walk> walks) {
-        deleteAllWalks();
-        for(Walk walk : walks) {
-            insert(walk);
+    public void deleteAllWalkAnnotationAndAddNew(List<WalkAnnotation> walkAnnotations) {
+        deleteAllWalksAnnotations();
+        for(WalkAnnotation walkAnnotation : walkAnnotations) {
+            insert(walkAnnotation);
         }
     }
 
@@ -48,6 +48,6 @@ public abstract class UserDao {
     @Query("SELECT friend.id, friend.friend_name AS fr_name " + "FROM friend, user " + "WHERE friend.current_user_id == user.id")
     public abstract List<UserFriend> getUserFriends();
 
-    @Query("SELECT walk.title, walk.date, walk.author " + "FROM walk, user " + "WHERE walk.author == user.name")
-    public abstract List<UserWalk> getUserWalks();
+    @Query("SELECT WalkAnnotation.title, WalkAnnotation.authorName, WalkAnnotation.authorId, WalkAnnotation.date " + "FROM WalkAnnotation, user " + "WHERE WalkAnnotation.authorId == user.id")
+    public abstract List<UserWalkAnnotation> getUserWalksAnnotations();
 }

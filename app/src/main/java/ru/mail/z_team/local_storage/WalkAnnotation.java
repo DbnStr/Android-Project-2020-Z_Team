@@ -4,22 +4,23 @@ import androidx.annotation.NonNull;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
-import java.util.Date;
-
 @Entity
-public class Walk {
+public class WalkAnnotation {
 
     @NonNull
     @PrimaryKey
     public String title;
 
-    public String author;
+    public String authorName;
+
+    public String authorId;
 
     public String date;
 
-    public Walk(@NonNull String title, String author, String date) {
+    public WalkAnnotation(@NonNull String title, String authorName, String authorId, String date) {
         this.title = title;
-        this.author = author;
+        this.authorName = authorName;
+        this.authorId = authorId;
         this.date = date;
     }
 }

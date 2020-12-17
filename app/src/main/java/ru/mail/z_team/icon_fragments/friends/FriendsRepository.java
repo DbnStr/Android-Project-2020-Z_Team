@@ -20,6 +20,7 @@ import ru.mail.z_team.local_storage.UserDao;
 import ru.mail.z_team.network.DatabaseApiRepository;
 import ru.mail.z_team.network.UserApi;
 import ru.mail.z_team.user.Friend;
+import ru.mail.z_team.user.User;
 
 public class FriendsRepository {
 
@@ -35,6 +36,7 @@ public class FriendsRepository {
 
     private final MutableLiveData<ArrayList<Friend>> currentUserFriends = new MutableLiveData<>();
     private final MutableLiveData<ArrayList<Friend>> currentUserFriendRequestList = new MutableLiveData<>();
+    private final MutableLiveData<User> currentUserProfileData = new MutableLiveData<>();
     private final MutableLiveData<Boolean> userExistence = new MutableLiveData<>();
 
     public FriendsRepository(Context context) {
@@ -47,6 +49,15 @@ public class FriendsRepository {
         localDatabase = ApplicationModified.from(context).getLocalDatabase();
         userDao = localDatabase.getUserDao();
     }
+
+    public void setCurrentUserProfileData(User user) {
+        currentUserProfileData.postValue(user);
+    }
+
+    public LiveData<User> getCurrentUserProfileData() {
+        return currentUserProfileData;
+    }
+
 
     public LiveData<ArrayList<Friend>> getCurrentUserFriends() {
         return currentUserFriends;

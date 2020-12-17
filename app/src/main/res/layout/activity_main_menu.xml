@@ -51,7 +51,7 @@
             android:clickable="true"
             android:focusable="true"
             android:gravity="center"
-            android:text="@string/walks">
+            android:text="@string/walkAnnotations">
 
         </TextView>
 
