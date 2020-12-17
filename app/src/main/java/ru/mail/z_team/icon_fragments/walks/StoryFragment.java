@@ -59,8 +59,7 @@ public class StoryFragment extends Fragment {
                 story = s;
                 showStory();
             });
-        }
-        else {
+        } else {
             showStory();
         }
 

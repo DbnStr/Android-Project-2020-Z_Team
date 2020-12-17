@@ -97,18 +97,22 @@ public class MapFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_map, container, false);
         viewModel = new ViewModelProvider(this).get(MapViewModel.class);
         if (savedInstanceState != null){
-            viewModel.getStartPos().observe(getActivity(), point -> {
-                startPos = point;
-            });
-            viewModel.getDestinationPos().observe(getActivity(), point -> {
-                destinationPos = point;
-            });
-            viewModel.getIsClickable().observe(getActivity(), b -> {
-                isMapClickable = b;
-            });
+            restoreMapFragment();
         }
 
         return view;
+    }
+
+    public void restoreMapFragment() {
+        viewModel.getStartPos().observe(getActivity(), point -> {
+            startPos = point;
+        });
+        viewModel.getDestinationPos().observe(getActivity(), point -> {
+            destinationPos = point;
+        });
+        viewModel.getIsClickable().observe(getActivity(), b -> {
+            isMapClickable = b;
+        });
     }
 
     @Override
@@ -119,37 +123,9 @@ public class MapFragment extends Fragment {
         mapView.onCreate(savedInstanceState);
         mapView.getMapAsync(mapboxMap -> mapboxMap.setStyle(Style.MAPBOX_STREETS, style -> {
             initLocationComponent(mapboxMap, style);
-            isFeatureListEmpty = ((MapActivity) getActivity()).getWalkGeoJSON().features().isEmpty();
-            if (!isFeatureListEmpty) {
-                ArrayList<Point> routePoints = new ArrayList<>();
-                for (Feature feature : ((MapActivity) getActivity()).getWalkGeoJSON().features()) {
-                    if (feature.geometry() instanceof LineString) {
-                        routePoints.addAll (((LineString) feature
-                                .geometry()).coordinates());
-                    }
-                    else if (feature.geometry() instanceof Point) {
-                        routePoints.add((Point) feature.geometry());
-                    }
-                }
-                ArrayList<LatLng> routeLatLngs = new ArrayList<>();
-                for (Point point : routePoints) {
-                    routeLatLngs.add(new LatLng(point.latitude(), point.longitude()));
-                }
-                LatLngBounds latLngBounds = new LatLngBounds.Builder()
-                        .includes(routeLatLngs)
-                        .build();
-                mapboxMap.animateCamera(CameraUpdateFactory.newLatLngBounds(latLngBounds, 10));
-            } else {
-                LatLng target = new LatLng(locationComponent.getLastKnownLocation().getLatitude(),
-                        locationComponent.getLastKnownLocation().getLongitude());
-                CameraPosition position = new CameraPosition.Builder()
-                        .target(target)
-                        .zoom(14)
-                        .tilt(20)
-                        .build();
-                //new LatLng(55.765762, 37.685479)
-                mapboxMap.animateCamera(CameraUpdateFactory.newCameraPosition(position), 7000);
-            }
+
+            animateCamera(mapboxMap);
+
             initLayers(style);
             showWalk(mapboxMap);
 
@@ -175,7 +151,6 @@ public class MapFragment extends Fragment {
                 addStory(mapboxMap);
             });
             saveMapButton.setOnClickListener(v -> {
-                //mapView.setVisibility(View.GONE);
                 getActivity().getSupportFragmentManager()
                         .beginTransaction()
                         .replace(R.id.map_activity_container, new SavingWalkFragment(), SAVE_TAG)
@@ -183,6 +158,40 @@ public class MapFragment extends Fragment {
                         .commitAllowingStateLoss();
             });
         }));
+    }
+
+    private void animateCamera(MapboxMap mapboxMap){
+        isFeatureListEmpty = ((MapActivity) getActivity()).getWalkGeoJSON().features().isEmpty();
+        if (!isFeatureListEmpty) {
+            ArrayList<Point> routePoints = new ArrayList<>();
+            for (Feature feature : ((MapActivity) getActivity()).getWalkGeoJSON().features()) {
+                if (feature.geometry() instanceof LineString) {
+                    routePoints.addAll (((LineString) feature
+                            .geometry()).coordinates());
+                }
+                else if (feature.geometry() instanceof Point) {
+                    routePoints.add((Point) feature.geometry());
+                }
+            }
+            ArrayList<LatLng> routeLatLngs = new ArrayList<>();
+            for (Point point : routePoints) {
+                routeLatLngs.add(new LatLng(point.latitude(), point.longitude()));
+            }
+            LatLngBounds latLngBounds = new LatLngBounds.Builder()
+                    .includes(routeLatLngs)
+                    .build();
+            mapboxMap.animateCamera(CameraUpdateFactory.newLatLngBounds(latLngBounds, 10));
+        } else {
+            LatLng target = new LatLng(locationComponent.getLastKnownLocation().getLatitude(),
+                    locationComponent.getLastKnownLocation().getLongitude());
+            CameraPosition position = new CameraPosition.Builder()
+                    .target(target)
+                    .zoom(14)
+                    .tilt(20)
+                    .build();
+            //new LatLng(55.765762, 37.685479)
+            mapboxMap.animateCamera(CameraUpdateFactory.newCameraPosition(position), 7000);
+        }
     }
 
     private void addStory(MapboxMap mapboxMap) {

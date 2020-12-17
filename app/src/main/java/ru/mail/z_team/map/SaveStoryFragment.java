@@ -87,26 +87,7 @@ public class SaveStoryFragment extends Fragment {
         viewModel = new ViewModelProvider(this).get(MapViewModel.class);
 
         if (savedInstanceState != null) {
-            viewModel.getStoryPoint().observe(getActivity(), p -> {
-                point = p;
-            });
-            viewModel.getDescription().observe(getActivity(), text -> {
-                description.setText(text);
-            });
-            viewModel.getPlaceName().observe(getActivity(), s -> {
-                place.setText(s);
-            });
-            viewModel.getImageUris().observe(getActivity(), uris -> {
-                imageRuis.clear();
-                imageRuis.addAll(uris);
-            });
-            viewModel.getImageCount().observe(getActivity(), count -> {
-                photoCount = count;
-                if (count > 0) {
-                    photoCounter.setText(String.valueOf(count));
-                    photoCounterLayout.setVisibility(View.VISIBLE);
-                }
-            });
+            restoreSaveStoryFragment();
         }
         else {
             viewModel.updatePlaceName(point);
@@ -118,38 +99,35 @@ public class SaveStoryFragment extends Fragment {
         return view;
     }
 
+    public void restoreSaveStoryFragment() {
+        viewModel.getStoryPoint().observe(getActivity(), p -> {
+            point = p;
+        });
+        viewModel.getDescription().observe(getActivity(), text -> {
+            description.setText(text);
+        });
+        viewModel.getPlaceName().observe(getActivity(), s -> {
+            place.setText(s);
+        });
+        viewModel.getImageUris().observe(getActivity(), uris -> {
+            imageRuis.clear();
+            imageRuis.addAll(uris);
+        });
+        viewModel.getImageCount().observe(getActivity(), count -> {
+            photoCount = count;
+            if (count > 0) {
+                photoCounter.setText(String.valueOf(count));
+                photoCounterLayout.setVisibility(View.VISIBLE);
+            }
+        });
+    }
+
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
         uploadBtn.setOnClickListener(v -> {
-            logger.log("uploadBtn clicked");
-            String descriptionText = description.getText().toString().trim();
-
-            if (TextUtils.isEmpty(descriptionText)) {
-                description.setError("Enter description");
-                description.setFocusable(true);
-                return;
-            }
-
-            Story story = new Story();
-            story.setDescription(descriptionText);
-            story.setPlace(place.getText().toString());
-            if (imageRuis.size() > 0) {
-                story.setUriImages(imageRuis);
-            }
-
-            ((MapActivity) getActivity()).addStory(story);
-            Feature walkPointGeoJSON = Feature.fromGeometry(point);
-            story.setPoint(walkPointGeoJSON);
-
-            String timeStamp = String.valueOf(System.currentTimeMillis());
-            story.setId(timeStamp);
-
-            walkPointGeoJSON.addStringProperty("markerType", "storyMarker");
-            walkPointGeoJSON.addStringProperty("id", timeStamp);
-            walkPointGeoJSON.addStringProperty("placeName", place.getText().toString());
-            ((MapActivity) getActivity()).addToWalkGeoJSON(walkPointGeoJSON);
+            saveStory();
 
             getActivity().getSupportFragmentManager().popBackStack();
         });
@@ -157,6 +135,35 @@ public class SaveStoryFragment extends Fragment {
         addPhotoBtn.setOnClickListener(v -> {
             showImagePickDialog();
         });
+    }
+
+    private void saveStory() {
+        String descriptionText = description.getText().toString().trim();
+
+        if (TextUtils.isEmpty(descriptionText)) {
+            description.setError("Enter description");
+            description.setFocusable(true);
+            return;
+        }
+
+        Story story = new Story();
+        story.setDescription(descriptionText);
+        story.setPlace(place.getText().toString());
+        if (imageRuis.size() > 0) {
+            story.setUriImages(imageRuis);
+        }
+
+        ((MapActivity) getActivity()).addStory(story);
+        Feature walkPointGeoJSON = Feature.fromGeometry(point);
+        story.setPoint(walkPointGeoJSON);
+
+        String timeStamp = String.valueOf(System.currentTimeMillis());
+        story.setId(timeStamp);
+
+        walkPointGeoJSON.addStringProperty("markerType", "storyMarker");
+        walkPointGeoJSON.addStringProperty("id", timeStamp);
+        walkPointGeoJSON.addStringProperty("placeName", place.getText().toString());
+        ((MapActivity) getActivity()).addToWalkGeoJSON(walkPointGeoJSON);
     }
 
     private void showImagePickDialog() {

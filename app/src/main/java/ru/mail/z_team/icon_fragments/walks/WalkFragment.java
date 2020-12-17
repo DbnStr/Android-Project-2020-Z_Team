@@ -92,49 +92,31 @@ public class WalkFragment extends Fragment {
         if (savedInstanceState != null) {
             viewModel.getAnnotation().observe(getActivity(), annotation -> {
                 walkAnnotation = annotation;
-                viewModel.updateCurrentDisplayedWalk(walkAnnotation);
-                viewModel.getCurrentDisplayedWalk().observe(getActivity(), walk -> {
-                    if (walk != null) {
-                        this.walk = walk;
-                        onMapCreated();
-                    }
-                });
+                initWalk(walkAnnotation);
             });
         }
         else {
-            viewModel.updateCurrentDisplayedWalk(walkAnnotation);
-            viewModel.getCurrentDisplayedWalk().observe(getActivity(), walk -> {
-                if (walk != null) {
-                    this.walk = walk;
-                    onMapCreated();
-                }
-            });
+            initWalk(walkAnnotation);
         }
+    }
+
+    private void initWalk(WalkAnnotation walkAnnotation) {
+        viewModel.updateCurrentDisplayedWalk(walkAnnotation);
+        viewModel.getCurrentDisplayedWalk().observe(getActivity(), walk -> {
+            if (walk != null) {
+                this.walk = walk;
+                onMapCreated();
+            }
+        });
     }
 
     private void onMapCreated() {
         mapView.getMapAsync(mapboxMap -> mapboxMap.setStyle(Style.MAPBOX_STREETS, style -> {
 
-            ArrayList<Point> routePoints = new ArrayList<>();
-            for (Feature feature : walk.getMap().features()) {
-                if (feature.geometry() instanceof LineString) {
-                    routePoints = (ArrayList<Point>) ((LineString) feature
-                            .geometry()).coordinates();
-                }
-            }
-
-            ArrayList<LatLng> routeLatLngs = new ArrayList<>();
-            for (Point point : routePoints) {
-                routeLatLngs.add(new LatLng(point.latitude(), point.longitude()));
-            }
-            LatLngBounds latLngBounds = new LatLngBounds.Builder()
-                    .includes(routeLatLngs)
-                    .build();
-            mapboxMap.animateCamera(CameraUpdateFactory.newLatLngBounds(latLngBounds, 10));
+            animateCamera(mapboxMap);
 
             initLayers(style);
             showWalk(mapboxMap);
-            addMarkers(mapboxMap);
 
             mapboxMap.addOnMapClickListener(point -> {
                 final PointF pixel = mapboxMap.getProjection().toScreenLocation(point);
@@ -159,14 +141,23 @@ public class WalkFragment extends Fragment {
         }));
     }
 
-    private void addMarkers(MapboxMap mapboxMap) {
-        mapboxMap.getStyle(style -> {
-            GeoJsonSource source = style.getSourceAs(SYMBOL_SOURCE_ID);
-
-            if (source != null) {
-                source.setGeoJson(walk.getMap());
+    private void animateCamera(MapboxMap mapboxMap) {
+        ArrayList<Point> routePoints = new ArrayList<>();
+        for (Feature feature : walk.getMap().features()) {
+            if (feature.geometry() instanceof LineString) {
+                routePoints = (ArrayList<Point>) ((LineString) feature
+                        .geometry()).coordinates();
             }
-        });
+        }
+
+        ArrayList<LatLng> routeLatLngs = new ArrayList<>();
+        for (Point point : routePoints) {
+            routeLatLngs.add(new LatLng(point.latitude(), point.longitude()));
+        }
+        LatLngBounds latLngBounds = new LatLngBounds.Builder()
+                .includes(routeLatLngs)
+                .build();
+        mapboxMap.animateCamera(CameraUpdateFactory.newLatLngBounds(latLngBounds, 10));
     }
 
     private void initLayers(@NonNull Style loadedMapStyle) {
@@ -195,10 +186,16 @@ public class WalkFragment extends Fragment {
     private void showWalk(MapboxMap mapboxMap) {
         if (mapboxMap != null) {
             mapboxMap.getStyle(style -> {
-                GeoJsonSource source = style.getSourceAs(ROUTE_SOURCE_ID);
+                GeoJsonSource routeSource = style.getSourceAs(ROUTE_SOURCE_ID);
 
-                if (source != null) {
-                    source.setGeoJson(walk.getMap());
+                if (routeSource != null) {
+                    routeSource.setGeoJson(walk.getMap());
+                }
+
+                GeoJsonSource symbolSource = style.getSourceAs(SYMBOL_SOURCE_ID);
+
+                if (symbolSource != null) {
+                    symbolSource.setGeoJson(walk.getMap());
                 }
             });
         }
