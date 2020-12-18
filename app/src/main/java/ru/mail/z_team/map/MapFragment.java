@@ -77,9 +77,9 @@ public class MapFragment extends Fragment {
 
     private boolean isMapClickable;
 
-    private FloatingActionButton saveMapButton, addStoryButton;
+    private FloatingActionButton saveMapButton, addStoryButton, openMenuButton;
 
-    private boolean isFeatureListEmpty = false;
+    private boolean isFeatureListEmpty = false, isMenuOpen = false;
 
     private MapViewModel viewModel;
 
@@ -147,6 +147,16 @@ public class MapFragment extends Fragment {
 
             addStoryButton = view.findViewById(R.id.add_story_btn);
             saveMapButton = view.findViewById(R.id.save_map_btn);
+            openMenuButton = view.findViewById(R.id.open_menu_btn);
+
+            openMenuButton.setOnClickListener(v -> {
+                if (isMenuOpen){
+                    closeMenu();
+                }
+                else{
+                    showMenu();
+                }
+            });
             addStoryButton.setOnClickListener(v -> {
                 addStory(mapboxMap);
             });
@@ -158,6 +168,18 @@ public class MapFragment extends Fragment {
                         .commitAllowingStateLoss();
             });
         }));
+    }
+
+    private void showMenu(){
+        isMenuOpen = true;
+        addStoryButton.animate().translationY(-getResources().getDimension(R.dimen.standard_70));
+        saveMapButton.animate().translationY(-getResources().getDimension(R.dimen.standard_140));
+    }
+
+    private void closeMenu(){
+        isMenuOpen = false;
+        addStoryButton.animate().translationY(0);
+        saveMapButton.animate().translationY(0);
     }
 
     private void animateCamera(MapboxMap mapboxMap) {
