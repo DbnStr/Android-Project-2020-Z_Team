@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -95,6 +96,11 @@ public class MapFragment extends Fragment {
 
         Mapbox.getInstance(getContext(), getString(R.string.mapbox_access_token));
         View view = inflater.inflate(R.layout.fragment_map, container, false);
+
+        addStoryButton = view.findViewById(R.id.add_story_btn);
+        saveMapButton = view.findViewById(R.id.save_map_btn);
+        openMenuButton = view.findViewById(R.id.open_menu_btn);
+
         viewModel = new ViewModelProvider(this).get(MapViewModel.class);
         if (savedInstanceState != null) {
             restoreMapFragment();
@@ -145,10 +151,6 @@ public class MapFragment extends Fragment {
                 return true;
             });
 
-            addStoryButton = view.findViewById(R.id.add_story_btn);
-            saveMapButton = view.findViewById(R.id.save_map_btn);
-            openMenuButton = view.findViewById(R.id.open_menu_btn);
-
             openMenuButton.setOnClickListener(v -> {
                 if (isMenuOpen){
                     closeMenu();
@@ -158,14 +160,24 @@ public class MapFragment extends Fragment {
                 }
             });
             addStoryButton.setOnClickListener(v -> {
-                addStory(mapboxMap);
+                if (startPos != null && destinationPos != null) {
+                    addStory(mapboxMap);
+                }
+                else {
+                    Toast.makeText(getActivity(), "Build your route first", Toast.LENGTH_LONG).show();
+                }
             });
             saveMapButton.setOnClickListener(v -> {
-                getActivity().getSupportFragmentManager()
-                        .beginTransaction()
-                        .replace(R.id.map_activity_container, new SavingWalkFragment(), SAVE_TAG)
-                        .addToBackStack(null)
-                        .commitAllowingStateLoss();
+                if (startPos != null && destinationPos != null) {
+                    getActivity().getSupportFragmentManager()
+                            .beginTransaction()
+                            .replace(R.id.map_activity_container, new SavingWalkFragment(), SAVE_TAG)
+                            .addToBackStack(null)
+                            .commitAllowingStateLoss();
+                }
+                else {
+                    Toast.makeText(getActivity(), "Build a walk to save one", Toast.LENGTH_LONG).show();
+                }
             });
         }));
     }
