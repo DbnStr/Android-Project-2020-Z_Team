@@ -1,16 +1,12 @@
 package ru.mail.z_team.icon_fragments.walks;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
-import com.mapbox.geojson.Feature;
-import com.mapbox.geojson.FeatureCollection;
-
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 
 import retrofit2.Response;
 import ru.mail.z_team.ApplicationModified;
@@ -39,6 +35,7 @@ public class WalkProfileRepository {
     private final MutableLiveData<WalkAnnotation> annotation = new MutableLiveData<>();
     private final MutableLiveData<Story> currentDisplayedStory = new MutableLiveData<>();
 
+    @SuppressLint("SimpleDateFormat")
     SimpleDateFormat sdf =
             new SimpleDateFormat("EEE, MMM d, yyyy hh:mm:ss a z");
 
@@ -53,8 +50,16 @@ public class WalkProfileRepository {
         userDao = localDatabase.getUserDao();
     }
 
+    public LiveData<WalkAnnotation> getAnnotation() {
+        return annotation;
+    }
+
     public LiveData<Walk> getCurrentDisplayedWalk() {
         return currentDisplayedWalk;
+    }
+
+    public LiveData<Story> getStory() {
+        return currentDisplayedStory;
     }
 
     public void updateCurrentDisplayedWalk(WalkAnnotation walkAnnotation) {
@@ -63,45 +68,40 @@ public class WalkProfileRepository {
         DatabaseNetworkControlExecutor executor = new DatabaseNetworkControlExecutor(context) {
             @Override
             public void networkRun() {
-                userApi.getWalkByDateAndId(userId, date).enqueue(new DatabaseCallback<UserApi.Walk>(LOG_TAG) {
-                    @Override
-                    public void onNullResponse(Response<UserApi.Walk> response) {
-                        logger.errorLog("This walk doesn't exist");
-                    }
-
-                    @Override
-                    public void onSuccessResponse(Response<UserApi.Walk> response) {
-                        currentDisplayedWalk.postValue(Transformer.transformToWalk(response.body()));
-                    }
-                });
+                getUserWalkFromRemoteDB(userId, date);
             }
 
             @Override
             public void noNetworkRun() {
-                localDatabase.databaseWriteExecutor.execute(new Runnable() {
-                    @Override
-                    public void run() {
-                        currentDisplayedWalk.postValue(Transformer.transformToWalk(userDao.getUserWalkWithStories(userId, date)));
-                    }
-                });
+                getUserWalkFromLocalDB(userId, date);
             }
         };
         executor.run();
+    }
+
+    private void getUserWalkFromRemoteDB(final String userId, final String date) {
+        userApi.getWalkByDateAndId(userId, date).enqueue(new DatabaseCallback<UserApi.Walk>(LOG_TAG) {
+            @Override
+            public void onNullResponse(Response<UserApi.Walk> response) {
+                logger.errorLog("This walk doesn't exist");
+            }
+
+            @Override
+            public void onSuccessResponse(Response<UserApi.Walk> response) {
+                currentDisplayedWalk.postValue(Transformer.transformToWalk(response.body()));
+            }
+        });
+    }
+
+    private void getUserWalkFromLocalDB(final String userId, final String date) {
+        localDatabase.databaseWriteExecutor.execute(() -> currentDisplayedWalk.postValue(Transformer.transformToWalk(userDao.getUserWalkWithStories(userId, date))));
     }
 
     public void setAnnotation(WalkAnnotation walkAnnotation) {
         annotation.postValue(walkAnnotation);
     }
 
-    public LiveData<WalkAnnotation> getAnnotation() {
-        return annotation;
-    }
-
     public void setStory(Story story) {
         currentDisplayedStory.postValue(story);
-    }
-
-    public LiveData<Story> getStory() {
-        return currentDisplayedStory;
     }
 }
