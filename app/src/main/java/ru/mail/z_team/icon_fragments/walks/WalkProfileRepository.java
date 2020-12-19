@@ -2,9 +2,12 @@ package ru.mail.z_team.icon_fragments.walks;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.view.SurfaceControl;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
+
+import com.google.firebase.auth.FirebaseAuth;
 
 import java.text.SimpleDateFormat;
 
@@ -58,8 +61,25 @@ public class WalkProfileRepository {
         return currentDisplayedWalk;
     }
 
-    public LiveData<Story> getStory() {
+    public LiveData<Story> getCurrentDisplayedStory() {
         return currentDisplayedStory;
+    }
+
+    public void updateCurrentDisplayedStory(final int number, final String dateOfWalk) {
+        String userId = FirebaseAuth.getInstance().getUid();
+        userApi.getStory(userId, dateOfWalk, number).enqueue(new DatabaseCallback<UserApi.Story>(LOG_TAG) {
+            @Override
+            public void onNullResponse(Response<UserApi.Story> response) {
+                logger.log("EMPTY STORY");
+                currentDisplayedStory.postValue(new Story());
+            }
+
+            @Override
+            public void onSuccessResponse(Response<UserApi.Story> response) {
+                logger.log("successfully get walk story");
+                currentDisplayedStory.postValue(Transformer.transformToStory(response.body()));
+            }
+        });
     }
 
     public void updateCurrentDisplayedWalk(WalkAnnotation walkAnnotation) {
@@ -99,9 +119,5 @@ public class WalkProfileRepository {
 
     public void setAnnotation(WalkAnnotation walkAnnotation) {
         annotation.postValue(walkAnnotation);
-    }
-
-    public void setStory(Story story) {
-        currentDisplayedStory.postValue(story);
     }
 }

@@ -133,4 +133,7 @@ public interface UserApi {
 
     @PATCH("/Users/{id}.json")
     Call<User> changeUserInformation(@Path("id") String id, @Body User user);
+
+    @GET("WalkMaps/{id}/{date}/stories/{number}.json")
+    Call<Story> getStory(@Path("id") String userId, @Path("date") String date, @Path("number") int number);
 }

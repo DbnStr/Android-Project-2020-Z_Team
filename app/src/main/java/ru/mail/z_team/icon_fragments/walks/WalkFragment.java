@@ -1,5 +1,6 @@
 package ru.mail.z_team.icon_fragments.walks;
 
+import android.annotation.SuppressLint;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.PointF;
@@ -31,6 +32,7 @@ import com.mapbox.mapboxsdk.style.layers.SymbolLayer;
 import com.mapbox.mapboxsdk.style.sources.GeoJsonSource;
 import com.mapbox.mapboxsdk.utils.BitmapUtils;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -61,6 +63,10 @@ public class WalkFragment extends Fragment {
     private Logger logger;
 
     private WalkProfileViewModel viewModel;
+
+    @SuppressLint("SimpleDateFormat")
+    SimpleDateFormat sdf =
+            new SimpleDateFormat("EEE, MMM d, yyyy hh:mm:ss a z");
 
     public WalkFragment() { }
 
@@ -127,9 +133,15 @@ public class WalkFragment extends Fragment {
                     for (Story story : walk.getStories()) {
                         logger.log("ids: " + features.get(0).getStringProperty("id") +  " vs " + story.getId());
                         if (features.get(0).getStringProperty("id").equals(story.getId())){
+                            ArrayList<Story>  stories = walk.getStories();
+                            Bundle bundle = new Bundle();
+                            bundle.putInt("numberInStoryList", stories.indexOf(story));
+                            bundle.putString("dateOfWalk", sdf.format(walk.getDate()));
+                            StoryFragment storyFragment = new StoryFragment();
+                            storyFragment.setArguments(bundle);
                             getActivity().getSupportFragmentManager()
                                     .beginTransaction()
-                                    .replace(R.id.current_menu_container, new StoryFragment(story), STORY_TAG)
+                                    .replace(R.id.current_menu_container, storyFragment, STORY_TAG)
                                     .addToBackStack(null)
                                     .commit();
                             break;
