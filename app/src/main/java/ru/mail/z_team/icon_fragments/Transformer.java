@@ -32,6 +32,8 @@ public class Transformer {
         for type of arguments : default type -> userApi type -> local_storage type
      */
 
+    private Transformer() {}
+
     @SuppressLint("SimpleDateFormat")
     public static SimpleDateFormat sdf =
             new SimpleDateFormat("EEE, MMM d, yyyy hh:mm:ss a z");
