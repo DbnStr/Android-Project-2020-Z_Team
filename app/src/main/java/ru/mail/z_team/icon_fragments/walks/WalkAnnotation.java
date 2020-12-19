@@ -4,12 +4,12 @@ import java.util.Date;
 
 public class WalkAnnotation implements Comparable<WalkAnnotation>{
     private String title;
-    private String author;
+    private String authorName;
     private String authorId;
     private Date date;
 
-    public void setAuthor(String author) {
-        this.author = author;
+    public void setAuthorName(String authorName) {
+        this.authorName = authorName;
     }
 
     public void setTitle(String title) {
@@ -28,8 +28,8 @@ public class WalkAnnotation implements Comparable<WalkAnnotation>{
         return authorId;
     }
 
-    public String getAuthor() {
-        return author;
+    public String getAuthorName() {
+        return authorName;
     }
 
     public Date getDate() {

@@ -21,11 +21,11 @@ public class WalksViewModel extends AndroidViewModel {
         currentUserWalks= repository.getCurrentUserWalks();
     }
 
-    public void updateCurrentUserWalks() {
-        repository.updateCurrentUserWalks();
+    public void updateCurrentUserWalksAnnotations() {
+        repository.updateCurrentUserWalksAnnotations();
     }
 
-    public LiveData<ArrayList<WalkAnnotation>> getCurrentUserWalks() {
+    public LiveData<ArrayList<WalkAnnotation>> getCurrentUserWalksAnnotations() {
         return currentUserWalks;
     }
 }
