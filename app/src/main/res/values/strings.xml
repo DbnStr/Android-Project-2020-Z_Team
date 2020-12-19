@@ -29,4 +29,5 @@
     <string name="name_text">NAME</string>
     <string name="age_text">AGE</string>
     <string name="save_changes">SAVE CHANGES</string>
+    <string name="channel_go_out_name">Go Out channel</string>
 </resources>
