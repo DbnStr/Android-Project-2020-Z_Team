@@ -14,7 +14,6 @@ import retrofit2.Response;
 import ru.mail.z_team.Logger;
 import ru.mail.z_team.icon_fragments.DatabaseCallback;
 import ru.mail.z_team.icon_fragments.Transformer;
-import ru.mail.z_team.icon_fragments.walks.WalkAnnotation;
 import ru.mail.z_team.network.DatabaseApiRepository;
 import ru.mail.z_team.network.UserApi;
 
@@ -25,14 +24,14 @@ public class NewsRepository {
 
     private final UserApi userApi;
 
-    private final MutableLiveData<ArrayList<WalkAnnotation>> currentUserNews = new MutableLiveData<>();
+    private final MutableLiveData<ArrayList<ru.mail.z_team.icon_fragments.walks.WalkAnnotation>> currentUserNews = new MutableLiveData<>();
 
     public NewsRepository(Context context) {
         userApi = DatabaseApiRepository.from(context).getUserApi();
         logger = new Logger(LOG_TAG, true);
     }
 
-    public LiveData<ArrayList<WalkAnnotation>> getNews() {
+    public LiveData<ArrayList<ru.mail.z_team.icon_fragments.walks.WalkAnnotation>> getNews() {
         logger.log("get news " + currentUserNews.toString());
         return currentUserNews;
     }
@@ -56,19 +55,19 @@ public class NewsRepository {
     }
 
     private void compileNewsAndPostInCurrentNews(ArrayList<String> ids) {
-        ArrayList<WalkAnnotation> news = new ArrayList<>();
+        ArrayList<ru.mail.z_team.icon_fragments.walks.WalkAnnotation> news = new ArrayList<>();
 
         logger.log("Compile news");
         for (String id : ids) {
             logger.log("Compile news... " + ids.indexOf(id));
-            userApi.getUserWalksById(id).enqueue(new DatabaseCallback<ArrayList<UserApi.WalkInfo>>(LOG_TAG) {
+            userApi.getUserWalksAnnotationsById(id).enqueue(new DatabaseCallback<ArrayList<UserApi.WalkAnnotation>>(LOG_TAG) {
                 @Override
-                public void onNullResponse(Response<ArrayList<UserApi.WalkInfo>> response) {
+                public void onNullResponse(Response<ArrayList<UserApi.WalkAnnotation>> response) {
                     logger.log(id + " doesn't have walks");
                 }
 
                 @Override
-                public void onSuccessResponse(Response<ArrayList<UserApi.WalkInfo>> response) {
+                public void onSuccessResponse(Response<ArrayList<UserApi.WalkAnnotation>> response) {
                     logger.log(id + " have walks");
                     news.addAll(Transformer.transformToWalkAnnotationAll(response.body()));
                     Collections.sort(news);

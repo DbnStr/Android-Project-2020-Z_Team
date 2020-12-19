@@ -13,9 +13,13 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 import retrofit2.Response;
+import ru.mail.z_team.ApplicationModified;
 import ru.mail.z_team.Logger;
 import ru.mail.z_team.icon_fragments.DatabaseCallback;
+import ru.mail.z_team.icon_fragments.DatabaseNetworkControlExecutor;
 import ru.mail.z_team.icon_fragments.Transformer;
+import ru.mail.z_team.local_storage.LocalDatabase;
+import ru.mail.z_team.local_storage.UserDao;
 import ru.mail.z_team.map.Story;
 import ru.mail.z_team.network.DatabaseApiRepository;
 import ru.mail.z_team.network.UserApi;
@@ -25,6 +29,9 @@ public class WalkProfileRepository {
     private final Logger logger;
 
     private final UserApi userApi;
+
+    private final UserDao userDao;
+    private final LocalDatabase localDatabase;
 
     private final Context context;
 
@@ -37,8 +44,13 @@ public class WalkProfileRepository {
 
     public WalkProfileRepository(Context context) {
         this.context = context;
-        userApi = DatabaseApiRepository.from(context).getUserApi();
+
         logger = new Logger(LOG_TAG, true);
+
+        userApi = DatabaseApiRepository.from(context).getUserApi();
+
+        localDatabase = ApplicationModified.from(context).getLocalDatabase();
+        userDao = localDatabase.getUserDao();
     }
 
     public LiveData<Walk> getCurrentDisplayedWalk() {
@@ -48,17 +60,33 @@ public class WalkProfileRepository {
     public void updateCurrentDisplayedWalk(WalkAnnotation walkAnnotation) {
         String userId = walkAnnotation.getAuthorId();
         String date = sdf.format(walkAnnotation.getDate());
-        userApi.getWalkByDateAndId(userId, date).enqueue(new DatabaseCallback<UserApi.Walk>(LOG_TAG) {
+        DatabaseNetworkControlExecutor executor = new DatabaseNetworkControlExecutor(context) {
             @Override
-            public void onNullResponse(Response<UserApi.Walk> response) {
-                logger.errorLog("This walk doesn't exist");
+            public void networkRun() {
+                userApi.getWalkByDateAndId(userId, date).enqueue(new DatabaseCallback<UserApi.Walk>(LOG_TAG) {
+                    @Override
+                    public void onNullResponse(Response<UserApi.Walk> response) {
+                        logger.errorLog("This walk doesn't exist");
+                    }
+
+                    @Override
+                    public void onSuccessResponse(Response<UserApi.Walk> response) {
+                        currentDisplayedWalk.postValue(Transformer.transformToWalk(response.body()));
+                    }
+                });
             }
 
             @Override
-            public void onSuccessResponse(Response<UserApi.Walk> response) {
-                currentDisplayedWalk.postValue(Transformer.transformToWalk(response.body()));
+            public void noNetworkRun() {
+                localDatabase.databaseWriteExecutor.execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        currentDisplayedWalk.postValue(Transformer.transformToWalk(userDao.getUserWalkWithStories(userId, date)));
+                    }
+                });
             }
-        });
+        };
+        executor.run();
     }
 
     public void setAnnotation(WalkAnnotation walkAnnotation) {

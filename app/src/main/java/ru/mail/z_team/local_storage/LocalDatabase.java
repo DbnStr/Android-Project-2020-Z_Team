@@ -6,7 +6,7 @@ import androidx.room.RoomDatabase;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-@Database(entities = {User.class, Friend.class, WalkAnnotation.class}, version = 1)
+@Database(entities = {User.class, Friend.class, WalkAnnotation.class, Walk.class, Story.class}, version = 1)
 public abstract class LocalDatabase extends RoomDatabase {
 
     private static final int NUMBER_OF_THREADS = 4;

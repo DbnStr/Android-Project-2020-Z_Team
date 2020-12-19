@@ -9,6 +9,7 @@ import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import retrofit2.Response;
 import ru.mail.z_team.ApplicationModified;
@@ -50,7 +51,7 @@ public class WalksRepository {
         return currentUserWalks;
     }
 
-    public void updateCurrentUserWalks() {
+    public void updateCurrentUserWalksAnnotations() {
         String currentUserId = FirebaseAuth.getInstance().getUid();
         DatabaseNetworkControlExecutor executor = new DatabaseNetworkControlExecutor(context) {
             @Override
@@ -67,19 +68,39 @@ public class WalksRepository {
     }
 
     private void getWalksAnnotationsFromRemoteDBAndInsertTheseInLocalDB(final String userId) {
-        userApi.getUserWalksById(userId).enqueue(new DatabaseCallback<ArrayList<UserApi.WalkInfo>>(LOG_TAG) {
+        userApi.getUserWalksAnnotationsById(userId).enqueue(new DatabaseCallback<ArrayList<UserApi.WalkAnnotation>>(LOG_TAG) {
             @Override
-            public void onNullResponse(Response<ArrayList<UserApi.WalkInfo>> response) {
+            public void onNullResponse(Response<ArrayList<UserApi.WalkAnnotation>> response) {
                 logger.log("Walks was empty");
                 currentUserWalks.postValue(new ArrayList<>());
             }
 
             @Override
-            public void onSuccessResponse(Response<ArrayList<UserApi.WalkInfo>> response) {
+            public void onSuccessResponse(Response<ArrayList<UserApi.WalkAnnotation>> response) {
                 logger.log("Successful update current user walks");
                 currentUserWalks.postValue(Transformer.transformToWalkAnnotationAll(response.body()));
 
                 insertWalkAnnotationListInLocalDB(Transformer.transformToLocalDBWalkAnnotationAll(response.body()));
+
+                userApi.getAllWalks(userId).enqueue(new DatabaseCallback<Map<String, UserApi.Walk>>(LOG_TAG) {
+                    @Override
+                    public void onNullResponse(Response<Map<String, UserApi.Walk>> response) {
+                        logger.log("NULL");
+                    }
+
+                    @Override
+                    public void onSuccessResponse(Response<Map<String, UserApi.Walk>> response) {
+                        localDatabase.databaseWriteExecutor.execute(new Runnable() {
+                            @Override
+                            public void run() {
+                                userDao.deleteAllWalkAndAddNew(Transformer.transformToLocalDBWalkAll(response.body(), userId));
+                                response.body().forEach((date, walk) -> {
+                                    userDao.deleteAllWalkStoryAndAddNew(Transformer.transformToLocalDBStoryAll(walk.stories, walk.date), walk.date);
+                                });
+                            }
+                        });
+                    }
+                });
             }
         });
     }
