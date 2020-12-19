@@ -2,7 +2,6 @@ package ru.mail.z_team.icon_fragments.walks;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.view.SurfaceControl;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -65,21 +64,34 @@ public class WalkProfileRepository {
         return currentDisplayedStory;
     }
 
+    //изменить получение данных
     public void updateCurrentDisplayedStory(final int number, final String dateOfWalk) {
         String userId = FirebaseAuth.getInstance().getUid();
-        userApi.getStory(userId, dateOfWalk, number).enqueue(new DatabaseCallback<UserApi.Story>(LOG_TAG) {
+        DatabaseNetworkControlExecutor executor = new DatabaseNetworkControlExecutor(context) {
             @Override
-            public void onNullResponse(Response<UserApi.Story> response) {
-                logger.log("EMPTY STORY");
-                currentDisplayedStory.postValue(new Story());
+            public void networkRun() {
+                userApi.getStory(userId, dateOfWalk, number).enqueue(new DatabaseCallback<UserApi.Story>(LOG_TAG) {
+                    @Override
+                    public void onNullResponse(Response<UserApi.Story> response) {
+                        logger.log("EMPTY STORY");
+                        currentDisplayedStory.postValue(new Story());
+                    }
+
+                    @Override
+                    public void onSuccessResponse(Response<UserApi.Story> response) {
+                        logger.log("successfully get walk story");
+                        currentDisplayedStory.postValue(Transformer.transformToStory(response.body()));
+                    }
+                });
             }
 
             @Override
-            public void onSuccessResponse(Response<UserApi.Story> response) {
-                logger.log("successfully get walk story");
-                currentDisplayedStory.postValue(Transformer.transformToStory(response.body()));
+            public void noNetworkRun() {
+                //почему-то не получается достать walk из currentDisplayedWalk
+                localDatabase.databaseWriteExecutor.execute(() -> currentDisplayedStory.postValue(Transformer.transformToWalk(userDao.getUserWalkWithStories(userId, dateOfWalk)).getStories().get(number)));
             }
-        });
+        };
+        executor.run();
     }
 
     public void updateCurrentDisplayedWalk(WalkAnnotation walkAnnotation) {
