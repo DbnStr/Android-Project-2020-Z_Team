@@ -8,7 +8,6 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MediatorLiveData;
 
 import com.mapbox.geojson.FeatureCollection;
-import com.mapbox.geojson.Point;
 
 import java.util.ArrayList;
 
@@ -22,7 +21,6 @@ public class GoOutViewModel extends AndroidViewModel {
     private final Logger logger;
     private final GoOutRepository repository;
     MediatorLiveData<String> postWalkStatus = new MediatorLiveData<>();
-    MediatorLiveData<String> placeName = new MediatorLiveData<>();
 
     public GoOutViewModel(@NonNull Application application) {
         super(application);
@@ -45,16 +43,5 @@ public class GoOutViewModel extends AndroidViewModel {
 
     public LiveData<String> getPostStatus(){
         return postWalkStatus;
-    }
-
-    public void updatePlaceName(Point point) {
-        repository.updatePlaceName(point);
-        placeName.addSource(repository.getPlaceName(), place -> {
-            placeName.postValue(place);
-        });
-    }
-
-    public LiveData<String> getPlaceName() {
-        return placeName;
     }
 }

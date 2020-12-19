@@ -1,6 +1,7 @@
 package ru.mail.z_team.icon_fragments.walks;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -8,12 +9,15 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 
-import com.bumptech.glide.Glide;
-import com.firebase.ui.storage.images.FirebaseImageLoader;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.squareup.picasso.Picasso;
 
 import ru.mail.z_team.Logger;
 import ru.mail.z_team.R;
@@ -23,16 +27,40 @@ public class StoryFragment extends Fragment {
 
     private static final String LOG_TAG = "StoryFragment";
 
-    private final Story story;
+    private Story story;
     private TextView place, description;
     private LinearLayout gallery;
+
+    private WalkProfileViewModel viewModel;
 
     private Logger logger;
 
     private static final String BASE_URL = "gs://android-project-2020-zteam.appspot.com";
 
+    private String dateOfWalk;
+    private int numberInStoryList;
+
+    public StoryFragment() {
+    }
+
     public StoryFragment(Story story) {
         this.story = story;
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (savedInstanceState != null) {
+            dateOfWalk = savedInstanceState.getString("dateOfWalk");
+            numberInStoryList = savedInstanceState.getInt("numberInStoryList");
+        } else {
+            if (story == null) {
+                dateOfWalk = getArguments().getString("dateOfWalk");
+                numberInStoryList = getArguments().getInt("numberInStoryList");
+                Log.d("StoryFragment" , "dateOfWalk" + dateOfWalk);
+                Log.d("StoryFrgment", Integer.toString(numberInStoryList) + "ds");
+            }
+        }
     }
 
     @Override
@@ -45,6 +73,24 @@ public class StoryFragment extends Fragment {
         description = view.findViewById(R.id.displayed_story_description);
         gallery = view.findViewById(R.id.displayed_story_gallery);
 
+        logger.log("OnCreateView");
+
+        viewModel = new ViewModelProvider(this).get(WalkProfileViewModel.class);
+
+        if (story == null) {
+            viewModel.updateCurrentDisplayedStory(numberInStoryList, dateOfWalk);
+            viewModel.getCurrentDisplayedStory().observe(getActivity(), s -> {
+                story = s;
+                showStory();
+            });
+        } else {
+            showStory();
+        }
+
+        return view;
+    }
+
+    private void showStory() {
         place.setText(story.getPlace());
         description.setText(story.getDescription());
         if (story.getUrlImages() != null) {
@@ -52,14 +98,25 @@ public class StoryFragment extends Fragment {
                 ImageView imageView = new ImageView(getActivity());
                 gallery.addView(imageView);
                 StorageReference reference = FirebaseStorage.getInstance().getReferenceFromUrl(BASE_URL + url);
-                Glide.with(this.getContext())
-                        .using(new FirebaseImageLoader())
-                        .load(reference)
-                        .placeholder(getActivity().getDrawable(R.drawable.ic_baseline_photo_24))
-                        .into(imageView);
+                reference.getDownloadUrl().addOnSuccessListener(uri -> Picasso.get()
+                        .load(uri)
+                        .placeholder(ContextCompat.getDrawable(getActivity(), R.drawable.ic_baseline_photo_24))
+                        .into(imageView)).addOnFailureListener(e -> logger.errorLog(e.getMessage()));
             }
         }
+    }
 
-        return view;
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        outState.putString("dateOfWalk", dateOfWalk);
+        outState.putInt("numberInStoryList", numberInStoryList);
+
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        onSaveInstanceState(new Bundle());
     }
 }
