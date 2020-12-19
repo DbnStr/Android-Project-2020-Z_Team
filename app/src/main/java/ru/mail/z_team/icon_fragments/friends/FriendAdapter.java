@@ -66,6 +66,6 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendViewHolder> {
 
     public void setFriends(ArrayList<Friend> users) {
         friends = users;
-        this.notifyItemRangeChanged(0, friends.size());
+        this.notifyDataSetChanged();
     }
 }
