@@ -6,10 +6,8 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
-import ru.mail.z_team.AuthRepository;
 import ru.mail.z_team.Logger;
 import ru.mail.z_team.user.Friend;
 import ru.mail.z_team.user.User;

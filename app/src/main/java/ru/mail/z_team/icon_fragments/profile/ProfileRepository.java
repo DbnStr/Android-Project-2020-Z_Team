@@ -18,7 +18,7 @@ import ru.mail.z_team.icon_fragments.DatabaseNetworkControlExecutor;
 import ru.mail.z_team.icon_fragments.Transformer;
 import ru.mail.z_team.local_storage.LocalDatabase;
 import ru.mail.z_team.local_storage.UserDao;
-import ru.mail.z_team.local_storage.UserFriend;
+import ru.mail.z_team.local_storage.friend.UserFriend;
 import ru.mail.z_team.network.DatabaseApiRepository;
 import ru.mail.z_team.network.UserApi;
 import ru.mail.z_team.user.Friend;

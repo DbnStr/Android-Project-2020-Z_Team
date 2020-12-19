@@ -1,8 +1,4 @@
-package ru.mail.z_team.local_storage;
-
-import androidx.room.PrimaryKey;
-
-import java.util.ArrayList;
+package ru.mail.z_team.local_storage.story;
 
 public class UserStory {
 

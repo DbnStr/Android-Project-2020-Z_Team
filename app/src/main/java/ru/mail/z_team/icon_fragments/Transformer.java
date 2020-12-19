@@ -14,10 +14,11 @@ import java.util.List;
 import java.util.Map;
 
 import ru.mail.z_team.icon_fragments.walks.Walk;
-import ru.mail.z_team.local_storage.UserFriend;
-import ru.mail.z_team.local_storage.UserStory;
-import ru.mail.z_team.local_storage.UserWalk;
-import ru.mail.z_team.local_storage.UserWalkAnnotation;
+import ru.mail.z_team.local_storage.friend.UserFriend;
+import ru.mail.z_team.local_storage.story.UserStory;
+import ru.mail.z_team.local_storage.walk.UserWalk;
+import ru.mail.z_team.local_storage.walk_annotation.UserWalkAnnotation;
+import ru.mail.z_team.local_storage.walk_annotation.WalkAnnotation;
 import ru.mail.z_team.map.Story;
 import ru.mail.z_team.network.UserApi;
 import ru.mail.z_team.user.Friend;
@@ -85,7 +86,7 @@ public class Transformer {
         return result;
     }
 
-    public static Friend transformToFriend(ru.mail.z_team.local_storage.UserFriend friend) {
+    public static Friend transformToFriend(UserFriend friend) {
         return new Friend(
                 friend.name,
                 friend.id
@@ -243,16 +244,16 @@ public class Transformer {
 
     /* LocalDB Friend result */
 
-    public static List<ru.mail.z_team.local_storage.Friend> transformToLocalDBFriendALl(List<Friend> friends, String currentUserId) {
-        List<ru.mail.z_team.local_storage.Friend> result = new ArrayList<>();
+    public static List<ru.mail.z_team.local_storage.friend.Friend> transformToLocalDBFriendALl(List<Friend> friends, String currentUserId) {
+        List<ru.mail.z_team.local_storage.friend.Friend> result = new ArrayList<>();
         for (Friend friend : friends) {
             result.add(transformToLocalDBFriend(friend, currentUserId));
         }
         return result;
     }
 
-    public static ru.mail.z_team.local_storage.Friend transformToLocalDBFriend(Friend friend, String currentUserId) {
-        return new ru.mail.z_team.local_storage.Friend(
+    public static ru.mail.z_team.local_storage.friend.Friend transformToLocalDBFriend(Friend friend, String currentUserId) {
+        return new ru.mail.z_team.local_storage.friend.Friend(
                 friend.name,
                 friend.id,
                 currentUserId
@@ -274,8 +275,8 @@ public class Transformer {
 
     /* LocalDB Story result */
 
-    public static List<ru.mail.z_team.local_storage.Story> transformToLocalDBStoryAll(ArrayList<UserApi.Story> stories, String walkDate) {
-        List<ru.mail.z_team.local_storage.Story> result = new ArrayList<>();
+    public static List<ru.mail.z_team.local_storage.story.Story> transformToLocalDBStoryAll(ArrayList<UserApi.Story> stories, String walkDate) {
+        List<ru.mail.z_team.local_storage.story.Story> result = new ArrayList<>();
         if (stories != null) {
             for (UserApi.Story story : stories) {
                 result.add(transformToLocalDBStory(story, walkDate));
@@ -284,8 +285,8 @@ public class Transformer {
         return result;
     }
 
-    public static ru.mail.z_team.local_storage.Story transformToLocalDBStory(UserApi.Story story, String walkDate) {
-        ru.mail.z_team.local_storage.Story result = new ru.mail.z_team.local_storage.Story();
+    public static ru.mail.z_team.local_storage.story.Story transformToLocalDBStory(UserApi.Story story, String walkDate) {
+        ru.mail.z_team.local_storage.story.Story result = new ru.mail.z_team.local_storage.story.Story();
         result.description = story.description;
         result.place = story.place;
         result.point = story.point;
@@ -296,16 +297,16 @@ public class Transformer {
 
     /* WalkAnnotation LocalDB result*/
 
-    public static List<ru.mail.z_team.local_storage.WalkAnnotation> transformToLocalDBWalkAnnotationAll(List<UserApi.WalkAnnotation> walksAnnotations) {
-        List<ru.mail.z_team.local_storage.WalkAnnotation> result = new ArrayList<>();
+    public static List<WalkAnnotation> transformToLocalDBWalkAnnotationAll(List<UserApi.WalkAnnotation> walksAnnotations) {
+        List<WalkAnnotation> result = new ArrayList<>();
         for (UserApi.WalkAnnotation walkAnnotation : walksAnnotations) {
             result.add(transformToLocalDBWalkAnnotation(walkAnnotation));
         }
         return result;
     }
 
-    public static ru.mail.z_team.local_storage.WalkAnnotation transformToLocalDBWalkAnnotation(UserApi.WalkAnnotation walkAnnotation) {
-        return new ru.mail.z_team.local_storage.WalkAnnotation(
+    public static WalkAnnotation transformToLocalDBWalkAnnotation(UserApi.WalkAnnotation walkAnnotation) {
+        return new WalkAnnotation(
                 walkAnnotation.title,
                 walkAnnotation.authorName,
                 walkAnnotation.authorId,
@@ -314,14 +315,14 @@ public class Transformer {
 
     /* Walk LocalDB result */
 
-    public static List<ru.mail.z_team.local_storage.Walk> transformToLocalDBWalkAll(Map<String, UserApi.Walk> walks, String userId) {
-        List<ru.mail.z_team.local_storage.Walk> result = new ArrayList<>();
+    public static List<ru.mail.z_team.local_storage.walk.Walk> transformToLocalDBWalkAll(Map<String, UserApi.Walk> walks, String userId) {
+        List<ru.mail.z_team.local_storage.walk.Walk> result = new ArrayList<>();
         walks.forEach((k, walk) -> result.add(transformToLocalDBWalk(walk, userId)));
         return result;
     }
 
-    public static ru.mail.z_team.local_storage.Walk transformToLocalDBWalk(UserApi.Walk walk, String userId) {
-        return new ru.mail.z_team.local_storage.Walk(
+    public static ru.mail.z_team.local_storage.walk.Walk transformToLocalDBWalk(UserApi.Walk walk, String userId) {
+        return new ru.mail.z_team.local_storage.walk.Walk(
                 walk.title,
                 walk.authorName,
                 userId,

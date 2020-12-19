@@ -1,9 +1,10 @@
-package ru.mail.z_team.local_storage;
+package ru.mail.z_team.local_storage.walk;
 
 import androidx.room.Ignore;
-import androidx.room.Insert;
 
 import java.util.List;
+
+import ru.mail.z_team.local_storage.story.UserStory;
 
 public class UserWalk {
     public String title;

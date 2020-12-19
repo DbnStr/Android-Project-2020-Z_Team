@@ -8,6 +8,15 @@ import androidx.room.Transaction;
 
 import java.util.List;
 
+import ru.mail.z_team.local_storage.friend.Friend;
+import ru.mail.z_team.local_storage.friend.UserFriend;
+import ru.mail.z_team.local_storage.story.Story;
+import ru.mail.z_team.local_storage.story.UserStory;
+import ru.mail.z_team.local_storage.walk.UserWalk;
+import ru.mail.z_team.local_storage.walk.Walk;
+import ru.mail.z_team.local_storage.walk_annotation.UserWalkAnnotation;
+import ru.mail.z_team.local_storage.walk_annotation.WalkAnnotation;
+
 @Dao
 public abstract class UserDao {
 

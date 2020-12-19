@@ -1,10 +1,8 @@
-package ru.mail.z_team.local_storage;
+package ru.mail.z_team.local_storage.story;
 
 import androidx.annotation.NonNull;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
-
-import java.util.ArrayList;
 
 @Entity
 public class Story {

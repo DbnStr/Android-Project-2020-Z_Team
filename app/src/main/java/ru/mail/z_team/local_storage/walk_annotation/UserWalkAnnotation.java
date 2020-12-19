@@ -1,9 +1,4 @@
-package ru.mail.z_team.local_storage;
-
-import androidx.annotation.NonNull;
-import androidx.room.PrimaryKey;
-
-import java.util.Date;
+package ru.mail.z_team.local_storage.walk_annotation;
 
 public class UserWalkAnnotation {
 

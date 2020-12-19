@@ -90,14 +90,9 @@ public class WalksRepository {
 
                     @Override
                     public void onSuccessResponse(Response<Map<String, UserApi.Walk>> response) {
-                        localDatabase.databaseWriteExecutor.execute(new Runnable() {
-                            @Override
-                            public void run() {
-                                userDao.deleteAllWalkAndAddNew(Transformer.transformToLocalDBWalkAll(response.body(), userId));
-                                response.body().forEach((date, walk) -> {
-                                    userDao.deleteAllWalkStoryAndAddNew(Transformer.transformToLocalDBStoryAll(walk.stories, walk.date), walk.date);
-                                });
-                            }
+                        localDatabase.databaseWriteExecutor.execute(() -> {
+                            userDao.deleteAllWalkAndAddNew(Transformer.transformToLocalDBWalkAll(response.body(), userId));
+                            response.body().forEach((date, walk) -> userDao.deleteAllWalkStoryAndAddNew(Transformer.transformToLocalDBStoryAll(walk.stories, walk.date), walk.date));
                         });
                     }
                 });
@@ -105,7 +100,7 @@ public class WalksRepository {
         });
     }
 
-    private void insertWalkAnnotationListInLocalDB(final List<ru.mail.z_team.local_storage.WalkAnnotation> walksAnnotations) {
+    private void insertWalkAnnotationListInLocalDB(final List<ru.mail.z_team.local_storage.walk_annotation.WalkAnnotation> walksAnnotations) {
         localDatabase.databaseWriteExecutor.execute(() ->
                 userDao.deleteAllWalkAnnotationAndAddNew(walksAnnotations));
     }
