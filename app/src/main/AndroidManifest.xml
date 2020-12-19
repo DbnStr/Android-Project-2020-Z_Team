@@ -3,8 +3,9 @@
     package="ru.mail.z_team">
 
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.CAMERA"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.CAMERA" />
+
     <application
         android:name=".ApplicationModified"
         android:allowBackup="true"
@@ -25,8 +26,6 @@
             android:name="com.google.firebase.messaging.default_notification_icon"
             android:resource="@drawable/ic_baseline_wb_sunny_24" />
 
-        <activity android:name=".map.MapActivity"/>
-        <activity android:name=".MainActivity" />
         <activity android:name=".MainMenuActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -36,6 +35,10 @@
         </activity>
         <activity android:name=".RegisterActivity" />
         <activity android:name=".LoginActivity" />
+        <activity
+            android:name=".map.MapActivity"
+            android:parentActivityName=".MainMenuActivity" />
+        <activity android:name=".MainActivity" />
     </application>
 
 </manifest>

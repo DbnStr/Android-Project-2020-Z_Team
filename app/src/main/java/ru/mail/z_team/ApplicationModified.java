@@ -27,6 +27,7 @@ public class ApplicationModified extends Application {
         mapRepository = new MapRepository(getApplicationContext());
 
         notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        initNotificationChannels();
     }
 
     public DatabaseApiRepository getApis() {
