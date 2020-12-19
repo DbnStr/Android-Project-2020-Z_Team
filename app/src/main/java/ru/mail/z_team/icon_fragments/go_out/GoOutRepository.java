@@ -35,8 +35,6 @@ public class GoOutRepository {
     SimpleDateFormat sdf =
             new SimpleDateFormat("EEE, MMM d, yyyy hh:mm:ss a z");
 
-    private String currentUserName;
-
     public GoOutRepository(Context context) {
         userApi = DatabaseApiRepository.from(context).getUserApi();
         logger = new Logger(LOG_TAG, true);
@@ -46,17 +44,27 @@ public class GoOutRepository {
     public void postWalk(String title, FeatureCollection walk, ArrayList<Story> stories) {
         String currentUserId = FirebaseAuth.getInstance().getUid();
 
-        updateCurrentUserName();
-        userApi.getUserWalksById(currentUserId).enqueue(new DatabaseCallback<ArrayList<UserApi.WalkInfo>>(LOG_TAG) {
+        userApi.getUserById(currentUserId).enqueue(new DatabaseCallback<UserApi.User>(LOG_TAG) {
             @Override
-            public void onNullResponse(Response<ArrayList<UserApi.WalkInfo>> response) {
-                addWalkInDb(0, title, currentUserId, currentUserName, walk, stories);
+            public void onNullResponse(Response<UserApi.User> response) {
+                logger.errorLog("Fail with update");
             }
 
             @Override
-            public void onSuccessResponse(Response<ArrayList<UserApi.WalkInfo>> response) {
-                int count = response.body().size();
-                addWalkInDb(count, title, currentUserId, currentUserName, walk, stories);
+            public void onSuccessResponse(Response<UserApi.User> response) {
+                String name = response.body().name;
+                userApi.getUserWalksAnnotationsById(currentUserId).enqueue(new DatabaseCallback<ArrayList<UserApi.WalkAnnotation>>(LOG_TAG) {
+                    @Override
+                    public void onNullResponse(Response<ArrayList<UserApi.WalkAnnotation>> response) {
+                        addWalkInDb(0, title, currentUserId, name, walk, stories);
+                    }
+
+                    @Override
+                    public void onSuccessResponse(Response<ArrayList<UserApi.WalkAnnotation>> response) {
+                        int count = response.body().size();
+                        addWalkInDb(count, title, currentUserId, name, walk, stories);
+                    }
+                });
             }
         });
     }
@@ -87,9 +95,9 @@ public class GoOutRepository {
                 postStatus.postValue(PostStatus.FAILED);
             }
         });
-        userApi.addWalkInfo(id, currentWalkNumber, new UserApi.WalkInfo(title, sdf.format(currentTime), name, id)).enqueue(new Callback<UserApi.WalkInfo>() {
+        userApi.addWalkInfo(id, currentWalkNumber, new UserApi.WalkAnnotation(title, sdf.format(currentTime), name, id)).enqueue(new Callback<UserApi.WalkAnnotation>() {
             @Override
-            public void onResponse(Call<UserApi.WalkInfo> call, Response<UserApi.WalkInfo> response) {
+            public void onResponse(Call<UserApi.WalkAnnotation> call, Response<UserApi.WalkAnnotation> response) {
                 if (response.isSuccessful()) {
                     postStatus.postValue(PostStatus.OK);
                 } else {
@@ -98,7 +106,7 @@ public class GoOutRepository {
             }
 
             @Override
-            public void onFailure(Call<UserApi.WalkInfo> call, Throwable t) {
+            public void onFailure(Call<UserApi.WalkAnnotation> call, Throwable t) {
                 logger.errorLog(t.getMessage());
                 postStatus.postValue(PostStatus.FAILED);
             }
@@ -138,24 +146,6 @@ public class GoOutRepository {
             apiStory.images.add(storageReference.getPath());
         }
         return apiStory;
-    }
-
-    private void updateCurrentUserName() {
-        String currentUserId = FirebaseAuth.getInstance().getUid();
-
-        logger.log("update user - " + currentUserId);
-
-        userApi.getUserById(currentUserId).enqueue(new DatabaseCallback<UserApi.User>(LOG_TAG) {
-            @Override
-            public void onNullResponse(Response<UserApi.User> response) {
-                logger.errorLog("Fail with update");
-            }
-
-            @Override
-            public void onSuccessResponse(Response<UserApi.User> response) {
-                currentUserName = response.body().name;
-            }
-        });
     }
 
     public MutableLiveData<PostStatus> getPostStatus() {

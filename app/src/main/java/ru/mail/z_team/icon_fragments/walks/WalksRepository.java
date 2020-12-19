@@ -7,13 +7,18 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.google.firebase.auth.FirebaseAuth;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 import retrofit2.Response;
+import ru.mail.z_team.ApplicationModified;
 import ru.mail.z_team.Logger;
 import ru.mail.z_team.icon_fragments.DatabaseCallback;
+import ru.mail.z_team.icon_fragments.DatabaseNetworkControlExecutor;
+import ru.mail.z_team.icon_fragments.Transformer;
+import ru.mail.z_team.local_storage.LocalDatabase;
+import ru.mail.z_team.local_storage.UserDao;
 import ru.mail.z_team.network.DatabaseApiRepository;
 import ru.mail.z_team.network.UserApi;
 
@@ -24,55 +29,84 @@ public class WalksRepository {
 
     private final UserApi userApi;
 
+    private final UserDao userDao;
+    private final LocalDatabase localDatabase;
+
     private final MutableLiveData<ArrayList<WalkAnnotation>> currentUserWalks = new MutableLiveData<>();
 
-    SimpleDateFormat sdf =
-            new SimpleDateFormat("EEE, MMM d, yyyy hh:mm:ss a z");
+    private final Context context;
 
     public WalksRepository(Context context) {
+        this.context = context;
+
         userApi = DatabaseApiRepository.from(context).getUserApi();
+
         logger = new Logger(LOG_TAG, true);
+
+        localDatabase = ApplicationModified.from(context).getLocalDatabase();
+        userDao = localDatabase.getUserDao();
     }
 
     public LiveData<ArrayList<WalkAnnotation>> getCurrentUserWalks() {
         return currentUserWalks;
     }
 
-    public void updateCurrentUserWalks() {
-        String id = FirebaseAuth.getInstance().getUid();
-        userApi.getUserWalksById(id).enqueue(new DatabaseCallback<ArrayList<UserApi.WalkInfo>>(LOG_TAG) {
+    public void updateCurrentUserWalksAnnotations() {
+        String currentUserId = FirebaseAuth.getInstance().getUid();
+        DatabaseNetworkControlExecutor executor = new DatabaseNetworkControlExecutor(context) {
             @Override
-            public void onNullResponse(Response<ArrayList<UserApi.WalkInfo>> response) {
+            public void networkRun() {
+                getWalksAnnotationsFromRemoteDBAndInsertTheseInLocalDB(currentUserId);
+            }
+
+            @Override
+            public void noNetworkRun() {
+                getCurrentUserWalksAnnotationsFromLocalD();
+            }
+        };
+        executor.run();
+    }
+
+    private void getWalksAnnotationsFromRemoteDBAndInsertTheseInLocalDB(final String userId) {
+        userApi.getUserWalksAnnotationsById(userId).enqueue(new DatabaseCallback<ArrayList<UserApi.WalkAnnotation>>(LOG_TAG) {
+            @Override
+            public void onNullResponse(Response<ArrayList<UserApi.WalkAnnotation>> response) {
                 logger.log("Walks was empty");
                 currentUserWalks.postValue(new ArrayList<>());
             }
 
             @Override
-            public void onSuccessResponse(Response<ArrayList<UserApi.WalkInfo>> response) {
+            public void onSuccessResponse(Response<ArrayList<UserApi.WalkAnnotation>> response) {
                 logger.log("Successful update current user walks");
-                currentUserWalks.postValue(transformToWalkAnnotationAll(response.body()));
+                currentUserWalks.postValue(Transformer.transformToWalkAnnotationAll(response.body()));
+
+                insertWalkAnnotationListInLocalDB(Transformer.transformToLocalDBWalkAnnotationAll(response.body()));
+
+                userApi.getAllWalks(userId).enqueue(new DatabaseCallback<Map<String, UserApi.Walk>>(LOG_TAG) {
+                    @Override
+                    public void onNullResponse(Response<Map<String, UserApi.Walk>> response) {
+                        logger.log("NULL");
+                    }
+
+                    @Override
+                    public void onSuccessResponse(Response<Map<String, UserApi.Walk>> response) {
+                        localDatabase.databaseWriteExecutor.execute(() -> {
+                            userDao.deleteAllWalkAndAddNew(Transformer.transformToLocalDBWalkAll(response.body(), userId));
+                            response.body().forEach((date, walk) -> userDao.deleteAllWalkStoryAndAddNew(Transformer.transformToLocalDBStoryAll(walk.stories, walk.date), walk.date));
+                        });
+                    }
+                });
             }
         });
     }
 
-    private ArrayList<WalkAnnotation> transformToWalkAnnotationAll(ArrayList<UserApi.WalkInfo> walks) {
-        ArrayList<WalkAnnotation> result = new ArrayList<>();
-        for (UserApi.WalkInfo walk : walks) {
-            result.add(transformToWalkAnnotation(walk));
-        }
-        return result;
+    private void insertWalkAnnotationListInLocalDB(final List<ru.mail.z_team.local_storage.walk_annotation.WalkAnnotation> walksAnnotations) {
+        localDatabase.databaseWriteExecutor.execute(() ->
+                userDao.deleteAllWalkAnnotationAndAddNew(walksAnnotations));
     }
 
-    private WalkAnnotation transformToWalkAnnotation(UserApi.WalkInfo walk) {
-        WalkAnnotation transformed = new WalkAnnotation();
-        transformed.setTitle(walk.title);
-        transformed.setAuthor(walk.author);
-        transformed.setAuthorId(walk.id);
-        try {
-            transformed.setDate(sdf.parse(walk.date));
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        return transformed;
+    private void getCurrentUserWalksAnnotationsFromLocalD() {
+        localDatabase.databaseWriteExecutor.execute(() ->
+                currentUserWalks.postValue(Transformer.transformToWalkAnnotationAll(userDao.getUserWalksAnnotations())));
     }
 }

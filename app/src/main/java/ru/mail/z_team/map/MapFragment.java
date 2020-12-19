@@ -303,6 +303,7 @@ public class MapFragment extends Fragment {
                     if (features.get(0).getStringProperty("placeName").equals(story.getPlace())) {
                         getActivity().getSupportFragmentManager()
                                 .beginTransaction()
+                                //заменить непустой конструктор
                                 .replace(R.id.map_activity_container, new StoryFragment(story), STORY_TAG)
                                 .addToBackStack(null)
                                 .commit();

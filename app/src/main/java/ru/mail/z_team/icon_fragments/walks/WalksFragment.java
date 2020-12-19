@@ -52,8 +52,8 @@ public class WalksFragment extends Fragment {
         recyclerView.setAdapter(adapter);
 
         viewModel = new ViewModelProvider(this).get(WalksViewModel.class);
-        viewModel.updateCurrentUserWalks();
-        viewModel.getCurrentUserWalks().observe(getActivity(), walks -> {
+        viewModel.updateCurrentUserWalksAnnotations();
+        viewModel.getCurrentUserWalksAnnotations().observe(getActivity(), walks -> {
             logger.log("get walks... " + walks.size());
             if (walks.isEmpty()) {
                 noWalks.setVisibility(View.VISIBLE);

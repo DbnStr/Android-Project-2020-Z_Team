@@ -1,20 +1,23 @@
 package ru.mail.z_team.icon_fragments.walks;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
-import com.mapbox.geojson.Feature;
-import com.mapbox.geojson.FeatureCollection;
+import com.google.firebase.auth.FirebaseAuth;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 
 import retrofit2.Response;
+import ru.mail.z_team.ApplicationModified;
 import ru.mail.z_team.Logger;
 import ru.mail.z_team.icon_fragments.DatabaseCallback;
+import ru.mail.z_team.icon_fragments.DatabaseNetworkControlExecutor;
+import ru.mail.z_team.icon_fragments.Transformer;
+import ru.mail.z_team.local_storage.LocalDatabase;
+import ru.mail.z_team.local_storage.UserDao;
 import ru.mail.z_team.map.Story;
 import ru.mail.z_team.network.DatabaseApiRepository;
 import ru.mail.z_team.network.UserApi;
@@ -25,28 +28,90 @@ public class WalkProfileRepository {
 
     private final UserApi userApi;
 
+    private final UserDao userDao;
+    private final LocalDatabase localDatabase;
+
     private final Context context;
 
     private final MutableLiveData<Walk> currentDisplayedWalk = new MutableLiveData<>();
     private final MutableLiveData<WalkAnnotation> annotation = new MutableLiveData<>();
     private final MutableLiveData<Story> currentDisplayedStory = new MutableLiveData<>();
 
+    @SuppressLint("SimpleDateFormat")
     SimpleDateFormat sdf =
             new SimpleDateFormat("EEE, MMM d, yyyy hh:mm:ss a z");
 
     public WalkProfileRepository(Context context) {
         this.context = context;
-        userApi = DatabaseApiRepository.from(context).getUserApi();
+
         logger = new Logger(LOG_TAG, true);
+
+        userApi = DatabaseApiRepository.from(context).getUserApi();
+
+        localDatabase = ApplicationModified.from(context).getLocalDatabase();
+        userDao = localDatabase.getUserDao();
+    }
+
+    public LiveData<WalkAnnotation> getAnnotation() {
+        return annotation;
     }
 
     public LiveData<Walk> getCurrentDisplayedWalk() {
         return currentDisplayedWalk;
     }
 
+    public LiveData<Story> getCurrentDisplayedStory() {
+        return currentDisplayedStory;
+    }
+
+    //изменить получение данных
+    public void updateCurrentDisplayedStory(final int number, final String dateOfWalk) {
+        String userId = FirebaseAuth.getInstance().getUid();
+        DatabaseNetworkControlExecutor executor = new DatabaseNetworkControlExecutor(context) {
+            @Override
+            public void networkRun() {
+                userApi.getStory(userId, dateOfWalk, number).enqueue(new DatabaseCallback<UserApi.Story>(LOG_TAG) {
+                    @Override
+                    public void onNullResponse(Response<UserApi.Story> response) {
+                        logger.log("EMPTY STORY");
+                        currentDisplayedStory.postValue(new Story());
+                    }
+
+                    @Override
+                    public void onSuccessResponse(Response<UserApi.Story> response) {
+                        logger.log("successfully get walk story");
+                        currentDisplayedStory.postValue(Transformer.transformToStory(response.body()));
+                    }
+                });
+            }
+
+            @Override
+            public void noNetworkRun() {
+                //почему-то не получается достать walk из currentDisplayedWalk
+                localDatabase.databaseWriteExecutor.execute(() -> currentDisplayedStory.postValue(Transformer.transformToWalk(userDao.getUserWalkWithStories(userId, dateOfWalk)).getStories().get(number)));
+            }
+        };
+        executor.run();
+    }
+
     public void updateCurrentDisplayedWalk(WalkAnnotation walkAnnotation) {
         String userId = walkAnnotation.getAuthorId();
         String date = sdf.format(walkAnnotation.getDate());
+        DatabaseNetworkControlExecutor executor = new DatabaseNetworkControlExecutor(context) {
+            @Override
+            public void networkRun() {
+                getUserWalkFromRemoteDB(userId, date);
+            }
+
+            @Override
+            public void noNetworkRun() {
+                getUserWalkFromLocalDB(userId, date);
+            }
+        };
+        executor.run();
+    }
+
+    private void getUserWalkFromRemoteDB(final String userId, final String date) {
         userApi.getWalkByDateAndId(userId, date).enqueue(new DatabaseCallback<UserApi.Walk>(LOG_TAG) {
             @Override
             public void onNullResponse(Response<UserApi.Walk> response) {
@@ -55,59 +120,16 @@ public class WalkProfileRepository {
 
             @Override
             public void onSuccessResponse(Response<UserApi.Walk> response) {
-                currentDisplayedWalk.postValue(transformToWalk(response.body()));
+                currentDisplayedWalk.postValue(Transformer.transformToWalk(response.body()));
             }
         });
     }
 
-    private Walk transformToWalk(UserApi.Walk walk) {
-        Walk transformed = new Walk();
-        transformed.setTitle(walk.title);
-        transformed.setAuthor(walk.author);
-        FeatureCollection map = FeatureCollection.fromJson(walk.walk);
-        transformed.setMap(map);
-        transformed.setStories(transformToStoryAll(walk.stories));
-        try {
-            transformed.setDate(sdf.parse(walk.date));
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        return transformed;
-    }
-
-    private ArrayList<Story> transformToStoryAll(ArrayList<UserApi.Story> stories) {
-        ArrayList<Story> transformed = new ArrayList<>();
-        if (stories != null) {
-            for (UserApi.Story apiStory : stories) {
-                transformed.add(transformToStory(apiStory));
-            }
-        }
-        return transformed;
-    }
-
-    private Story transformToStory(UserApi.Story apiStory) {
-        Story story = new Story();
-        story.setDescription(apiStory.description);
-        story.setPlace(apiStory.place);
-        story.setId(apiStory.id);
-        story.setUrlImages(apiStory.images);
-        story.setPoint(Feature.fromJson(apiStory.point));
-        return story;
+    private void getUserWalkFromLocalDB(final String userId, final String date) {
+        localDatabase.databaseWriteExecutor.execute(() -> currentDisplayedWalk.postValue(Transformer.transformToWalk(userDao.getUserWalkWithStories(userId, date))));
     }
 
     public void setAnnotation(WalkAnnotation walkAnnotation) {
         annotation.postValue(walkAnnotation);
-    }
-
-    public LiveData<WalkAnnotation> getAnnotation() {
-        return annotation;
-    }
-
-    public void setStory(Story story) {
-        currentDisplayedStory.postValue(story);
-    }
-
-    public LiveData<Story> getStory() {
-        return currentDisplayedStory;
     }
 }

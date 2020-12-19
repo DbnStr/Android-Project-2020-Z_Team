@@ -41,7 +41,7 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsViewHolder> {
     public void onBindViewHolder(@NonNull NewsViewHolder holder, int position) {
         logger.log("OnBindViewHolderWalk " + position);
         String title = walks.get(position).getTitle();
-        String author = walks.get(position).getAuthor();
+        String author = walks.get(position).getAuthorName();
         Date date = walks.get(position).getDate();
 
         holder.newsTitle.setText(title);

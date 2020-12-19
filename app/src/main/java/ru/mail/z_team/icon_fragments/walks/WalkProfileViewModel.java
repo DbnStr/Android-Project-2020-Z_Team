@@ -14,15 +14,23 @@ public class WalkProfileViewModel extends AndroidViewModel {
     private final WalkProfileRepository repository;
 
     private final LiveData<Walk> currentDisplayedWalk;
+    private final LiveData<Story> currentDisplayedStory;
 
     public WalkProfileViewModel(@NonNull Application application) {
         super(application);
         repository = new WalkProfileRepository(getApplication());
+
         currentDisplayedWalk = repository.getCurrentDisplayedWalk();
+        currentDisplayedStory = repository.getCurrentDisplayedStory();
     }
 
     public void updateCurrentDisplayedWalk(WalkAnnotation walkAnnotation) {
         repository.updateCurrentDisplayedWalk(walkAnnotation);
+    }
+
+
+    public void updateCurrentDisplayedStory(final int number, final String dateOfWalk) {
+        repository.updateCurrentDisplayedStory(number, dateOfWalk);
     }
 
     public LiveData<Walk> getCurrentDisplayedWalk() {
@@ -37,11 +45,7 @@ public class WalkProfileViewModel extends AndroidViewModel {
         return repository.getAnnotation();
     }
 
-    public void setStory(Story story) {
-        repository.setStory(story);
-    }
-
-    public LiveData<Story> getStory() {
-        return repository.getStory();
+    public LiveData<Story> getCurrentDisplayedStory() {
+        return currentDisplayedStory;
     }
 }
