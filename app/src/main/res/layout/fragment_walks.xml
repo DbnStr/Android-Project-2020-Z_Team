@@ -8,12 +8,17 @@
         android:id="@+id/no_walks_tv"
         android:visibility="invisible"
         android:text="You don't have walks yet"
+        android:layout_gravity="center_horizontal"
         android:layout_width="match_parent"
+        android:layout_marginTop="32dp"
         android:layout_height="0dp"
         app:layout_constraintTop_toTopOf="parent"/>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_walks"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginTop="16dp"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 
