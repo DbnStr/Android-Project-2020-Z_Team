@@ -54,14 +54,12 @@ public class UserFragment extends Fragment {
         userImage = view.findViewById(R.id.user_image);
         ageLayout = view.findViewById(R.id.linear_user_age);
 
-        if (savedInstanceState != null) {
-            viewModel.getUserProfileData().observe(getActivity(), u -> {
-                user = u;
-                showProfile();
-            });
-        } else {
+        viewModel.updateCurrentDisplayedUser(user.getId());
+        viewModel.getUserProfileData().observe(getActivity(), u -> {
+            user = u;
             showProfile();
-        }
+        });
+
         return view;
     }
 
@@ -76,6 +74,7 @@ public class UserFragment extends Fragment {
             ageLayout.setVisibility(View.INVISIBLE);
         }
 
+        logger.log("image url: " + user.getImageUrl());
         if (user.getImageUrl() != null
                 && !user.getImageUrl().isEmpty()
                 && !user.getImageUrl().equals("no Image")) {
@@ -93,8 +92,5 @@ public class UserFragment extends Fragment {
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        if (viewModel != null) {
-            viewModel.setUser(user);
-        }
     }
 }
