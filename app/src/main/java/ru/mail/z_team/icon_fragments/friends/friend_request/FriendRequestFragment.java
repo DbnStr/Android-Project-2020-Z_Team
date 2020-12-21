@@ -95,7 +95,7 @@ public class FriendRequestFragment extends Fragment {
 
         friendRequestRefreshLayout.setOnRefreshListener(() -> {
             friendsViewModel.updateCurrentUserFriendRequestList();
-            //Todo : как-то проверять процесс обновления друзей(полученя даннъы из дб), и только при успехе убирать значок обновления
+            //Todo : как-то проверять процесс обновления заявок в друзья(полученя даннъы из дб), и только при успехе убирать значок обновления
             friendRequestRefreshLayout.setRefreshing(false);
         });
     }
