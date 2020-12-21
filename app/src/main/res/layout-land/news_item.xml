@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout android:id="@+id/news_item"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/news_card"
+        android:clickable="true"
+        android:focusable="true"
+        android:checkable="true"
+        android:layout_width="match_parent"
+        app:cardElevation="5dp"
+        app:cardCornerRadius="15dp"
+        app:cardBackgroundColor="@color/card_back"
+        android:layout_margin="16dp"
+        android:layout_height="wrap_content" >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:orientation="horizontal">
+                <ImageView
+                    android:layout_width="55dp"
+                    android:layout_height="55dp"
+                    android:layout_margin="2.5dp"
+                    android:background="@drawable/ic_person"/>
+                <TextView
+                    android:id="@+id/news_item_author"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:text="Who knows who"
+                    android:textSize="24sp"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/news_item_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:textSize="24sp"
+                    android:layout_marginStart="10dp"
+                    android:textStyle="italic"
+                    android:text="Title"/>
+
+                <TextView
+                    android:id="@+id/news_item_date"
+                    android:layout_width="match_parent"
+                    android:textAlignment="textEnd"
+                    android:layout_height="30dp"
+                    android:padding="5dp"
+                    android:textSize="12sp"
+                    android:text="published after death"/>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </com.google.android.material.card.MaterialCardView>
+
+</LinearLayout>
