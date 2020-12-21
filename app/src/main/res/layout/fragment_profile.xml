@@ -81,8 +81,7 @@
             android:hint="Your age"
             android:text="@string/profile"
             android:textColor="@color/primaryDarkColor"
-            android:textSize="20sp"
-            app:layout_constraintTop_toBottomOf="@id/profile_name" />
+            android:textSize="20sp"/>
 
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

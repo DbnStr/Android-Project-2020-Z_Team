@@ -48,6 +48,7 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendViewHolder> {
         holder.friend.setOnClickListener(v -> {
             Friend friend = friends.get(position);
             if (context instanceof MainMenuActivity){
+
                 User user = new User(
                         friend.name,
                         14,

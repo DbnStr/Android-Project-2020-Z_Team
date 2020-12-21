@@ -37,4 +37,7 @@
     <string name="upload">Upload</string>
     <string name="zero_int">0</string>
     <string name="channel_go_out_name">Go Out channel</string>
+    <string name="enter_user_id">Enter User ID</string>
+    <string name="add_your_first_friend">Add your first friend</string>
+    <string name="anonymous">Anonymous</string>
 </resources>
