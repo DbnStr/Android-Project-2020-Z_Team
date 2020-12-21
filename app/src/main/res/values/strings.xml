@@ -33,4 +33,6 @@
     <string name="friends_list">friends list</string>
     <string name="you_have_no_friend_requests">You have no friend requests</string>
     <string name="add_friend">Add friend</string>
+    <string name="upload">Upload</string>
+    <string name="zero_int">0</string>
 </resources>

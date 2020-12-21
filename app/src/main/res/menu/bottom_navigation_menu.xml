@@ -11,7 +11,7 @@
         android:enabled="true"
         android:icon="@android:drawable/ic_dialog_map"
         android:visible="true"
-        android:title="@string/walks"/>
+        android:title="@string/walkAnnotations"/>
     <item
         android:id="@+id/friends_icon"
         android:enabled="true"
