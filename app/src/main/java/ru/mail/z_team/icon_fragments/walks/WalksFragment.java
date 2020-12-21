@@ -13,6 +13,7 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -26,8 +27,10 @@ public class WalksFragment extends Fragment {
     private Logger logger;
     WalkAdapter adapter;
     private WalksViewModel viewModel;
+
     TextView noWalks;
     FloatingActionButton toMapBtn;
+    SwipeRefreshLayout newsRefreshLayout;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -44,7 +47,7 @@ public class WalksFragment extends Fragment {
         logger.log("create view");
         noWalks = view.findViewById(R.id.no_walks_tv);
         toMapBtn = view.findViewById(R.id.map_activity_btn);
-        toMapBtn.setOnClickListener(v -> startActivity(new Intent(requireActivity(), MapActivity.class)));
+        newsRefreshLayout = view.findViewById(R.id.swipe_to_refresh_walks);
 
         return view;
     }
@@ -52,6 +55,8 @@ public class WalksFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        toMapBtn.setOnClickListener(v -> startActivity(new Intent(requireActivity(), MapActivity.class)));
 
         final RecyclerView recyclerView = view.findViewById(R.id.recycler_walks);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
@@ -68,6 +73,15 @@ public class WalksFragment extends Fragment {
             } else {
                 noWalks.setVisibility(View.INVISIBLE);
                 adapter.setWalks(walks);
+            }
+        });
+
+        newsRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                viewModel.updateCurrentUserWalksAnnotations();
+                //Todo : убирать значок прогрузки только тогда, когда прогулки подргузятся
+                newsRefreshLayout.setRefreshing(false);
             }
         });
     }
