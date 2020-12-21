@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/news_feed_icon"
+        android:enabled="true"
+        android:icon="@drawable/ic_news"
+        android:visible="true"
+        android:title="@string/news"/>
+    <item
+        android:id="@+id/walks_icon"
+        android:enabled="true"
+        android:icon="@android:drawable/ic_dialog_map"
+        android:visible="true"
+        android:title="@string/walkAnnotations"/>
+    <item
+        android:id="@+id/friends_icon"
+        android:enabled="true"
+        android:icon="@drawable/ic_friends"
+        android:visible="true"
+        android:title="@string/friends"/>
+    <item
+        android:id="@+id/profile_icon"
+        android:enabled="true"
+        android:icon="@android:drawable/ic_menu_myplaces"
+        android:visible="true"
+        android:title="@string/profile"/>
+</menu>

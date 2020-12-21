@@ -2,10 +2,9 @@ package ru.mail.z_team;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
@@ -13,11 +12,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 import ru.mail.z_team.icon_fragments.friends.FriendsFragment;
-import ru.mail.z_team.icon_fragments.go_out.GoOutFragment;
 import ru.mail.z_team.icon_fragments.news.NewsFragment;
 import ru.mail.z_team.icon_fragments.profile.ProfileFragment;
 import ru.mail.z_team.icon_fragments.walks.WalkAnnotation;
@@ -26,14 +25,13 @@ import ru.mail.z_team.icon_fragments.walks.WalksFragment;
 import ru.mail.z_team.user.User;
 import ru.mail.z_team.user.UserFragment;
 
-public class MainMenuActivity extends AppCompatActivity {
+public class MainMenuActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener {
 
     static private final String NEWS_TAG = "NEWS FRAGMENT";
     static private final String WALKS_TAG = "WALKS FRAGMENT";
     static private final String FRIENDS_TAG = "FRIENDS FRAGMENT";
     static private final String PROFILE_TAG = "PROFILE FRAGMENT";
     static private final String USER_TAG = "USER FRAGMENT";
-    static private final String GO_OUT_TAG = "GO_OUT FRAGMENT";
     private static final String WALK_TAG = "WALK FRAGMENT";
 
     private static final String LOG_TAG = "MainMenuActivity";
@@ -43,10 +41,12 @@ public class MainMenuActivity extends AppCompatActivity {
     FragmentManager fragmentManager;
     int container;
     ActionBar actionBar;
+    BottomNavigationView bottomNavigationView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.d("Main", "onCreate");
         setContentView(R.layout.activity_main_menu);
         logger = new Logger(LOG_TAG, true);
 
@@ -54,18 +54,8 @@ public class MainMenuActivity extends AppCompatActivity {
 
         fragmentManager = getSupportFragmentManager();
         container = R.id.current_menu_container;
-        final TextView news = findViewById(R.id.news_feed_icon);
-        final TextView walks = findViewById(R.id.walks_icon);
-        final TextView friends = findViewById(R.id.friends_icon);
-        final TextView profile = findViewById(R.id.profile_icon);
-        final TextView goOut = findViewById(R.id.go_out_icon);
-
-
-        news.setOnClickListener(new ClickOnIconHandler<>(new NewsFragment()).getListener(NEWS_TAG));
-        walks.setOnClickListener(new ClickOnIconHandler<>(new WalksFragment()).getListener(WALKS_TAG));
-        friends.setOnClickListener(new ClickOnIconHandler<>(new FriendsFragment()).getListener(FRIENDS_TAG));
-        profile.setOnClickListener(new ClickOnIconHandler<>(new ProfileFragment()).getListener(PROFILE_TAG));
-        goOut.setOnClickListener(new ClickOnIconHandler<>(new GoOutFragment()).getListener(GO_OUT_TAG));
+        bottomNavigationView = findViewById(R.id.bottom_navigation);
+        bottomNavigationView.setOnNavigationItemSelectedListener(this);
 
         if (getSupportFragmentManager().findFragmentById(container) == null) {
             getSupportFragmentManager()
@@ -104,34 +94,51 @@ public class MainMenuActivity extends AppCompatActivity {
                 .commitAllowingStateLoss();
     }
 
-    private class ClickOnIconHandler<T extends Fragment> {
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        final Fragment fragment;
+        final String tag;
+        final Fragment nFragment;
 
-        final private T newFragment;
-
-        ClickOnIconHandler(T newFragment) {
-            this.newFragment = newFragment;
+        switch (item.getItemId()) {
+            case R.id.news_feed_icon:
+                fragment = new NewsFragment();
+                nFragment = (NewsFragment) fragmentManager.findFragmentByTag(NEWS_TAG);
+                tag = NEWS_TAG;
+                break;
+            case R.id.walks_icon:
+                fragment = new WalksFragment();
+                nFragment = (WalksFragment) fragmentManager.findFragmentByTag(WALKS_TAG);
+                tag = WALKS_TAG;
+                break;
+            case R.id.friends_icon:
+                fragment = new FriendsFragment();
+                nFragment = (FriendsFragment) fragmentManager.findFragmentByTag(FRIENDS_TAG);
+                tag = FRIENDS_TAG;
+                break;
+            case R.id.profile_icon:
+                fragment = new ProfileFragment();
+                nFragment = (ProfileFragment) fragmentManager.findFragmentByTag(PROFILE_TAG);
+                tag = PROFILE_TAG;
+                break;
+            default:
+                throw new UnsupportedOperationException();
         }
 
-        public View.OnClickListener getListener(final String tag) {
-            return v -> {
-                T fragment = (T) fragmentManager.findFragmentByTag(tag);
-                if (fragment == null) {
-                    replaceFragment(tag, fragmentManager, container, newFragment);
-                    return;
-                }
-                if (fragmentManager.findFragmentById(container) != fragment) {
-                    replaceFragment(tag, fragmentManager, container, fragment);
-                }
-            };
-        }
-
-        private void replaceFragment(final String tag, final FragmentManager fragmentManager, final int container, final T fragment) {
+        if (nFragment == null) {
             fragmentManager
                     .beginTransaction()
                     .replace(container, fragment, tag)
                     .addToBackStack(null)
                     .commitAllowingStateLoss();
+        } else if (fragmentManager.findFragmentById(container) != nFragment) {
+            fragmentManager
+                    .beginTransaction()
+                    .replace(container, nFragment, tag)
+                    .addToBackStack(null)
+                    .commitAllowingStateLoss();
         }
+        return true;
     }
 
     @Override

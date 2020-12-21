@@ -4,21 +4,32 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".AddWalkActivity">
+    tools:context=".map.MapActivity">
 
-    <EditText
+    <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/walk_title_et"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Enter Walk's Title"
+        android:layout_margin="16dp"
+        app:startIconDrawable="@drawable/ic_walk"
         app:layout_constraintTop_toTopOf="parent"
-        android:minHeight="60dp"/>
+        android:hint="Walk's Title">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+    </com.google.android.material.textfield.TextInputLayout>
 
     <Button
         android:id="@+id/add_walk_btn"
         android:text="Add Walk"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/walk_title_et"/>
+        app:layout_constraintTop_toBottomOf="@id/walk_title_et"
+        style="@style/CustomButton"
+        android:layout_marginTop="8dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
