@@ -3,10 +3,10 @@ package ru.mail.z_team;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -15,13 +15,14 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
 
 public class RegisterActivity extends AppCompatActivity {
 
     private static final String LOG_TAG = "RegisterActivity";
     Button registerBtn;
-    EditText emailEt, passwordEt;
+    TextInputLayout emailEt, passwordEt;
     TextView toLogin;
     ProgressDialog progressDialog;
 
@@ -35,6 +36,7 @@ public class RegisterActivity extends AppCompatActivity {
 
         ActionBar actionBar = getSupportActionBar();
         actionBar.setTitle("Create Account");
+        Log.d("RegisterActivity", "onCreate");
 
         registerBtn = findViewById(R.id.register);
         emailEt = findViewById(R.id.emailEt);
@@ -66,8 +68,9 @@ public class RegisterActivity extends AppCompatActivity {
         });
 
         registerBtn.setOnClickListener(v -> {
-            String email = emailEt.getText().toString().trim();
-            String password = passwordEt.getText().toString().trim();
+            String email = emailEt.getEditText().getText().toString().trim();
+            Log.d("RegisterActivity", email);
+            String password = passwordEt.getEditText().getText().toString().trim();
             if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
                 emailEt.setError("Invalid Email");
                 emailEt.setFocusable(true);

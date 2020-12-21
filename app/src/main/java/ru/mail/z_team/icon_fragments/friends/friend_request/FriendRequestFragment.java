@@ -14,6 +14,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import ru.mail.z_team.Logger;
 import ru.mail.z_team.R;
@@ -28,6 +29,7 @@ public class FriendRequestFragment extends Fragment {
 
     private Button backToFriendsListBtn;
     private TextView noFriendRequests;
+    private SwipeRefreshLayout friendRequestRefreshLayout;
 
     private FriendRequestAdapter adapter;
 
@@ -49,6 +51,7 @@ public class FriendRequestFragment extends Fragment {
 
         backToFriendsListBtn = view.findViewById(R.id.back_to_friends_list_button);
         noFriendRequests = view.findViewById(R.id.no_friend_requests_tv);
+        friendRequestRefreshLayout = view.findViewById(R.id.swipe_to_refresh_friend_request);
         this.container = R.id.current_menu_container;
 
         return view;
@@ -82,12 +85,18 @@ public class FriendRequestFragment extends Fragment {
 
         backToFriendsListBtn.setOnClickListener(v -> {
             FragmentManager fragmentManager = getParentFragmentManager();
-            FriendsFragment friendsFragment = (FriendsFragment)fragmentManager.findFragmentByTag(FRIENDS_TAG);
+            FriendsFragment friendsFragment = (FriendsFragment) fragmentManager.findFragmentByTag(FRIENDS_TAG);
             if (friendsFragment == null) {
                 replaceFragment(FRIENDS_TAG, fragmentManager, container, new FriendsFragment());
             } else {
                 replaceFragment(FRIENDS_TAG, fragmentManager, container, friendsFragment);
             }
+        });
+
+        friendRequestRefreshLayout.setOnRefreshListener(() -> {
+            friendsViewModel.updateCurrentUserFriendRequestList();
+            //Todo : как-то проверять процесс обновления друзей(полученя даннъы из дб), и только при успехе убирать значок обновления
+            friendRequestRefreshLayout.setRefreshing(false);
         });
     }
 

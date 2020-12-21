@@ -128,7 +128,7 @@ public class WalkFragment extends Fragment {
                 final PointF pixel = mapboxMap.getProjection().toScreenLocation(point);
                 List<Feature> features = mapboxMap.queryRenderedFeatures(pixel, SYMBOL_LAYER_ID);
 
-                if (features.size() > 0 && features.get(0).getStringProperty("markerType").equals("storyMarker")) {
+                if (features.size() > 0 && features.get(0).getStringProperty("markerType") != null && features.get(0).getStringProperty("markerType").equals("storyMarker")) {
                     logger.log("pin was clicked");
                     for (Story story : walk.getStories()) {
                         logger.log("ids: " + features.get(0).getStringProperty("id") +  " vs " + story.getId());

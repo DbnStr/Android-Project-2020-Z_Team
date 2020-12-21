@@ -5,7 +5,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -16,6 +15,9 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+
+import com.google.android.material.textfield.TextInputLayout;
 
 import ru.mail.z_team.Logger;
 import ru.mail.z_team.R;
@@ -28,13 +30,13 @@ public class FriendsFragment extends Fragment {
     private Logger logger;
 
     private FriendAdapter adapter;
-
-    private FriendsViewModel viewModel;
+    FriendsViewModel viewModel;
 
     private Button addFriendBtn;
     private Button friendRequestBtn;
-    private EditText fieldAddFriend;
+    private TextInputLayout fieldAddFriend;
     private TextView noFriends;
+    private SwipeRefreshLayout friendsRefreshLayout;
 
     int container;
 
@@ -58,6 +60,7 @@ public class FriendsFragment extends Fragment {
         friendRequestBtn =view.findViewById(R.id.friend_request);
         fieldAddFriend = view.findViewById(R.id.add_friend_by_id_et);
         noFriends = view.findViewById(R.id.no_friend_tv);
+        friendsRefreshLayout = view.findViewById(R.id.swipe_to_refresh_friends);
         this.container = R.id.current_menu_container;
 
         return view;
@@ -88,7 +91,7 @@ public class FriendsFragment extends Fragment {
                 });
 
         addFriendBtn.setOnClickListener(v -> {
-            String id = fieldAddFriend.getText().toString().trim();
+            String id = fieldAddFriend.getEditText().getText().toString().trim();
             if (id.equals("")) {
                 fieldAddFriend.setError("Id can't be empty");
                 fieldAddFriend.setFocusable(true);
@@ -110,6 +113,12 @@ public class FriendsFragment extends Fragment {
             } else {
                 replaceFragment(FRIEND_REQUEST_FRAGMENT_TAG, fragmentManager, container, friendRequestFragment);
             }
+        });
+
+        friendsRefreshLayout.setOnRefreshListener(() -> {
+            viewModel.updateCurrentUserFriends();
+            //Todo : как-то проверять процесс обновления друзей(полученя даннъы из дб), и только при успехе убирать значок обновления
+            friendsRefreshLayout.setRefreshing(false);
         });
     }
 
