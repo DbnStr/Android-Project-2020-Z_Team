@@ -51,9 +51,9 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendViewHolder> {
                 User user = new User(
                         friend.name,
                         14,
-                        friend.id,
-                        new ArrayList<>()
-                );
+                        new ArrayList<>(),
+                        friend.id
+                        );
                 ((MainMenuActivity) context).openUserProfile(user);
             }
         });

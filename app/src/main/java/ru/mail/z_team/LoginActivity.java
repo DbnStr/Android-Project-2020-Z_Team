@@ -99,16 +99,13 @@ public class LoginActivity extends AppCompatActivity implements LifecycleOwner {
 
         toRegistration.setOnClickListener(new TvListener());
         recoverPassword.setOnClickListener(new TvListener());
-        signInBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String email = emailEt.getText().toString().trim();
-                String password = passwordEt.getText().toString().trim();
-                if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-                    emailEt.setError("Invalid Email");
-                } else {
-                    loginUser(email, password);
-                }
+        signInBtn.setOnClickListener(v -> {
+            String email = emailEt.getText().toString().trim();
+            String password = passwordEt.getText().toString().trim();
+            if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+                emailEt.setError("Invalid Email");
+            } else {
+                loginUser(email, password);
             }
         });
     }

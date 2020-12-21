@@ -17,6 +17,7 @@ public interface UserApi {
         public String name;
         public int age;
         public ArrayList<Friend> friends;
+        public String imageUrl;
         public String email;
         public String id;
 

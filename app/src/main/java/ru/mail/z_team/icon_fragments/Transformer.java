@@ -47,21 +47,24 @@ public class Transformer {
         if (user.friends != null) {
             userFriends.addAll(Transformer.transformToFriendAll(user.friends));
         }
-        return new User(
+        User u =  new User(
                 name,
                 user.age,
-                user.id,
-                userFriends
+                userFriends,
+                user.id
         );
+
+        u.setImageUrl(user.imageUrl);
+
+        return u;
     }
 
     public static User transformToUser(ru.mail.z_team.local_storage.User user) {
         return new User(
                 user.name,
                 user.age,
-                user.id,
-                new ArrayList<>()
-        );
+                new ArrayList<>(),
+                user.id);
     }
 
     /* default Friend result */
@@ -206,6 +209,7 @@ public class Transformer {
         result.id = user.getId();
         result.name = user.getName();
         result.age = user.getAge();
+        result.imageUrl = user.getImageUrl();
         return result;
     }
 

@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">Android-Project-2020-Z_Team</string>
     <string name="mapbox_access_token">sk.eyJ1Ijoiei10ZWFtIiwiYSI6ImNraWFsamU3YTBqdngyc3JrOTNxNXoxcHQifQ.6qIU-PkG7o_-WcuctceK1g</string>
+    <string name="base_storage_url">"gs://android-project-2020-zteam.appspot.com"</string>
     <string name="authUI">Auth</string>
     <string name="sign_in_cancelled">Sign In canceled</string>
     <string name="no_internet_connection">Interneta netu</string>

@@ -13,9 +13,10 @@ public class User {
     public String name;
     public int age;
     public String id;
+    public String imageUrl;
     public ArrayList<Friend> friends;
 
-    public User(String name, int age, String id, ArrayList<Friend> friends) {
+    public User(String name, int age, ArrayList<Friend> friends, String id) {
         this.name = name;
         this.age = age;
         this.id = id;
@@ -34,8 +35,8 @@ public class User {
         this.friends = friends;
     }
 
-    public int getFriendsListSize() {
-        return friends.size();
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 
     public String getName() {
@@ -50,13 +51,17 @@ public class User {
         return id;
     }
 
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
     public ArrayList<Friend> getFriends() {
         return friends;
     }
 
     public User updateUserInfo(HashMap<String, String> newInfo) {
         Field[] fields = User.class.getFields();
-        for(Field field : fields) {
+        for (Field field : fields) {
             if (newInfo.containsKey(field.getName())) {
                 setFieldValue(field, newInfo.get(field.getName()));
             }
