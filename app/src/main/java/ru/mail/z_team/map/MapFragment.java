@@ -432,6 +432,11 @@ public class MapFragment extends Fragment {
         if (mapView != null) {
             mapView.onSaveInstanceState(outState);
         }
+        if (viewModel != null) {
+            viewModel.setIsClickable(isMapClickable);
+            viewModel.setStartPos(startPos);
+            viewModel.setDestinationPos(destinationPos);
+        }
     }
 
     @Override

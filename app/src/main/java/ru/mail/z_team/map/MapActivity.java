@@ -82,7 +82,6 @@ public class MapActivity extends AppCompatActivity implements PermissionsListene
 
     public void addStory(Story story) {
         stories.add(story);
-        viewModel.setStories(stories);
     }
 
     public FeatureCollection getWalkGeoJSON() {
@@ -98,7 +97,6 @@ public class MapActivity extends AppCompatActivity implements PermissionsListene
         logger.log("addToWalkGeoJSON ... " + walkList.size());
         walkList.add(walkPointGeoJSON);
         walkGeoJSON = FeatureCollection.fromFeatures(walkList);
-        viewModel.setWalkList(walkList);
     }
 
     @Override
@@ -125,5 +123,7 @@ public class MapActivity extends AppCompatActivity implements PermissionsListene
     @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
+        viewModel.setStories(stories);
+        viewModel.setWalkList(walkList);
     }
 }
