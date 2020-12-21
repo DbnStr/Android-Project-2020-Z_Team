@@ -59,7 +59,7 @@ public class ProfileFragment extends Fragment {
     private Button editBtn, saveChangesBtn;
     private User user;
 
-    private Uri imageRui;
+    private Uri imageUri;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -146,10 +146,10 @@ public class ProfileFragment extends Fragment {
         info.put("age", ageText);
         info.put("name", nameText);
 
-        if (imageRui != null) {
+        if (imageUri != null) {
             StorageReference storageReference = FirebaseStorage.getInstance().getReference()
-                    .child("ProfileImages/" + user.id + "/" + imageRui.getLastPathSegment());
-            storageReference.putFile(imageRui).addOnCompleteListener(task -> {
+                    .child("ProfileImages/" + user.id + "/" + imageUri.getLastPathSegment());
+            storageReference.putFile(imageUri).addOnCompleteListener(task -> {
                 if (task.isSuccessful()) {
                     logger.log("successfully added the image");
                 } else {
@@ -219,11 +219,11 @@ public class ProfileFragment extends Fragment {
         contentValues.put(MediaStore.Images.Media.TITLE, "title");
         contentValues.put(MediaStore.Images.Media.DESCRIPTION, "description");
 
-        imageRui = getActivity().getContentResolver()
+        imageUri = getActivity().getContentResolver()
                 .insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues);
 
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        intent.putExtra(MediaStore.EXTRA_OUTPUT, imageRui);
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
 
         startActivityForResult(intent, PICK_CAMERA_CODE);
     }
@@ -281,10 +281,10 @@ public class ProfileFragment extends Fragment {
         logger.log("onActivityResult");
         if (resultCode == RESULT_OK) {
             if (requestCode == PICK_GALLERY_CODE) {
-                imageRui = data.getData();
-                image.setImageURI(imageRui);
+                imageUri = data.getData();
+                image.setImageURI(imageUri);
             } else if (requestCode == PICK_CAMERA_CODE) {
-                image.setImageURI(imageRui);
+                image.setImageURI(imageUri);
             }
 
         } else {

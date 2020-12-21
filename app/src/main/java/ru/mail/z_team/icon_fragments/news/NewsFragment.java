@@ -75,7 +75,7 @@ public class NewsFragment extends Fragment {
 
         newsRefreshLayout.setOnRefreshListener(() -> {
             viewModel.updateCurrentUserNews();
-            //Todo : как-то проверять процесс обновления друзей(полученя даннъы из дб), и только при успехе убирать значок обновления
+            //Todo : как-то проверять процесс обновления новостей(полученя даннъы из дб), и только при успехе убирать значок обновления
             newsRefreshLayout.setRefreshing(false);
         });
     }
