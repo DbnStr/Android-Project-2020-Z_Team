@@ -13,7 +13,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -25,6 +24,7 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.google.android.material.textfield.TextInputLayout;
 import com.mapbox.geojson.Feature;
 import com.mapbox.geojson.Point;
 
@@ -39,7 +39,7 @@ public class SaveStoryFragment extends Fragment {
 
     private Point point;
     private TextView place, photoCounter;
-    private EditText description;
+    private TextInputLayout description;
     private Button addPhotoBtn, uploadBtn;
     private LinearLayout photoCounterLayout;
 
@@ -104,7 +104,7 @@ public class SaveStoryFragment extends Fragment {
             point = p;
         });
         viewModel.getDescription().observe(getActivity(), text -> {
-            description.setText(text);
+            description.getEditText().setText(text);
         });
         viewModel.getPlaceName().observe(getActivity(), s -> {
             place.setText(s);
@@ -136,7 +136,7 @@ public class SaveStoryFragment extends Fragment {
     }
 
     private void saveStory() {
-        String descriptionText = description.getText().toString().trim();
+        String descriptionText = description.getEditText().getText().toString().trim();
 
         if (TextUtils.isEmpty(descriptionText)) {
             description.setError("Enter description");
@@ -287,7 +287,7 @@ public class SaveStoryFragment extends Fragment {
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         viewModel.setStoryPoint(point);
-        viewModel.setDescription(description.getText().toString());
+        viewModel.setDescription(description.getEditText().getText().toString());
         viewModel.setImageUris(imageRuis);
         viewModel.setImageCount(photoCount);
     }

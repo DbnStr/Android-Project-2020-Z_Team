@@ -48,13 +48,14 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_margin="16dp"
             android:text="name:" />
 
         <EditText
             android:id="@+id/profile_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="15dp"
+            android:layout_margin="16dp"
             android:hint="Your name"
             android:text="@string/profile"
             android:textColor="@color/primaryDarkColor"
@@ -71,13 +72,14 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_margin="16dp"
             android:text="age:" />
 
         <EditText
             android:id="@+id/profile_age"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="15dp"
+            android:layout_margin="16dp"
             android:hint="Your age"
             android:text="@string/profile"
             android:textColor="@color/primaryDarkColor"
