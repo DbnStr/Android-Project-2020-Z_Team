@@ -15,6 +15,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+
         <service
             android:name=".MessagingService"
             android:exported="false">
@@ -27,7 +28,9 @@
             android:name="com.google.firebase.messaging.default_notification_icon"
             android:resource="@drawable/ic_baseline_wb_sunny_24" />
 
-        <activity android:name=".MainMenuActivity">
+        <activity android:theme="@style/MainTheme" android:name=".map.MapActivity"></activity>
+        <activity android:name=".MainActivity" />
+        <activity android:theme="@style/MainTheme" android:name=".MainMenuActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -36,10 +39,6 @@
         </activity>
         <activity android:name=".RegisterActivity" />
         <activity android:name=".LoginActivity" />
-        <activity
-            android:name=".map.MapActivity"
-            android:parentActivityName=".MainMenuActivity" />
-        <activity android:name=".MainActivity" />
     </application>
 
 </manifest>
