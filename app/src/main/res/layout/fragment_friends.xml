@@ -7,7 +7,7 @@
     <TextView
         android:id="@+id/no_friend_tv"
         android:visibility="invisible"
-        android:text="Add your first friend"
+        android:text="@string/add_your_first_friend"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center_horizontal"
@@ -38,7 +38,7 @@
             android:layout_marginTop="8dp"
             app:startIconDrawable="@drawable/add_friend"
             app:layout_constraintTop_toTopOf="parent"
-            android:hint="Enter User ID">
+            android:hint="@string/enter_user_id">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:layout_width="match_parent"
