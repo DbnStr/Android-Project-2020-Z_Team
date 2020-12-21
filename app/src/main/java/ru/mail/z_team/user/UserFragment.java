@@ -54,7 +54,9 @@ public class UserFragment extends Fragment {
         userImage = view.findViewById(R.id.user_image);
         ageLayout = view.findViewById(R.id.linear_user_age);
 
-        viewModel.updateCurrentDisplayedUser(user.getId());
+        if (user != null) {
+            viewModel.updateCurrentDisplayedUser(user.getId());
+        }
         viewModel.getUserProfileData().observe(getActivity(), u -> {
             user = u;
             showProfile();
