@@ -146,17 +146,20 @@ public class ProfileFragment extends Fragment {
         info.put("age", ageText);
         info.put("name", nameText);
 
-        StorageReference storageReference = FirebaseStorage.getInstance().getReference()
-                .child("ProfileImages/" + user.id + "/" + imageRui.getLastPathSegment());
-        storageReference.putFile(imageRui).addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
-                logger.log("successfully added the image");
-            } else {
-                logger.errorLog("error in adding the image");
-            }
-        });
+        if (imageRui != null) {
+            StorageReference storageReference = FirebaseStorage.getInstance().getReference()
+                    .child("ProfileImages/" + user.id + "/" + imageRui.getLastPathSegment());
+            storageReference.putFile(imageRui).addOnCompleteListener(task -> {
+                if (task.isSuccessful()) {
+                    logger.log("successfully added the image");
+                } else {
+                    logger.errorLog("error in adding the image");
+                }
+            });
 
-        info.put("imageUrl", storageReference.getPath());
+            info.put("imageUrl", storageReference.getPath());
+        }
+
         return info;
     }
 
