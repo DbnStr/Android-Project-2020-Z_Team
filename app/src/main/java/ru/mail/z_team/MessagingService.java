@@ -12,8 +12,6 @@ import androidx.core.app.NotificationCompat;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
-import ru.mail.z_team.map.MapActivity;
-
 public class MessagingService extends FirebaseMessagingService {
 
     private static final int NOTIFICATION_ID = 100;
@@ -48,7 +46,7 @@ public class MessagingService extends FirebaseMessagingService {
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, ApplicationModified.CHANNEL_GO_OUT);
 
-        Intent resultIntent = new Intent(this, MapActivity.class);
+        Intent resultIntent = new Intent(this, MainMenuActivity.class);
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
         stackBuilder.addNextIntentWithParentStack(resultIntent);
         PendingIntent resultPendingIntent =
