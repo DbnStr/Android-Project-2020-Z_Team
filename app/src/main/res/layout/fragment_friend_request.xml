@@ -7,18 +7,26 @@
 
     <TextView
         android:id="@+id/no_friend_requests_tv"
-        android:visibility="invisible"
-        android:text="@string/you_have_no_friend_requests"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:text="@string/you_have_no_friend_requests"
+        android:visibility="invisible"
         app:layout_constraintTop_toBottomOf="@+id/back_to_friends_list_button" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recycler_friend_request"
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/swipe_to_refresh_friend_request"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/back_to_friends_list_button" />
+        app:layout_constraintTop_toBottomOf="@+id/back_to_friends_list_button">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recycler_friend_request"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="parent" />
+
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
     <Button
         android:id="@+id/back_to_friends_list_button"
