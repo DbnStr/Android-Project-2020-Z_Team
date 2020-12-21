@@ -6,7 +6,10 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 
+import java.util.ArrayList;
+
 import ru.mail.z_team.Logger;
+import ru.mail.z_team.user.Friend;
 import ru.mail.z_team.user.User;
 
 public class FriendsViewModel extends AndroidViewModel {
@@ -16,21 +19,35 @@ public class FriendsViewModel extends AndroidViewModel {
 
     private final FriendsRepository repository;
 
-    private final LiveData<User> currentUserData;
+    private final LiveData<ArrayList<Friend>> currentUserFriends;
+    private final LiveData<ArrayList<Friend>> currentUserFriendRequestList;
 
     public FriendsViewModel(@NonNull Application application) {
         super(application);
         logger = new Logger(LOG_TAG, true);
         repository = new FriendsRepository(getApplication());
-        currentUserData = repository.getCurrentUser();
+        currentUserFriends = repository.getCurrentUserFriends();
+        currentUserFriendRequestList = repository.getCurrentUserFriendsRequestList();
     }
 
-    public LiveData<User> getCurrentUser() {
-        return currentUserData;
+    public LiveData<ArrayList<Friend>> getCurrentUserFriends() {
+        return currentUserFriends;
     }
 
-    public void updateCurrentUser() {
-        repository.updateCurrentUser();
+    public LiveData<ArrayList<Friend>> getCurrentUserFriendRequestList() {
+        return currentUserFriendRequestList;
+    }
+
+    public void updateCurrentUserFriends() {
+        repository.updateCurrentUserFriends();
+    }
+
+    public void updateCurrentUserFriendRequestList() {
+        repository.updateCurrentUserFriendRequestList();
+    }
+
+    public void acceptFriendRequest(final int number) {
+        repository.acceptFriendRequest(number);
     }
 
     public void checkUserExistence(final String id) {
@@ -45,11 +62,28 @@ public class FriendsViewModel extends AndroidViewModel {
 
     public void addFriendToCurrentUser(String id) {
         logger.log("addFriend");
-        User currentUser = currentUserData.getValue();
-        if (! currentUser.isThisFriendAdded(id)) {
-            repository.addFriendToCurrentUser(id, currentUser.getFriendsListSize());
+        ArrayList<Friend> friends = currentUserFriends.getValue();
+        if (! isFriendWithIDAdded(friends, id)) {
+            repository.addFriendToCurrentUserAndAddFriendRequestToFriend(id, friends.size());
         } else {
             logger.errorLog("Friend already added");
         }
+    }
+
+    private boolean isFriendWithIDAdded(ArrayList<Friend> friends, String id) {
+        for(Friend friend : friends) {
+            if (friend.id.equals(id)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public void setUser(User user){
+        repository.setCurrentUserProfileData(user);
+    }
+
+    public LiveData<User> getUserProfileData() {
+        return  repository.getCurrentUserProfileData();
     }
 }

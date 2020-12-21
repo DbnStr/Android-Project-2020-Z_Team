@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import com.google.android.material.textfield.TextInputLayout;
@@ -30,8 +31,14 @@ public class SavingWalkFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_saving_walk, container, false);
+
         addWalk = view.findViewById(R.id.add_walk_btn);
         walkTitle = view.findViewById(R.id.walk_title_et);
+
+        if (savedInstanceState != null) {
+            title = savedInstanceState.getString("title");
+        }
+
         addWalk.setOnClickListener(v -> {
             title = walkTitle.getEditText().getText().toString().trim();
             if (title.equals("")) {
@@ -59,5 +66,11 @@ public class SavingWalkFragment extends Fragment {
             }
             getActivity().finish();
         });
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString("title", title);
     }
 }

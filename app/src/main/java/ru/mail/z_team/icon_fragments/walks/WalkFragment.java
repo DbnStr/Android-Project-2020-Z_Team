@@ -1,5 +1,6 @@
 package ru.mail.z_team.icon_fragments.walks;
 
+import android.annotation.SuppressLint;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.PointF;
@@ -31,6 +32,7 @@ import com.mapbox.mapboxsdk.style.layers.SymbolLayer;
 import com.mapbox.mapboxsdk.style.sources.GeoJsonSource;
 import com.mapbox.mapboxsdk.utils.BitmapUtils;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -46,7 +48,7 @@ import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.lineWidth;
 
 public class WalkFragment extends Fragment {
 
-    private final WalkAnnotation walkAnnotation;
+    private WalkAnnotation walkAnnotation;
     private Walk walk;
     private MapView mapView;
 
@@ -58,26 +60,32 @@ public class WalkFragment extends Fragment {
 
     private static final String STORY_TAG = "open story fragment";
     private static final String LOG_TAG = "WalkFragment";
-    private final Logger logger;
-
-    private boolean flag;
+    private Logger logger;
 
     private WalkProfileViewModel viewModel;
 
+    @SuppressLint("SimpleDateFormat")
+    SimpleDateFormat sdf =
+            new SimpleDateFormat("EEE, MMM d, yyyy hh:mm:ss a z");
+
+    public WalkFragment() { }
+
     public WalkFragment(WalkAnnotation walkAnnotation) {
         this.walkAnnotation = walkAnnotation;
-        logger = new Logger(LOG_TAG, true);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        logger = new Logger(LOG_TAG, true);
+
         logger.log("onCreateView");
         Mapbox.getInstance(getActivity(), getString(R.string.mapbox_access_token));
         View view = inflater.inflate(R.layout.fragment_walk, container, false);
 
         mapView = view.findViewById(R.id.walk_map_view);
         mapView.onCreate(savedInstanceState);
+
         return view;
     }
 
@@ -86,6 +94,19 @@ public class WalkFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         viewModel = new ViewModelProvider(this).get(WalkProfileViewModel.class);
+
+        if (savedInstanceState != null) {
+            viewModel.getAnnotation().observe(getActivity(), annotation -> {
+                walkAnnotation = annotation;
+                initWalk(walkAnnotation);
+            });
+        }
+        else {
+            initWalk(walkAnnotation);
+        }
+    }
+
+    private void initWalk(WalkAnnotation walkAnnotation) {
         viewModel.updateCurrentDisplayedWalk(walkAnnotation);
         viewModel.getCurrentDisplayedWalk().observe(getActivity(), walk -> {
             if (walk != null) {
@@ -98,26 +119,10 @@ public class WalkFragment extends Fragment {
     private void onMapCreated() {
         mapView.getMapAsync(mapboxMap -> mapboxMap.setStyle(Style.MAPBOX_STREETS, style -> {
 
-            ArrayList<Point> routePoints = new ArrayList<>();
-            for (Feature feature : walk.getMap().features()) {
-                if (feature.geometry() instanceof LineString) {
-                    routePoints = (ArrayList<Point>) ((LineString) feature
-                            .geometry()).coordinates();
-                }
-            }
-
-            ArrayList<LatLng> routeLatLngs = new ArrayList<>();
-            for (Point point : routePoints) {
-                routeLatLngs.add(new LatLng(point.latitude(), point.longitude()));
-            }
-            LatLngBounds latLngBounds = new LatLngBounds.Builder()
-                    .includes(routeLatLngs)
-                    .build();
-            mapboxMap.animateCamera(CameraUpdateFactory.newLatLngBounds(latLngBounds, 10));
+            animateCamera(mapboxMap);
 
             initLayers(style);
             showWalk(mapboxMap);
-            addMarkers(mapboxMap);
 
             mapboxMap.addOnMapClickListener(point -> {
                 final PointF pixel = mapboxMap.getProjection().toScreenLocation(point);
@@ -128,9 +133,15 @@ public class WalkFragment extends Fragment {
                     for (Story story : walk.getStories()) {
                         logger.log("ids: " + features.get(0).getStringProperty("id") +  " vs " + story.getId());
                         if (features.get(0).getStringProperty("id").equals(story.getId())){
+                            ArrayList<Story>  stories = walk.getStories();
+                            Bundle bundle = new Bundle();
+                            bundle.putInt("numberInStoryList", stories.indexOf(story));
+                            bundle.putString("dateOfWalk", sdf.format(walk.getDate()));
+                            StoryFragment storyFragment = new StoryFragment();
+                            storyFragment.setArguments(bundle);
                             getActivity().getSupportFragmentManager()
                                     .beginTransaction()
-                                    .replace(R.id.current_menu_container, new StoryFragment(story), STORY_TAG)
+                                    .replace(R.id.current_menu_container, storyFragment, STORY_TAG)
                                     .addToBackStack(null)
                                     .commit();
                             break;
@@ -142,14 +153,23 @@ public class WalkFragment extends Fragment {
         }));
     }
 
-    private void addMarkers(MapboxMap mapboxMap) {
-        mapboxMap.getStyle(style -> {
-            GeoJsonSource source = style.getSourceAs(SYMBOL_SOURCE_ID);
-
-            if (source != null) {
-                source.setGeoJson(walk.getMap());
+    private void animateCamera(MapboxMap mapboxMap) {
+        ArrayList<Point> routePoints = new ArrayList<>();
+        for (Feature feature : walk.getMap().features()) {
+            if (feature.geometry() instanceof LineString) {
+                routePoints = (ArrayList<Point>) ((LineString) feature
+                        .geometry()).coordinates();
             }
-        });
+        }
+
+        ArrayList<LatLng> routeLatLngs = new ArrayList<>();
+        for (Point point : routePoints) {
+            routeLatLngs.add(new LatLng(point.latitude(), point.longitude()));
+        }
+        LatLngBounds latLngBounds = new LatLngBounds.Builder()
+                .includes(routeLatLngs)
+                .build();
+        mapboxMap.animateCamera(CameraUpdateFactory.newLatLngBounds(latLngBounds, 10));
     }
 
     private void initLayers(@NonNull Style loadedMapStyle) {
@@ -178,10 +198,16 @@ public class WalkFragment extends Fragment {
     private void showWalk(MapboxMap mapboxMap) {
         if (mapboxMap != null) {
             mapboxMap.getStyle(style -> {
-                GeoJsonSource source = style.getSourceAs(ROUTE_SOURCE_ID);
+                GeoJsonSource routeSource = style.getSourceAs(ROUTE_SOURCE_ID);
 
-                if (source != null) {
-                    source.setGeoJson(walk.getMap());
+                if (routeSource != null) {
+                    routeSource.setGeoJson(walk.getMap());
+                }
+
+                GeoJsonSource symbolSource = style.getSourceAs(SYMBOL_SOURCE_ID);
+
+                if (symbolSource != null) {
+                    symbolSource.setGeoJson(walk.getMap());
                 }
             });
         }
@@ -215,18 +241,27 @@ public class WalkFragment extends Fragment {
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        mapView.onSaveInstanceState(outState);
+        if (mapView != null) {
+            mapView.onSaveInstanceState(outState);
+        }
+        if (viewModel != null) {
+            viewModel.setAnnotation(walkAnnotation);
+        }
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        mapView.onDestroy();
+        if (mapView != null){
+            mapView.onDestroy();
+        }
     }
 
     @Override
     public void onLowMemory() {
         super.onLowMemory();
-        mapView.onLowMemory();
+        if (mapView != null) {
+            mapView.onLowMemory();
+        }
     }
 }

@@ -7,7 +7,7 @@
     <string name="unknown_error">Unknown error :(</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="news">NEWS</string>
-    <string name="walks">WALKS</string>
+    <string name="walkAnnotations">WALKS</string>
     <string name="friends">FRIENDS</string>
     <string name="profile">PROFILE</string>
     <string name="some_menu">SOME MENU</string>
@@ -29,4 +29,8 @@
     <string name="name_text">NAME</string>
     <string name="age_text">AGE</string>
     <string name="save_changes">SAVE CHANGES</string>
+    <string name="friend_request">Friend Request</string>
+    <string name="friends_list">friends list</string>
+    <string name="you_have_no_friend_requests">You have no friend requests</string>
+    <string name="add_friend">Add friend</string>
 </resources>

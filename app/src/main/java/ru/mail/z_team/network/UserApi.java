@@ -1,9 +1,11 @@
 package ru.mail.z_team.network;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 import retrofit2.Call;
 import retrofit2.http.Body;
+import retrofit2.http.DELETE;
 import retrofit2.http.GET;
 import retrofit2.http.PATCH;
 import retrofit2.http.PUT;
@@ -42,31 +44,31 @@ public interface UserApi {
         }
     }
 
-    class WalkInfo {
+    class WalkAnnotation {
         public String title;
-        public String author;
+        public String authorName;
+        public String authorId;
         public String date;
-        public String id;
 
-        public WalkInfo(String title, String date, String author, String id) {
+        public WalkAnnotation(String title, String date, String authorName, String authorId) {
             this.title = title;
             this.date = date;
-            this.author = author;
-            this.id = id;
+            this.authorName = authorName;
+            this.authorId = authorId;
         }
     }
 
     class Walk {
         public String title;
-        public String author;
+        public String authorName;
         public String date;
         public String walk;
         public ArrayList<Story> stories;
 
-        public Walk(String title, String date, String author, String walk, ArrayList<Story> stories) {
+        public Walk(String title, String date, String authorName, String walk, ArrayList<Story> stories) {
             this.title = title;
             this.date = date;
-            this.author = author;
+            this.authorName = authorName;
             this.walk = walk;
             this.stories = stories;
         }
@@ -87,23 +89,29 @@ public interface UserApi {
     @GET("/Users/{id}.json")
     Call<User> getUserById(@Path("id") String id);
 
-    @GET("/WalkInfo/{id}.json")
-    Call<ArrayList<WalkInfo>> getUserWalksById(@Path("id") String id);
+    @GET("/WalkAnnotation/{id}.json")
+    Call<ArrayList<WalkAnnotation>> getUserWalksAnnotationsById(@Path("id") String id);
 
     @GET("/WalkMaps/{id}/{date}.json")
     Call<Walk> getWalkByDateAndId(@Path("id") String id, @Path("date") String date);
 
+    @GET("/WalkMaps/{id}.json")
+    Call<Map<String,Walk>> getAllWalks(@Path("id") String id);
+
     @GET("/FriendsIds/{id}.json")
     Call<ArrayList<String>> getUserFriendsIds(@Path("id") String id);
+
+    @GET("/Users/{id}/friends.json")
+    Call<ArrayList<Friend>> getUserFriendsById(@Path("id") String id);
 
     @PUT("/Users/{id}.json")
     Call<User> addUser(@Path("id") String id, @Body User user);
 
-    @PUT("/WalkInfo/{id}/{num}.json")
-    Call<WalkInfo> addWalkInfo(@Path("id") String id, @Path("num") int num, @Body WalkInfo walk);
+    @PUT("/WalkAnnotation/{id}/{num}.json")
+    Call<WalkAnnotation> addWalkInfo(@Path("id") String id, @Path("num") int num, @Body WalkAnnotation walk);
 
-    @PUT("/WalkMaps/{id}/{num}.json")
-    Call<Walk> addWalk(@Path("id") String id, @Path("num") String num, @Body Walk walk);
+    @PUT("/WalkMaps/{id}/{date}.json")
+    Call<Walk> addWalk(@Path("id") String id, @Path("date") String date, @Body Walk walk);
 
     @PUT("/FriendsIds/{id}/{num}.json")
     Call<String> addFriendId(@Path("id") String id, @Path("num") int num, @Body String friendId);
@@ -111,6 +119,21 @@ public interface UserApi {
     @PUT("/Users/{id}/friends/{num}.json")
     Call<Friend> addFriend(@Path("id") String id, @Path("num") int num, @Body Friend friend);
 
+    @PUT("/FriendRequest/{id}/{num}.json")
+    Call<Friend> addFriendToFriendsRequest(@Path("id") String id, @Path("num") int num, @Body Friend friend);
+
+    @GET("/FriendRequest/{id}/{num}.json")
+    Call<Friend> getFriendsRequest(@Path("id") String id, @Path("num") int num);
+
+    @DELETE("/FriendRequest/{id}/{num}.json")
+    Call<Friend> deleteFriendRequest(@Path("id") String id, @Path("num") int num);
+
+    @GET("/FriendRequest/{id}.json")
+    Call<ArrayList<Friend>> getFriendRequestList(@Path("id") String id);
+
     @PATCH("/Users/{id}.json")
     Call<User> changeUserInformation(@Path("id") String id, @Body User user);
+
+    @GET("WalkMaps/{id}/{date}/stories/{number}.json")
+    Call<Story> getStory(@Path("id") String userId, @Path("date") String date, @Path("number") int number);
 }
