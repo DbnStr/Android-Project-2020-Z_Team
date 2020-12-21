@@ -43,8 +43,8 @@ dependencies {
 
     implementation 'com.google.firebase:firebase-auth:20.0.1'
     implementation 'com.google.firebase:firebase-storage:19.2.0'
-    implementation "androidx.lifecycle:lifecycle-extensions:2.2.0"
     implementation 'com.google.firebase:firebase-database:19.5.1'
+    implementation 'com.google.firebase:firebase-messaging'
 
     implementation 'com.mapbox.mapboxsdk:mapbox-android-sdk:9.0.0'
     implementation 'com.mapbox.mapboxsdk:mapbox-sdk-services:5.6.0'

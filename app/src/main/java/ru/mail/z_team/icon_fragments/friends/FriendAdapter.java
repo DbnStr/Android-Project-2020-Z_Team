@@ -48,12 +48,13 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendViewHolder> {
         holder.friend.setOnClickListener(v -> {
             Friend friend = friends.get(position);
             if (context instanceof MainMenuActivity){
+
                 User user = new User(
                         friend.name,
                         14,
-                        friend.id,
-                        new ArrayList<>()
-                );
+                        new ArrayList<>(),
+                        friend.id
+                        );
                 ((MainMenuActivity) context).openUserProfile(user);
             }
         });
@@ -66,6 +67,6 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendViewHolder> {
 
     public void setFriends(ArrayList<Friend> users) {
         friends = users;
-        this.notifyItemRangeChanged(0, friends.size());
+        this.notifyDataSetChanged();
     }
 }

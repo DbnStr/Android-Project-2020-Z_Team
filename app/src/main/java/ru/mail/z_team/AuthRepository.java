@@ -9,7 +9,6 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
@@ -51,8 +50,8 @@ public class AuthRepository implements Executor{
         mAuthProgress = new MutableLiveData<>(new Pair<>(AuthProgress.IN_PROGRESS, ""));
         mAuth = FirebaseAuth.getInstance();
         mAuth.signInWithEmailAndPassword(email, password)
-                .addOnCompleteListener((Executor) this, new OnCompleteAuthProgressListener())
-                .addOnFailureListener((OnFailureListener) e -> {
+                .addOnCompleteListener(this, new OnCompleteAuthProgressListener())
+                .addOnFailureListener(e -> {
                     logger.errorLog(e.getMessage());
                     mAuthProgress.postValue(new Pair<>(AuthProgress.ERROR, e.getMessage()));
                 });
@@ -74,7 +73,9 @@ public class AuthRepository implements Executor{
     public void addNewUser() {
         String id = FirebaseAuth.getInstance().getUid();
         String email = FirebaseAuth.getInstance().getCurrentUser().getEmail();
-        userApi.addUser(id, new UserApi.User(id, email, ""))
+        UserApi.User user = new UserApi.User(id, email, "");
+        user.imageUrl = "no Image";
+        userApi.addUser(id, user)
                 .enqueue(new Callback<UserApi.User>() {
             @Override
             public void onResponse(Call<UserApi.User> call, Response<UserApi.User> response) {
@@ -97,22 +98,14 @@ public class AuthRepository implements Executor{
 
     public LiveData<RestoreProgress> restorePassword(String email) {
         final MutableLiveData<RestoreProgress> mRestoreProgress = new MutableLiveData<>(RestoreProgress.IN_PROGRESS);
-        mAuth.sendPasswordResetEmail(email).addOnCompleteListener(new OnCompleteListener<Void>() {
-            @Override
-            public void onComplete(@NonNull Task<Void> task) {
-                if (task.isSuccessful()){
-                    mRestoreProgress.postValue(RestoreProgress.OK);
-                }
-                else{
-                    mRestoreProgress.postValue(RestoreProgress.FAILED);
-                }
+        mAuth.sendPasswordResetEmail(email).addOnCompleteListener(task -> {
+            if (task.isSuccessful()){
+                mRestoreProgress.postValue(RestoreProgress.OK);
             }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                mRestoreProgress.postValue(RestoreProgress.ERROR);
+            else{
+                mRestoreProgress.postValue(RestoreProgress.FAILED);
             }
-        });
+        }).addOnFailureListener(e -> mRestoreProgress.postValue(RestoreProgress.ERROR));
         return  mRestoreProgress;
     }
 

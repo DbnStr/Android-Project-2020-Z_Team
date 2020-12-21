@@ -30,7 +30,8 @@ public class FriendsFragment extends Fragment {
     private Logger logger;
 
     private FriendAdapter adapter;
-    FriendsViewModel viewModel;
+
+    private FriendsViewModel viewModel;
 
     private Button addFriendBtn;
     private Button friendRequestBtn;

@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">Android-Project-2020-Z_Team</string>
     <string name="mapbox_access_token">sk.eyJ1Ijoiei10ZWFtIiwiYSI6ImNraWFsamU3YTBqdngyc3JrOTNxNXoxcHQifQ.6qIU-PkG7o_-WcuctceK1g</string>
+    <string name="base_storage_url">"gs://android-project-2020-zteam.appspot.com"</string>
     <string name="authUI">Auth</string>
     <string name="sign_in_cancelled">Sign In canceled</string>
     <string name="no_internet_connection">Interneta netu</string>
@@ -33,4 +34,10 @@
     <string name="friends_list">friends list</string>
     <string name="you_have_no_friend_requests">You have no friend requests</string>
     <string name="add_friend">Add friend</string>
+    <string name="upload">Upload</string>
+    <string name="zero_int">0</string>
+    <string name="channel_go_out_name">Go Out channel</string>
+    <string name="enter_user_id">Enter User ID</string>
+    <string name="add_your_first_friend">Add your first friend</string>
+    <string name="anonymous">Anonymous</string>
 </resources>

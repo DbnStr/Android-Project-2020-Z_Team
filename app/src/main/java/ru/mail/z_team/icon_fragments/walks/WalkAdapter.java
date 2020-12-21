@@ -49,7 +49,7 @@ public class WalkAdapter extends RecyclerView.Adapter<WalksViewHolder> {
 
         holder.walkBody.setOnClickListener(v -> {
             logger.log("clicked on holder.body");
-            if (context instanceof MainMenuActivity){
+            if (context instanceof MainMenuActivity) {
                 ((MainMenuActivity) context).openWalkProfile(walks.get(position));
             }
         });
@@ -62,6 +62,6 @@ public class WalkAdapter extends RecyclerView.Adapter<WalksViewHolder> {
 
     public void setWalks(ArrayList<WalkAnnotation> walks) {
         this.walks = walks;
-        this.notifyItemRangeChanged(0, this.walks.size());
+        this.notifyDataSetChanged();
     }
 }

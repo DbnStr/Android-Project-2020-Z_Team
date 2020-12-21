@@ -290,4 +290,18 @@ public class FriendsRepository {
             }
         });
     }
+
+    public void updateCurrentUserProfileData(String id) {
+        userApi.getUserById(id).enqueue(new DatabaseCallback<UserApi.User>(LOG_TAG) {
+            @Override
+            public void onNullResponse(Response<UserApi.User> response) {
+                logger.errorLog("failed to load user data");
+            }
+
+            @Override
+            public void onSuccessResponse(Response<UserApi.User> response) {
+                currentUserProfileData.postValue(Transformer.transformToUser(response.body()));
+            }
+        });
+    }
 }

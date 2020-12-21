@@ -35,8 +35,6 @@ public class StoryFragment extends Fragment {
 
     private Logger logger;
 
-    private static final String BASE_URL = "gs://android-project-2020-zteam.appspot.com";
-
     private String dateOfWalk;
     private int numberInStoryList;
 
@@ -58,7 +56,7 @@ public class StoryFragment extends Fragment {
                 dateOfWalk = getArguments().getString("dateOfWalk");
                 numberInStoryList = getArguments().getInt("numberInStoryList");
                 Log.d("StoryFragment" , "dateOfWalk" + dateOfWalk);
-                Log.d("StoryFrgment", Integer.toString(numberInStoryList) + "ds");
+                Log.d("StoryFrgment", numberInStoryList + "ds");
             }
         }
     }
@@ -97,7 +95,7 @@ public class StoryFragment extends Fragment {
             for (String url : story.getUrlImages()) {
                 ImageView imageView = new ImageView(getActivity());
                 gallery.addView(imageView);
-                StorageReference reference = FirebaseStorage.getInstance().getReferenceFromUrl(BASE_URL + url);
+                StorageReference reference = FirebaseStorage.getInstance().getReferenceFromUrl(getString(R.string.base_storage_url) + url);
                 reference.getDownloadUrl().addOnSuccessListener(uri -> Picasso.get()
                         .load(uri)
                         .placeholder(ContextCompat.getDrawable(getActivity(), R.drawable.ic_baseline_photo_24))

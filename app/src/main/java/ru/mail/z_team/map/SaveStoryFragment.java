@@ -128,8 +128,6 @@ public class SaveStoryFragment extends Fragment {
 
         uploadBtn.setOnClickListener(v -> {
             saveStory();
-
-            getActivity().getSupportFragmentManager().popBackStack();
         });
 
         addPhotoBtn.setOnClickListener(v -> {
@@ -164,6 +162,8 @@ public class SaveStoryFragment extends Fragment {
         walkPointGeoJSON.addStringProperty("id", timeStamp);
         walkPointGeoJSON.addStringProperty("placeName", place.getText().toString());
         ((MapActivity) getActivity()).addToWalkGeoJSON(walkPointGeoJSON);
+
+        getActivity().getSupportFragmentManager().popBackStack();
     }
 
     private void showImagePickDialog() {
