@@ -13,12 +13,16 @@
         android:layout_height="match_parent"
         android:gravity="center_horizontal">
 
-        <ImageView
+        <de.hdodenhof.circleimageview.CircleImageView
+            xmlns:app="http://schemas.android.com/apk/res-auto"
             android:id="@+id/user_image"
             android:layout_width="200dp"
             android:layout_height="200dp"
+            android:src="@drawable/user_icon"
+            app:civ_border_width="10dp"
+            app:civ_border_overlay="true"
             android:layout_margin="25dp"
-            android:src="@drawable/user_icon" />
+            app:civ_border_color="@color/primaryDarkColor"/>
     </RelativeLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout

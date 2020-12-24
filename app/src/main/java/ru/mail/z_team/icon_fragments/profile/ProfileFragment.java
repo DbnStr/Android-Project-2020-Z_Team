@@ -174,6 +174,7 @@ public class ProfileFragment extends Fragment {
                     .getReferenceFromUrl(getString(R.string.base_storage_url) + user.getImageUrl());
             reference.getDownloadUrl().addOnSuccessListener(uri -> Picasso.get()
                     .load(uri)
+                    .noFade()
                     .resize(image.getHeight(), image.getWidth())
                     .centerCrop()
                     .placeholder(ContextCompat.getDrawable(getActivity(), R.drawable.ic_baseline_photo_24))
