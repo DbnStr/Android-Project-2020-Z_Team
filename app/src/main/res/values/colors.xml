@@ -1,12 +1,12 @@
 <!--?xml version="1.0" encoding="UTF-8"?-->
 <resources>
-  <color name="primaryColor">#18227c</color>
-  <color name="primaryLightColor">#81d4fa</color>
-  <color name="primaryDarkColor">#00004f</color>
-  <color name="secondaryColor">#bf360c</color>
-  <color name="secondaryLightColor">#f9683a</color>
-  <color name="secondaryDarkColor">#870000</color>
-  <color name="primaryTextColor">#ffffff</color>
-  <color name="secondaryTextColor">#ffffff</color>
-  <color name="card_back">#F4F3F3</color>
+    <color name="primaryColor">#009688</color>
+    <color name="primaryLightColor">#B2DFDB</color>
+    <color name="primaryDarkColor">#00796B</color>
+    <color name="secondaryColor">#8BC34A</color>
+    <color name="secondaryLightColor">#757575</color>
+    <color name="secondaryDarkColor">#212121</color>
+    <color name="primaryTextColor">#FFFFFF</color>
+    <color name="secondaryTextColor">#BDBDBD</color>
+    <color name="card_back">#F4F3F3</color>
 </resources>
