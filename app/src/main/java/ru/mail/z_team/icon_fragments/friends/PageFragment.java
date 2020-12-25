@@ -1,6 +1,7 @@
 package ru.mail.z_team.icon_fragments.friends;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,7 +21,7 @@ import ru.mail.z_team.icon_fragments.friends.friend_request.FriendRequestAdapter
 
 public class PageFragment extends Fragment {
     private static final String LOG_TAG = "PageFragment";
-    private Logger logger;
+    private final Logger logger = new Logger(LOG_TAG, true);
 
     private FriendAdapter adapter;
 
@@ -39,6 +40,7 @@ public class PageFragment extends Fragment {
     }
 
     public static PageFragment newInstance(int page) {
+        Log.d("PageFragment", "newInstance");
         Bundle args = new Bundle();
         args.putInt(ARG_PAGE, page);
         PageFragment fragment = new PageFragment();
@@ -48,7 +50,6 @@ public class PageFragment extends Fragment {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        logger = new Logger(LOG_TAG, true);
         logger.log("OnCreate");
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
@@ -126,8 +127,11 @@ public class PageFragment extends Fragment {
                 friendsRefreshLayout.setRefreshing(false);
             });
         }
+    }
 
-
-
+    @Override
+    public void onResume() {
+        logger.log("onResume");
+        super.onResume();
     }
 }

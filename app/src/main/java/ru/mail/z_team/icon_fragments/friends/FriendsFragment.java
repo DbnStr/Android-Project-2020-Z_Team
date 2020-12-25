@@ -24,7 +24,11 @@ public class FriendsFragment extends Fragment {
     private static final String LOG_TAG = "FriendsFragment";
     private Logger logger;
 
+    private static final String PAGE_ARG = "current-page-number";
+
     private FriendsViewModel viewModel;
+
+    private ViewPager viewPager;
 
     private Button addFriendBtn;
     private TextInputLayout fieldAddFriend;
@@ -45,13 +49,19 @@ public class FriendsFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_friends, container, false);
 
+        logger.log("onCreateView");
+
         addFriendBtn = view.findViewById(R.id.add_friend_by_id_btn);
         fieldAddFriend = view.findViewById(R.id.add_friend_by_id_et);
         this.container = R.id.current_menu_container;
 
-        ViewPager viewPager = view.findViewById(R.id.viewpager);
+        viewPager = view.findViewById(R.id.viewpager);
         viewPager.setAdapter(
-                new FriendsPagerAdapter(getActivity().getSupportFragmentManager(), 0));
+                new FriendsPagerAdapter(getChildFragmentManager(), 0));
+
+        if (savedInstanceState != null) {
+            viewPager.setCurrentItem(savedInstanceState.getInt(PAGE_ARG));
+        }
 
         TabLayout tabLayout = view.findViewById(R.id.tabs_friends);
         tabLayout.setupWithViewPager(viewPager);
@@ -97,5 +107,18 @@ public class FriendsFragment extends Fragment {
             }
             viewModel.userExists().removeObservers(getActivity());
         }
+    }
+
+    @Override
+    public void onResume() {
+        logger.log("onResume");
+        viewPager.setCurrentItem(0);
+        super.onResume();
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        outState.putInt(PAGE_ARG, viewPager.getCurrentItem());
+        super.onSaveInstanceState(outState);
     }
 }

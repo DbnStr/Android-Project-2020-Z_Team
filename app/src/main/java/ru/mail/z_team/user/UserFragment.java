@@ -9,7 +9,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -86,7 +85,7 @@ public class UserFragment extends Fragment {
                     .load(uri)
                     .resize(userImage.getHeight(), userImage.getWidth())
                     .centerCrop()
-                    .placeholder(ContextCompat.getDrawable(getActivity(), R.drawable.ic_baseline_photo_24))
+//                    .placeholder(ContextCompat.getDrawable(getActivity(), R.drawable.ic_baseline_photo_24))
                     .into(userImage)).addOnFailureListener(e -> logger.errorLog(e.getMessage()));
         }
     }

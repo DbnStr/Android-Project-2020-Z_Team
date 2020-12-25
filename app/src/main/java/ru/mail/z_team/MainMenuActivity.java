@@ -82,7 +82,7 @@ public class MainMenuActivity extends AppCompatActivity implements BottomNavigat
                 .beginTransaction()
                 .replace(container, new UserFragment(user), USER_TAG)
                 .addToBackStack(null)
-                .commitAllowingStateLoss();
+                .commit();
     }
 
     public void openWalkProfile(WalkAnnotation walk) {
