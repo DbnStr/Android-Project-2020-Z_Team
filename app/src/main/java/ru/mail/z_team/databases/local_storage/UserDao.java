@@ -9,8 +9,8 @@ import androidx.room.Transaction;
 import java.util.List;
 
 import ru.mail.z_team.databases.DatabaseUser;
+import ru.mail.z_team.databases.DatabaseFriend;
 import ru.mail.z_team.databases.local_storage.friend.Friend;
-import ru.mail.z_team.databases.local_storage.friend.UserFriend;
 import ru.mail.z_team.databases.local_storage.story.Story;
 import ru.mail.z_team.databases.local_storage.story.UserStory;
 import ru.mail.z_team.databases.local_storage.walk.UserWalk;
@@ -81,6 +81,13 @@ public abstract class UserDao {
     }
 
     @Transaction
+    public DatabaseUser getUserById(String id) {
+        DatabaseUser result = getUserWithoutFriendsById(id);
+        result.friends = getUserFriends(id);
+        return result;
+    }
+
+    @Transaction
     public UserWalk getUserWalkWithStories(String walkId, String walkDate) {
         UserWalk userWalk = getUserWalk(walkId, walkDate);
         userWalk.stories = getWalkStoriesByDate(walkDate);
@@ -88,16 +95,13 @@ public abstract class UserDao {
     }
 
     @Query("SELECT * FROM DatabaseUser WHERE id = :id")
-    public abstract DatabaseUser getById(String id);
+    public abstract DatabaseUser getUserWithoutFriendsById(String id);
 
-    @Query("SELECT friend.id, friend.friend_name AS fr_name " + "FROM friend, DatabaseUser " + "WHERE friend.current_user_id == DatabaseUser.id")
-    public abstract List<UserFriend> getUserFriends();
+    @Query("SELECT friend.id, friend.friend_name AS fr_name " + "FROM friend " + "WHERE friend.current_user_id == :id")
+    public abstract List<DatabaseFriend> getUserFriends(String id);
 
     @Query("SELECT WalkAnnotation.title, WalkAnnotation.authorName, WalkAnnotation.authorId, WalkAnnotation.date " + "FROM WalkAnnotation, DatabaseUser " + "WHERE WalkAnnotation.authorId == DatabaseUser.id")
     public abstract List<UserWalkAnnotation> getUserWalksAnnotations();
-
-    @Query("SELECT Walk.title, Walk.authorName, Walk.authorId, Walk.date, Walk.walk " + "FROM Walk, DatabaseUser " + "WHERE Walk.authorId == DatabaseUser.id")
-    public abstract List<UserWalk> getUserWalks();
 
     @Query("SELECT * FROM walk WHERE authorId == :id AND date == :date")
     public abstract UserWalk getUserWalk(String id, String date);

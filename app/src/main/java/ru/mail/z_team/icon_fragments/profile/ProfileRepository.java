@@ -19,7 +19,7 @@ import ru.mail.z_team.icon_fragments.DatabaseNetworkControlExecutor;
 import ru.mail.z_team.icon_fragments.Transformer;
 import ru.mail.z_team.databases.local_storage.LocalDatabase;
 import ru.mail.z_team.databases.local_storage.UserDao;
-import ru.mail.z_team.databases.local_storage.friend.UserFriend;
+import ru.mail.z_team.databases.DatabaseFriend;
 import ru.mail.z_team.databases.network.DatabaseApiRepository;
 import ru.mail.z_team.databases.network.UserApi;
 import ru.mail.z_team.user.Friend;
@@ -98,13 +98,13 @@ public class ProfileRepository {
                 userDao.insert(Transformer.transformToLocalDBFriend(friend, user.id));
             }
 
-            List<UserFriend> fr = userDao.getUserFriends();
+            List<DatabaseFriend> fr = userDao.getUserFriends(currentUser.id);
             logger.log(fr.get(0).name);
         });
     }
 
     private void getUserFromLocalDB(final String userID) {
-        localDatabase.databaseWriteExecutor.execute(() -> currentUserData.postValue(Transformer.transformToUser(userDao.getById(userID))));
+        localDatabase.databaseWriteExecutor.execute(() -> currentUserData.postValue(Transformer.transformToUser(userDao.getUserById(userID))));
     }
 
     public void changeCurrentUserInformation(User newInformation) {

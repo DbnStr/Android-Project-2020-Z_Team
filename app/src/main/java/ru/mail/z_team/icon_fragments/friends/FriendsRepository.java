@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import retrofit2.Response;
 import ru.mail.z_team.ApplicationModified;
 import ru.mail.z_team.Logger;
+import ru.mail.z_team.databases.DatabaseFriend;
 import ru.mail.z_team.databases.DatabaseUser;
 import ru.mail.z_team.icon_fragments.DatabaseCallback;
 import ru.mail.z_team.icon_fragments.DatabaseNetworkControlExecutor;
@@ -107,21 +108,22 @@ public class FriendsRepository {
     }
 
     private void getCurrentUserFriendsFromLocalDB() {
+        String currentUserId = FirebaseAuth.getInstance().getUid();
         localDatabase.databaseWriteExecutor.execute(() ->
-                currentUserFriends.postValue(Transformer.transformToFriendAll(userDao.getUserFriends())));
+                currentUserFriends.postValue(Transformer.transformToFriendAll(userDao.getUserFriends(currentUserId))));
     }
 
     public void acceptFriendRequest(int number) {
         String currentUserId = FirebaseAuth.getInstance().getUid();
-        userApi.getFriendsRequest(currentUserId, number).enqueue(new DatabaseCallback<UserApi.Friend>(LOG_TAG) {
+        userApi.getFriendsRequest(currentUserId, number).enqueue(new DatabaseCallback<DatabaseFriend>(LOG_TAG) {
             @Override
-            public void onNullResponse(Response<UserApi.Friend> response) {
+            public void onNullResponse(Response<DatabaseFriend> response) {
                 logger.log("Friend request no longer exists");
             }
 
             @Override
-            public void onSuccessResponse(Response<UserApi.Friend> response) {
-                UserApi.Friend newFriend = response.body();
+            public void onSuccessResponse(Response<DatabaseFriend> response) {
+                DatabaseFriend newFriend = response.body();
                 addFriendToUserWithoutNumber(currentUserId, newFriend);
 
                 deleteFriendRequest(currentUserId, number);
@@ -129,16 +131,16 @@ public class FriendsRepository {
         });
     }
 
-    private void addFriendToUserWithoutNumber(final String userId, final UserApi.Friend newFriend) {
-        userApi.getUserFriendsById(userId).enqueue(new DatabaseCallback<ArrayList<UserApi.Friend>>(LOG_TAG) {
+    private void addFriendToUserWithoutNumber(final String userId, final DatabaseFriend newFriend) {
+        userApi.getUserFriendsById(userId).enqueue(new DatabaseCallback<ArrayList<DatabaseFriend>>(LOG_TAG) {
             @Override
-            public void onNullResponse(Response<ArrayList<UserApi.Friend>> response) {
+            public void onNullResponse(Response<ArrayList<DatabaseFriend>> response) {
                 addFriendToUserByNumberOnFriendList(userId, 0, newFriend);
                 updateCurrentUserFriends();
             }
 
             @Override
-            public void onSuccessResponse(Response<ArrayList<UserApi.Friend>> response) {
+            public void onSuccessResponse(Response<ArrayList<DatabaseFriend>> response) {
                 addFriendToUserByNumberOnFriendList(userId, response.body().size(), newFriend);
                 updateCurrentUserFriends();
             }
@@ -146,15 +148,15 @@ public class FriendsRepository {
     }
 
     private void deleteFriendRequest(final String userId, final int numberOnList) {
-        userApi.deleteFriendRequest(userId, numberOnList).enqueue(new DatabaseCallback<UserApi.Friend>(LOG_TAG) {
+        userApi.deleteFriendRequest(userId, numberOnList).enqueue(new DatabaseCallback<DatabaseFriend>(LOG_TAG) {
             @Override
-            public void onNullResponse(Response<UserApi.Friend> response) {
+            public void onNullResponse(Response<DatabaseFriend> response) {
                 logger.log("Successfully delete friend request");
                 updateCurrentUserFriendRequestList();
             }
 
             @Override
-            public void onSuccessResponse(Response<UserApi.Friend> response) {
+            public void onSuccessResponse(Response<DatabaseFriend> response) {
 
             }
         });
@@ -163,16 +165,16 @@ public class FriendsRepository {
     public void updateCurrentUserFriendRequestList() {
         final String currentUserId = FirebaseAuth.getInstance().getUid();
 
-        userApi.getFriendRequestList(currentUserId).enqueue(new DatabaseCallback<ArrayList<UserApi.Friend>>(LOG_TAG) {
+        userApi.getFriendRequestList(currentUserId).enqueue(new DatabaseCallback<ArrayList<DatabaseFriend>>(LOG_TAG) {
             @Override
-            public void onNullResponse(Response<ArrayList<UserApi.Friend>> response) {
+            public void onNullResponse(Response<ArrayList<DatabaseFriend>> response) {
                 logger.log("the current user has no new friend requests");
 
                 currentUserFriendRequestList.postValue(new ArrayList<>());
             }
 
             @Override
-            public void onSuccessResponse(Response<ArrayList<UserApi.Friend>> response) {
+            public void onSuccessResponse(Response<ArrayList<DatabaseFriend>> response) {
                 logger.log("the current user has " + response.body().size() + " friend requests");
 
                 currentUserFriendRequestList.postValue(Transformer.transformToFriendAll(response.body()));
@@ -213,7 +215,7 @@ public class FriendsRepository {
 
             @Override
             public void onSuccessResponse(Response<DatabaseUser> response) {
-                UserApi.Friend friend = Transformer.transformToUserApiFriend(response.body());
+                DatabaseFriend friend = Transformer.transformToUserApiFriend(response.body());
 
                 userApi.getUserById(curUserId).enqueue(new DatabaseCallback<DatabaseUser>(LOG_TAG) {
                     @Override
@@ -223,7 +225,7 @@ public class FriendsRepository {
 
                     @Override
                     public void onSuccessResponse(Response<DatabaseUser> response) {
-                        UserApi.Friend friendsReq = Transformer.transformToUserApiFriend(response.body());
+                        DatabaseFriend friendsReq = Transformer.transformToUserApiFriend(response.body());
                         addFriendToFriendRequest(newFriendId, friendsReq);
                     }
                 });
@@ -235,30 +237,30 @@ public class FriendsRepository {
         });
     }
 
-    private void addFriendToFriendRequest(final String userId, final UserApi.Friend friend) {
-        userApi.getFriendRequestList(userId).enqueue(new DatabaseCallback<ArrayList<UserApi.Friend>>(LOG_TAG) {
+    private void addFriendToFriendRequest(final String userId, final DatabaseFriend friend) {
+        userApi.getFriendRequestList(userId).enqueue(new DatabaseCallback<ArrayList<DatabaseFriend>>(LOG_TAG) {
             @Override
-            public void onNullResponse(Response<ArrayList<UserApi.Friend>> response) {
+            public void onNullResponse(Response<ArrayList<DatabaseFriend>> response) {
                 addFriendToFriendRequestListAtNumber(userId, 0, friend);
             }
 
             @Override
-            public void onSuccessResponse(Response<ArrayList<UserApi.Friend>> response) {
+            public void onSuccessResponse(Response<ArrayList<DatabaseFriend>> response) {
                 final int number = response.body().size();
                 addFriendToFriendRequestListAtNumber(userId, number, friend);
             }
         });
     }
 
-    private void addFriendToFriendRequestListAtNumber(final String userId, final int numberOnList, final UserApi.Friend friend) {
-        userApi.addFriendToFriendsRequest(userId, numberOnList, friend).enqueue(new DatabaseCallback<UserApi.Friend>(LOG_TAG) {
+    private void addFriendToFriendRequestListAtNumber(final String userId, final int numberOnList, final DatabaseFriend friend) {
+        userApi.addFriendToFriendsRequest(userId, numberOnList, friend).enqueue(new DatabaseCallback<DatabaseFriend>(LOG_TAG) {
             @Override
-            public void onNullResponse(Response<UserApi.Friend> response) {
+            public void onNullResponse(Response<DatabaseFriend> response) {
                 logger.errorLog("failed to add new friendRequest " + friend.id);
             }
 
             @Override
-            public void onSuccessResponse(Response<UserApi.Friend> response) {
+            public void onSuccessResponse(Response<DatabaseFriend> response) {
                 logger.log("successfully add friend " + friend.id + " to friendRequest");
             }
         });
@@ -278,15 +280,15 @@ public class FriendsRepository {
         });
     }
 
-    private void addFriendToUserByNumberOnFriendList(final String userId, final int number, final UserApi.Friend friend) {
-        userApi.addFriend(userId, number, friend).enqueue(new DatabaseCallback<UserApi.Friend>(LOG_TAG) {
+    private void addFriendToUserByNumberOnFriendList(final String userId, final int number, final DatabaseFriend friend) {
+        userApi.addFriend(userId, number, friend).enqueue(new DatabaseCallback<DatabaseFriend>(LOG_TAG) {
             @Override
-            public void onNullResponse(Response<UserApi.Friend> response) {
+            public void onNullResponse(Response<DatabaseFriend> response) {
                 logger.errorLog("Failed to add friend " + friend.id);
             }
 
             @Override
-            public void onSuccessResponse(Response<UserApi.Friend> response) {
+            public void onSuccessResponse(Response<DatabaseFriend> response) {
                 updateCurrentUserFriends();
             }
         });

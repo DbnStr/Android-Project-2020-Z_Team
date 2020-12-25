@@ -6,6 +6,7 @@ import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import ru.mail.z_team.databases.network.UserApi;
 
@@ -21,7 +22,7 @@ public class DatabaseUser {
     public int age;
 
     @Ignore
-    public ArrayList<UserApi.Friend> friends = new ArrayList<>();
+    public List<DatabaseFriend> friends = new ArrayList<>();
 
     @Ignore
     public String imageUrl;

@@ -10,22 +10,10 @@ import retrofit2.http.GET;
 import retrofit2.http.PATCH;
 import retrofit2.http.PUT;
 import retrofit2.http.Path;
+import ru.mail.z_team.databases.DatabaseFriend;
 import ru.mail.z_team.databases.DatabaseUser;
 
 public interface UserApi {
-
-    class Friend {
-        public String name;
-        public String id;
-
-        public Friend(String name, String id) {
-            this.name = name;
-            this.id = id;
-        }
-
-        public Friend() {
-        }
-    }
 
     class WalkAnnotation {
         public String title;
@@ -85,7 +73,7 @@ public interface UserApi {
     Call<ArrayList<String>> getUserFriendsIds(@Path("id") String id);
 
     @GET("/Users/{id}/friends.json")
-    Call<ArrayList<Friend>> getUserFriendsById(@Path("id") String id);
+    Call<ArrayList<DatabaseFriend>> getUserFriendsById(@Path("id") String id);
 
     @PUT("/Users/{id}.json")
     Call<DatabaseUser> addUser(@Path("id") String id, @Body DatabaseUser user);
@@ -100,19 +88,19 @@ public interface UserApi {
     Call<String> addFriendId(@Path("id") String id, @Path("num") int num, @Body String friendId);
 
     @PUT("/Users/{id}/friends/{num}.json")
-    Call<Friend> addFriend(@Path("id") String id, @Path("num") int num, @Body Friend friend);
+    Call<DatabaseFriend> addFriend(@Path("id") String id, @Path("num") int num, @Body DatabaseFriend friend);
 
     @PUT("/FriendRequest/{id}/{num}.json")
-    Call<Friend> addFriendToFriendsRequest(@Path("id") String id, @Path("num") int num, @Body Friend friend);
+    Call<DatabaseFriend> addFriendToFriendsRequest(@Path("id") String id, @Path("num") int num, @Body DatabaseFriend friend);
 
     @GET("/FriendRequest/{id}/{num}.json")
-    Call<Friend> getFriendsRequest(@Path("id") String id, @Path("num") int num);
+    Call<DatabaseFriend> getFriendsRequest(@Path("id") String id, @Path("num") int num);
 
     @DELETE("/FriendRequest/{id}/{num}.json")
-    Call<Friend> deleteFriendRequest(@Path("id") String id, @Path("num") int num);
+    Call<DatabaseFriend> deleteFriendRequest(@Path("id") String id, @Path("num") int num);
 
     @GET("/FriendRequest/{id}.json")
-    Call<ArrayList<Friend>> getFriendRequestList(@Path("id") String id);
+    Call<ArrayList<DatabaseFriend>> getFriendRequestList(@Path("id") String id);
 
     @PATCH("/Users/{id}.json")
     Call<DatabaseUser> changeUserInformation(@Path("id") String id, @Body DatabaseUser user);

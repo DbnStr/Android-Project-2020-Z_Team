@@ -15,7 +15,7 @@ import java.util.Map;
 
 import ru.mail.z_team.databases.DatabaseUser;
 import ru.mail.z_team.icon_fragments.walks.Walk;
-import ru.mail.z_team.databases.local_storage.friend.UserFriend;
+import ru.mail.z_team.databases.DatabaseFriend;
 import ru.mail.z_team.databases.local_storage.story.UserStory;
 import ru.mail.z_team.databases.local_storage.walk.UserWalk;
 import ru.mail.z_team.databases.local_storage.walk_annotation.UserWalkAnnotation;
@@ -63,31 +63,16 @@ public class Transformer {
 
     /* default Friend result */
 
-    public static ArrayList<Friend> transformToFriendAll(ArrayList<UserApi.Friend> friends) {
+    public static ArrayList<Friend> transformToFriendAll(List<DatabaseFriend> friends) {
         ArrayList<Friend> result = new ArrayList<>();
-        for (UserApi.Friend friend : friends) {
+        for (DatabaseFriend friend : friends) {
             result.add(transformToFriend(friend));
         }
         return result;
     }
 
-    public static Friend transformToFriend(UserApi.Friend friend) {
+    public static Friend transformToFriend(DatabaseFriend friend) {
         return new Friend(friend.name, friend.id);
-    }
-
-    public static ArrayList<Friend> transformToFriendAll(List<UserFriend> friends) {
-        ArrayList<Friend> result = new ArrayList<>();
-        for (UserFriend friend : friends) {
-            result.add(transformToFriend(friend));
-        }
-        return result;
-    }
-
-    public static Friend transformToFriend(UserFriend friend) {
-        return new Friend(
-                friend.name,
-                friend.id
-        );
     }
 
     /* default WalkAnnotation result */
@@ -209,8 +194,8 @@ public class Transformer {
 
     /* UserApi Friend result */
 
-    public static UserApi.Friend transformToUserApiFriend(DatabaseUser user) {
-        UserApi.Friend result = new UserApi.Friend();
+    public static DatabaseFriend transformToUserApiFriend(DatabaseUser user) {
+        DatabaseFriend result = new DatabaseFriend();
         result.id = user.id;
         result.name = user.name;
         return result;

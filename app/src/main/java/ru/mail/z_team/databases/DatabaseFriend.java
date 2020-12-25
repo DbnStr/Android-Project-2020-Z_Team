@@ -1,8 +1,8 @@
-package ru.mail.z_team.databases.local_storage.friend;
+package ru.mail.z_team.databases;
 
 import androidx.room.ColumnInfo;
 
-public class UserFriend {
+public class DatabaseFriend {
 
     public String id;
 
