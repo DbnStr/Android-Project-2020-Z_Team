@@ -21,13 +21,14 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendViewHolder> {
 
     private static final String LOG_TAG = "FriendAdapter";
     private final Logger logger;
-    private ArrayList<Friend> friends;
+    private final ArrayList<Friend> friends;
     private final Context context;
 
     public FriendAdapter(Context context) {
         this.context = context;
         this.friends = new ArrayList<>();
         logger = new Logger(LOG_TAG, true);
+        logger.log("new FriendAdapter: " + friends.size());
     }
 
     @NonNull
@@ -66,7 +67,9 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendViewHolder> {
     }
 
     public void setFriends(ArrayList<Friend> users) {
-        friends = users;
+        logger.log("setFriends: " + users.size());
+        friends.clear();
+        friends.addAll(users);
         this.notifyDataSetChanged();
     }
 }

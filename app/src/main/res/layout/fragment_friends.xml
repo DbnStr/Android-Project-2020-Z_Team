@@ -6,30 +6,27 @@
 
     <TextView
         android:id="@+id/no_friend_tv"
-        android:visibility="invisible"
-        android:text="@string/add_your_first_friend"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:gravity="center_horizontal"
         android:layout_marginTop="16dp"
+        android:gravity="center_horizontal"
+        android:text="@string/add_your_first_friend"
+        android:visibility="invisible"
         app:layout_constraintTop_toBottomOf="@+id/friend_request" />
 
-    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-        android:id="@+id/swipe_to_refresh_friends"
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/tabs_friends"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/add_friend_by_id_layout" />
+
+    <androidx.viewpager.widget.ViewPager
+        android:id="@+id/viewpager"
+        android:layout_width="match_parent"
+        android:layout_height="0px"
+        android:layout_weight="1"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/friend_request">
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recycler_friends"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_marginStart="8dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/friend_request" />
-
-    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+        app:layout_constraintTop_toBottomOf="@+id/tabs_friends" />
 
     <LinearLayout
         android:id="@+id/add_friend_by_id_layout"
@@ -43,11 +40,11 @@
             android:layout_width="300dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:layout_marginEnd="0dp"
             android:layout_marginTop="8dp"
-            app:startIconDrawable="@drawable/add_friend"
+            android:layout_marginEnd="0dp"
+            android:hint="@string/enter_user_id"
             app:layout_constraintTop_toTopOf="parent"
-            android:hint="@string/enter_user_id">
+            app:startIconDrawable="@drawable/add_friend">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:layout_width="match_parent"
@@ -60,15 +57,8 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_margin="10dp"
-            android:background="@drawable/ic_add_cycle"/>
+            android:background="@drawable/ic_add_cycle" />
 
     </LinearLayout>
-
-    <Button
-        android:id="@+id/friend_request"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/friend_request"
-        app:layout_constraintTop_toBottomOf="@+id/add_friend_by_id_layout" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
