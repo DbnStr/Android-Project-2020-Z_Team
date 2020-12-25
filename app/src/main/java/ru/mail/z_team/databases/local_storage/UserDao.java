@@ -10,12 +10,11 @@ import java.util.List;
 
 import ru.mail.z_team.databases.DatabaseUser;
 import ru.mail.z_team.databases.DatabaseFriend;
-import ru.mail.z_team.databases.local_storage.friend.Friend;
 import ru.mail.z_team.databases.local_storage.story.Story;
 import ru.mail.z_team.databases.local_storage.story.UserStory;
 import ru.mail.z_team.databases.local_storage.walk.UserWalk;
 import ru.mail.z_team.databases.local_storage.walk.Walk;
-import ru.mail.z_team.databases.local_storage.walk_annotation.UserWalkAnnotation;
+import ru.mail.z_team.databases.DatabaseWalkAnnotation;
 import ru.mail.z_team.databases.local_storage.walk_annotation.WalkAnnotation;
 
 @Dao
@@ -25,7 +24,7 @@ public abstract class UserDao {
     public abstract void insert(DatabaseUser user);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    public abstract void insert(Friend friend);
+    public abstract void insert(LocalDbFriend localDbFriend);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     public abstract void insert(WalkAnnotation walkAnnotation);
@@ -36,7 +35,7 @@ public abstract class UserDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     public abstract void insert(Story story);
 
-    @Query("DELETE FROM Friend")
+    @Query("DELETE FROM LocalDbFriend")
     public abstract void deleteAllFriends();
 
     @Query("DELETE FROM WalkAnnotation")
@@ -57,10 +56,10 @@ public abstract class UserDao {
     }
 
     @Transaction
-    public void deleteAllFriendsAndAddNew(List<Friend> friends) {
+    public void deleteAllFriendsAndAddNew(List<LocalDbFriend> localDbFriends) {
         deleteAllFriends();
-        for (Friend friend : friends) {
-            insert(friend);
+        for (LocalDbFriend localDbFriend : localDbFriends) {
+            insert(localDbFriend);
         }
     }
 
@@ -97,11 +96,11 @@ public abstract class UserDao {
     @Query("SELECT * FROM DatabaseUser WHERE id = :id")
     public abstract DatabaseUser getUserWithoutFriendsById(String id);
 
-    @Query("SELECT friend.id, friend.friend_name AS fr_name " + "FROM friend " + "WHERE friend.current_user_id == :id")
+    @Query("SELECT LocalDbFriend.id, LocalDbFriend.friend_name AS fr_name " + "FROM LocalDbFriend " + "WHERE LocalDbFriend.current_user_id == :id")
     public abstract List<DatabaseFriend> getUserFriends(String id);
 
     @Query("SELECT WalkAnnotation.title, WalkAnnotation.authorName, WalkAnnotation.authorId, WalkAnnotation.date " + "FROM WalkAnnotation, DatabaseUser " + "WHERE WalkAnnotation.authorId == DatabaseUser.id")
-    public abstract List<UserWalkAnnotation> getUserWalksAnnotations();
+    public abstract List<DatabaseWalkAnnotation> getUserWalksAnnotations();
 
     @Query("SELECT * FROM walk WHERE authorId == :id AND date == :date")
     public abstract UserWalk getUserWalk(String id, String date);

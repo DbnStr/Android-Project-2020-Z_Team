@@ -118,7 +118,7 @@ public class FriendsRepository {
         userApi.getFriendsRequest(currentUserId, number).enqueue(new DatabaseCallback<DatabaseFriend>(LOG_TAG) {
             @Override
             public void onNullResponse(Response<DatabaseFriend> response) {
-                logger.log("Friend request no longer exists");
+                logger.log("LocalDbFriend request no longer exists");
             }
 
             @Override

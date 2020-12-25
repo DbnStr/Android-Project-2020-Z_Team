@@ -1,4 +1,4 @@
-package ru.mail.z_team.databases.local_storage.friend;
+package ru.mail.z_team.databases.local_storage;
 
 
 import androidx.annotation.NonNull;
@@ -7,7 +7,7 @@ import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
 @Entity
-public class Friend {
+public class LocalDbFriend {
 
     @ColumnInfo(name = "friend_name")
     public String name;
@@ -19,7 +19,7 @@ public class Friend {
     @ColumnInfo(name = "current_user_id")
     public String currentUserId;
 
-    public Friend(String name, String id, String currentUserId) {
+    public LocalDbFriend(String name, @NonNull String id, String currentUserId) {
         this.name = name;
         this.id = id;
         this.currentUserId = currentUserId;
@@ -29,6 +29,7 @@ public class Friend {
         return name;
     }
 
+    @NonNull
     public String getId() {
         return id;
     }

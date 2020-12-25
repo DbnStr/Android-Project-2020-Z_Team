@@ -17,7 +17,7 @@
         android:enabled="true"
         android:icon="@drawable/ic_friends"
         android:visible="true"
-        android:title="@string/friends"/>
+        android:title="@string/localDbFriends"/>
     <item
         android:id="@+id/profile_icon"
         android:enabled="true"

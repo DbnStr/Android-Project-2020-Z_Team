@@ -18,6 +18,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import ru.mail.z_team.Logger;
 import ru.mail.z_team.databases.DatabaseUser;
+import ru.mail.z_team.databases.DatabaseWalkAnnotation;
 import ru.mail.z_team.icon_fragments.DatabaseCallback;
 import ru.mail.z_team.map.Story;
 import ru.mail.z_team.databases.network.DatabaseApiRepository;
@@ -54,14 +55,14 @@ public class GoOutRepository {
             @Override
             public void onSuccessResponse(Response<DatabaseUser> response) {
                 String name = response.body().name;
-                userApi.getUserWalksAnnotationsById(currentUserId).enqueue(new DatabaseCallback<ArrayList<UserApi.WalkAnnotation>>(LOG_TAG) {
+                userApi.getUserWalksAnnotationsById(currentUserId).enqueue(new DatabaseCallback<ArrayList<DatabaseWalkAnnotation>>(LOG_TAG) {
                     @Override
-                    public void onNullResponse(Response<ArrayList<UserApi.WalkAnnotation>> response) {
+                    public void onNullResponse(Response<ArrayList<DatabaseWalkAnnotation>> response) {
                         addWalkInDb(0, title, currentUserId, name, walk, stories);
                     }
 
                     @Override
-                    public void onSuccessResponse(Response<ArrayList<UserApi.WalkAnnotation>> response) {
+                    public void onSuccessResponse(Response<ArrayList<DatabaseWalkAnnotation>> response) {
                         int count = response.body().size();
                         addWalkInDb(count, title, currentUserId, name, walk, stories);
                     }
@@ -96,9 +97,9 @@ public class GoOutRepository {
                 postStatus.postValue(PostStatus.FAILED);
             }
         });
-        userApi.addWalkInfo(id, currentWalkNumber, new UserApi.WalkAnnotation(title, sdf.format(currentTime), name, id)).enqueue(new Callback<UserApi.WalkAnnotation>() {
+        userApi.addWalkInfo(id, currentWalkNumber, new DatabaseWalkAnnotation(title, sdf.format(currentTime), name, id)).enqueue(new Callback<DatabaseWalkAnnotation>() {
             @Override
-            public void onResponse(Call<UserApi.WalkAnnotation> call, Response<UserApi.WalkAnnotation> response) {
+            public void onResponse(Call<DatabaseWalkAnnotation> call, Response<DatabaseWalkAnnotation> response) {
                 if (response.isSuccessful()) {
                     postStatus.postValue(PostStatus.OK);
                 } else {
@@ -107,7 +108,7 @@ public class GoOutRepository {
             }
 
             @Override
-            public void onFailure(Call<UserApi.WalkAnnotation> call, Throwable t) {
+            public void onFailure(Call<DatabaseWalkAnnotation> call, Throwable t) {
                 logger.errorLog(t.getMessage());
                 postStatus.postValue(PostStatus.FAILED);
             }

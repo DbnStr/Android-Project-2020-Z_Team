@@ -12,22 +12,9 @@ import retrofit2.http.PUT;
 import retrofit2.http.Path;
 import ru.mail.z_team.databases.DatabaseFriend;
 import ru.mail.z_team.databases.DatabaseUser;
+import ru.mail.z_team.databases.DatabaseWalkAnnotation;
 
 public interface UserApi {
-
-    class WalkAnnotation {
-        public String title;
-        public String authorName;
-        public String authorId;
-        public String date;
-
-        public WalkAnnotation(String title, String date, String authorName, String authorId) {
-            this.title = title;
-            this.date = date;
-            this.authorName = authorName;
-            this.authorId = authorId;
-        }
-    }
 
     class Walk {
         public String title;
@@ -61,7 +48,7 @@ public interface UserApi {
     Call<DatabaseUser> getUserById(@Path("id") String id);
 
     @GET("/WalkAnnotation/{id}.json")
-    Call<ArrayList<WalkAnnotation>> getUserWalksAnnotationsById(@Path("id") String id);
+    Call<ArrayList<DatabaseWalkAnnotation>> getUserWalksAnnotationsById(@Path("id") String id);
 
     @GET("/WalkMaps/{id}/{date}.json")
     Call<Walk> getWalkByDateAndId(@Path("id") String id, @Path("date") String date);
@@ -79,7 +66,7 @@ public interface UserApi {
     Call<DatabaseUser> addUser(@Path("id") String id, @Body DatabaseUser user);
 
     @PUT("/WalkAnnotation/{id}/{num}.json")
-    Call<WalkAnnotation> addWalkInfo(@Path("id") String id, @Path("num") int num, @Body WalkAnnotation walk);
+    Call<DatabaseWalkAnnotation> addWalkInfo(@Path("id") String id, @Path("num") int num, @Body DatabaseWalkAnnotation walk);
 
     @PUT("/WalkMaps/{id}/{date}.json")
     Call<Walk> addWalk(@Path("id") String id, @Path("date") String date, @Body Walk walk);

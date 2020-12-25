@@ -8,8 +8,6 @@ import androidx.room.PrimaryKey;
 import java.util.ArrayList;
 import java.util.List;
 
-import ru.mail.z_team.databases.network.UserApi;
-
 @Entity
 public class DatabaseUser {
 
@@ -30,7 +28,7 @@ public class DatabaseUser {
     @Ignore
     public String email;
 
-    public DatabaseUser(String id, String email, String name) {
+    public DatabaseUser(@NonNull String id, String email, String name) {
         this.name = name;
         this.id = id;
         this.email = email;

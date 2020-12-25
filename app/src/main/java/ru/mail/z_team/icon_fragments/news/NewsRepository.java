@@ -12,6 +12,7 @@ import java.util.Collections;
 
 import retrofit2.Response;
 import ru.mail.z_team.Logger;
+import ru.mail.z_team.databases.DatabaseWalkAnnotation;
 import ru.mail.z_team.icon_fragments.DatabaseCallback;
 import ru.mail.z_team.icon_fragments.Transformer;
 import ru.mail.z_team.databases.network.DatabaseApiRepository;
@@ -60,14 +61,14 @@ public class NewsRepository {
         logger.log("Compile news");
         for (String id : ids) {
             logger.log("Compile news... " + ids.indexOf(id));
-            userApi.getUserWalksAnnotationsById(id).enqueue(new DatabaseCallback<ArrayList<UserApi.WalkAnnotation>>(LOG_TAG) {
+            userApi.getUserWalksAnnotationsById(id).enqueue(new DatabaseCallback<ArrayList<DatabaseWalkAnnotation>>(LOG_TAG) {
                 @Override
-                public void onNullResponse(Response<ArrayList<UserApi.WalkAnnotation>> response) {
+                public void onNullResponse(Response<ArrayList<DatabaseWalkAnnotation>> response) {
                     logger.log(id + " doesn't have walks");
                 }
 
                 @Override
-                public void onSuccessResponse(Response<ArrayList<UserApi.WalkAnnotation>> response) {
+                public void onSuccessResponse(Response<ArrayList<DatabaseWalkAnnotation>> response) {
                     logger.log(id + " have walks");
                     news.addAll(Transformer.transformToWalkAnnotationAll(response.body()));
                     Collections.sort(news);

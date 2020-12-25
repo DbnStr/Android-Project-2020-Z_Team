@@ -14,11 +14,12 @@ import java.util.List;
 import java.util.Map;
 
 import ru.mail.z_team.databases.DatabaseUser;
+import ru.mail.z_team.databases.DatabaseWalkAnnotation;
+import ru.mail.z_team.databases.local_storage.LocalDbFriend;
 import ru.mail.z_team.icon_fragments.walks.Walk;
 import ru.mail.z_team.databases.DatabaseFriend;
 import ru.mail.z_team.databases.local_storage.story.UserStory;
 import ru.mail.z_team.databases.local_storage.walk.UserWalk;
-import ru.mail.z_team.databases.local_storage.walk_annotation.UserWalkAnnotation;
 import ru.mail.z_team.databases.local_storage.walk_annotation.WalkAnnotation;
 import ru.mail.z_team.map.Story;
 import ru.mail.z_team.databases.network.UserApi;
@@ -28,7 +29,7 @@ import ru.mail.z_team.user.User;
 public class Transformer {
     /*
         function order
-        for result : User -> Friend -> WalkAnnotation -> Walk -> Story
+        for result : User -> LocalDbFriend -> WalkAnnotation -> Walk -> Story
         for type of result: default type -> userApi type -> local_storage type
         for type of arguments : default type -> userApi type -> local_storage type
      */
@@ -61,7 +62,7 @@ public class Transformer {
         return u;
     }
 
-    /* default Friend result */
+    /* default LocalDbFriend result */
 
     public static ArrayList<Friend> transformToFriendAll(List<DatabaseFriend> friends) {
         ArrayList<Friend> result = new ArrayList<>();
@@ -77,32 +78,15 @@ public class Transformer {
 
     /* default WalkAnnotation result */
 
-    public static ArrayList<ru.mail.z_team.icon_fragments.walks.WalkAnnotation> transformToWalkAnnotationAll(ArrayList<UserApi.WalkAnnotation> walks) {
+    public static ArrayList<ru.mail.z_team.icon_fragments.walks.WalkAnnotation> transformToWalkAnnotationAll(List<DatabaseWalkAnnotation> walksAnnotations) {
         ArrayList<ru.mail.z_team.icon_fragments.walks.WalkAnnotation> result = new ArrayList<>();
-        for (UserApi.WalkAnnotation walk : walks) {
-            result.add(transformToWalkAnnotation(walk));
-        }
-        return result;
-    }
-
-    public static ru.mail.z_team.icon_fragments.walks.WalkAnnotation transformToWalkAnnotation(UserApi.WalkAnnotation walk) {
-        ru.mail.z_team.icon_fragments.walks.WalkAnnotation transformed = new ru.mail.z_team.icon_fragments.walks.WalkAnnotation();
-        transformed.setTitle(walk.title);
-        transformed.setAuthorName(walk.authorName);
-        transformed.setAuthorId(walk.authorId);
-        transformed.setDate(getDate(walk.date));
-        return transformed;
-    }
-
-    public static ArrayList<ru.mail.z_team.icon_fragments.walks.WalkAnnotation> transformToWalkAnnotationAll(List<UserWalkAnnotation> walksAnnotations) {
-        ArrayList<ru.mail.z_team.icon_fragments.walks.WalkAnnotation> result = new ArrayList<>();
-        for (UserWalkAnnotation walksAnnotation : walksAnnotations) {
+        for (DatabaseWalkAnnotation walksAnnotation : walksAnnotations) {
             result.add(transformToWalkAnnotation(walksAnnotation));
         }
         return result;
     }
 
-    public static ru.mail.z_team.icon_fragments.walks.WalkAnnotation transformToWalkAnnotation(UserWalkAnnotation walkAnnotation) {
+    public static ru.mail.z_team.icon_fragments.walks.WalkAnnotation transformToWalkAnnotation(DatabaseWalkAnnotation walkAnnotation) {
         ru.mail.z_team.icon_fragments.walks.WalkAnnotation result = new ru.mail.z_team.icon_fragments.walks.WalkAnnotation();
         result.setTitle(walkAnnotation.title);
         result.setAuthorName(walkAnnotation.authorName);
@@ -192,7 +176,7 @@ public class Transformer {
         return result;
     }
 
-    /* UserApi Friend result */
+    /* UserApi LocalDbFriend result */
 
     public static DatabaseFriend transformToUserApiFriend(DatabaseUser user) {
         DatabaseFriend result = new DatabaseFriend();
@@ -225,18 +209,18 @@ public class Transformer {
         return result;
     }
 
-    /* LocalDB Friend result */
+    /* LocalDB LocalDbFriend result */
 
-    public static List<ru.mail.z_team.databases.local_storage.friend.Friend> transformToLocalDBFriendALl(List<Friend> friends, String currentUserId) {
-        List<ru.mail.z_team.databases.local_storage.friend.Friend> result = new ArrayList<>();
+    public static List<LocalDbFriend> transformToLocalDBFriendALl(List<Friend> friends, String currentUserId) {
+        List<LocalDbFriend> result = new ArrayList<>();
         for (Friend friend : friends) {
             result.add(transformToLocalDBFriend(friend, currentUserId));
         }
         return result;
     }
 
-    public static ru.mail.z_team.databases.local_storage.friend.Friend transformToLocalDBFriend(Friend friend, String currentUserId) {
-        return new ru.mail.z_team.databases.local_storage.friend.Friend(
+    public static LocalDbFriend transformToLocalDBFriend(Friend friend, String currentUserId) {
+        return new LocalDbFriend(
                 friend.name,
                 friend.id,
                 currentUserId
@@ -280,15 +264,15 @@ public class Transformer {
 
     /* WalkAnnotation LocalDB result*/
 
-    public static List<WalkAnnotation> transformToLocalDBWalkAnnotationAll(List<UserApi.WalkAnnotation> walksAnnotations) {
+    public static List<WalkAnnotation> transformToLocalDBWalkAnnotationAll(List<DatabaseWalkAnnotation> walksAnnotations) {
         List<WalkAnnotation> result = new ArrayList<>();
-        for (UserApi.WalkAnnotation walkAnnotation : walksAnnotations) {
+        for (DatabaseWalkAnnotation walkAnnotation : walksAnnotations) {
             result.add(transformToLocalDBWalkAnnotation(walkAnnotation));
         }
         return result;
     }
 
-    public static WalkAnnotation transformToLocalDBWalkAnnotation(UserApi.WalkAnnotation walkAnnotation) {
+    public static WalkAnnotation transformToLocalDBWalkAnnotation(DatabaseWalkAnnotation walkAnnotation) {
         return new WalkAnnotation(
                 walkAnnotation.title,
                 walkAnnotation.authorName,
