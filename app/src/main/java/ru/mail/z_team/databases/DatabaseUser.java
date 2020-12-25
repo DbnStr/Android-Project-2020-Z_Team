@@ -25,7 +25,6 @@ public class DatabaseUser {
     @Ignore
     public String imageUrl;
 
-    @Ignore
     public String email;
 
     public DatabaseUser(@NonNull String id, String email, String name) {

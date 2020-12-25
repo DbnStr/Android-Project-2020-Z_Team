@@ -90,7 +90,7 @@ public class ProfileRepository {
 
     private void addUserInLocalDB(final DatabaseUser user) {
         localDatabase.databaseWriteExecutor.execute(() -> {
-            userDao.insert(Transformer.transformToLocalDBUser(user));
+            userDao.insert(user);
 
             User currentUser = Transformer.transformToUser(user);
             ArrayList<Friend> friends = currentUser.getFriends();

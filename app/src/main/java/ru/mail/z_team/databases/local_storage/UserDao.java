@@ -8,12 +8,11 @@ import androidx.room.Transaction;
 
 import java.util.List;
 
+import ru.mail.z_team.databases.DatabaseStory;
 import ru.mail.z_team.databases.DatabaseUser;
 import ru.mail.z_team.databases.DatabaseFriend;
+import ru.mail.z_team.databases.DatabaseWalk;
 import ru.mail.z_team.databases.local_storage.story.Story;
-import ru.mail.z_team.databases.local_storage.story.UserStory;
-import ru.mail.z_team.databases.local_storage.walk.UserWalk;
-import ru.mail.z_team.databases.local_storage.walk.Walk;
 import ru.mail.z_team.databases.DatabaseWalkAnnotation;
 import ru.mail.z_team.databases.local_storage.walk_annotation.WalkAnnotation;
 
@@ -30,7 +29,7 @@ public abstract class UserDao {
     public abstract void insert(WalkAnnotation walkAnnotation);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    public abstract void insert(Walk walk);
+    public abstract void insert(DatabaseWalk databaseWalk);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     public abstract void insert(Story story);
@@ -41,7 +40,7 @@ public abstract class UserDao {
     @Query("DELETE FROM WalkAnnotation")
     public abstract void deleteAllWalksAnnotations();
 
-    @Query("DELETE FROM Walk")
+    @Query("DELETE FROM DatabaseWalk")
     public abstract void deleteAllWalks();
 
     @Query("DELETE FROM story WHERE walkDate == :walkDate")
@@ -64,10 +63,10 @@ public abstract class UserDao {
     }
 
     @Transaction
-    public void deleteAllWalkAndAddNew(List<Walk> walks) {
+    public void deleteAllWalkAndAddNew(List<DatabaseWalk> databaseWalks) {
         deleteAllWalks();
-        for (Walk walk : walks) {
-            insert(walk);
+        for (DatabaseWalk databaseWalk : databaseWalks) {
+            insert(databaseWalk);
         }
     }
 
@@ -87,10 +86,10 @@ public abstract class UserDao {
     }
 
     @Transaction
-    public UserWalk getUserWalkWithStories(String walkId, String walkDate) {
-        UserWalk userWalk = getUserWalk(walkId, walkDate);
-        userWalk.stories = getWalkStoriesByDate(walkDate);
-        return userWalk;
+    public DatabaseWalk getUserWalkWithStories(String walkId, String walkDate) {
+        DatabaseWalk databaseWalk = getUserWalk(walkId, walkDate);
+        databaseWalk.stories = getWalkStoriesByDate(walkDate);
+        return databaseWalk;
     }
 
     @Query("SELECT * FROM DatabaseUser WHERE id = :id")
@@ -102,9 +101,9 @@ public abstract class UserDao {
     @Query("SELECT WalkAnnotation.title, WalkAnnotation.authorName, WalkAnnotation.authorId, WalkAnnotation.date " + "FROM WalkAnnotation, DatabaseUser " + "WHERE WalkAnnotation.authorId == DatabaseUser.id")
     public abstract List<DatabaseWalkAnnotation> getUserWalksAnnotations();
 
-    @Query("SELECT * FROM walk WHERE authorId == :id AND date == :date")
-    public abstract UserWalk getUserWalk(String id, String date);
+    @Query("SELECT * FROM DatabaseWalk WHERE authorId == :id AND date == :date")
+    public abstract DatabaseWalk getUserWalk(String id, String date);
 
-    @Query("SELECT Story.description, Story.place, Story.point, Story.id, Story.walkDate " + "FROM Story " + "WHERE story.walkDate = :walkDate")
-    public abstract List<UserStory> getWalkStoriesByDate(String walkDate);
+    @Query("SELECT Story.description, Story.place, Story.point, Story.id " + "FROM Story " + "WHERE story.walkDate = :walkDate")
+    public abstract List<DatabaseStory> getWalkStoriesByDate(String walkDate);
 }

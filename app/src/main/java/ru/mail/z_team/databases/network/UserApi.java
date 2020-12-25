@@ -11,38 +11,12 @@ import retrofit2.http.PATCH;
 import retrofit2.http.PUT;
 import retrofit2.http.Path;
 import ru.mail.z_team.databases.DatabaseFriend;
+import ru.mail.z_team.databases.DatabaseStory;
 import ru.mail.z_team.databases.DatabaseUser;
+import ru.mail.z_team.databases.DatabaseWalk;
 import ru.mail.z_team.databases.DatabaseWalkAnnotation;
 
 public interface UserApi {
-
-    class Walk {
-        public String title;
-        public String authorName;
-        public String date;
-        public String walk;
-        public ArrayList<Story> stories;
-
-        public Walk(String title, String date, String authorName, String walk, ArrayList<Story> stories) {
-            this.title = title;
-            this.date = date;
-            this.authorName = authorName;
-            this.walk = walk;
-            this.stories = stories;
-        }
-    }
-
-    class Story {
-        public String description;
-        public ArrayList<String> images;
-        public String place;
-        public String point;
-        public String id;
-
-        public Story(String description) {
-            this.description = description;
-        }
-    }
 
     @GET("/Users/{id}.json")
     Call<DatabaseUser> getUserById(@Path("id") String id);
@@ -51,10 +25,10 @@ public interface UserApi {
     Call<ArrayList<DatabaseWalkAnnotation>> getUserWalksAnnotationsById(@Path("id") String id);
 
     @GET("/WalkMaps/{id}/{date}.json")
-    Call<Walk> getWalkByDateAndId(@Path("id") String id, @Path("date") String date);
+    Call<DatabaseWalk> getWalkByDateAndId(@Path("id") String id, @Path("date") String date);
 
     @GET("/WalkMaps/{id}.json")
-    Call<Map<String,Walk>> getAllWalks(@Path("id") String id);
+    Call<Map<String, DatabaseWalk>> getAllWalks(@Path("id") String id);
 
     @GET("/FriendsIds/{id}.json")
     Call<ArrayList<String>> getUserFriendsIds(@Path("id") String id);
@@ -69,7 +43,7 @@ public interface UserApi {
     Call<DatabaseWalkAnnotation> addWalkInfo(@Path("id") String id, @Path("num") int num, @Body DatabaseWalkAnnotation walk);
 
     @PUT("/WalkMaps/{id}/{date}.json")
-    Call<Walk> addWalk(@Path("id") String id, @Path("date") String date, @Body Walk walk);
+    Call<DatabaseWalk> addWalk(@Path("id") String id, @Path("date") String date, @Body DatabaseWalk walk);
 
     @PUT("/FriendsIds/{id}/{num}.json")
     Call<String> addFriendId(@Path("id") String id, @Path("num") int num, @Body String friendId);
@@ -93,5 +67,5 @@ public interface UserApi {
     Call<DatabaseUser> changeUserInformation(@Path("id") String id, @Body DatabaseUser user);
 
     @GET("WalkMaps/{id}/{date}/stories/{number}.json")
-    Call<Story> getStory(@Path("id") String userId, @Path("date") String date, @Path("number") int number);
+    Call<DatabaseStory> getStory(@Path("id") String userId, @Path("date") String date, @Path("number") int number);
 }

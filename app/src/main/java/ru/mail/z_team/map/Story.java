@@ -5,13 +5,14 @@ import android.net.Uri;
 import com.mapbox.geojson.Feature;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class Story {
     private String description;
     private String place;
     private Feature point;
     private String id;
-    private ArrayList<String> urlImages = new ArrayList<>();
+    private List<String> urlImages = new ArrayList<>();
     private final ArrayList<Uri> uriImages = new ArrayList<>();
 
     public void setDescription(String description) {
@@ -35,7 +36,7 @@ public class Story {
         this.id = id;
     }
 
-    public void setUrlImages(ArrayList<String> urlImages) {
+    public void setUrlImages(List<String> urlImages) {
         this.urlImages = urlImages;
     }
 
@@ -63,7 +64,7 @@ public class Story {
         return uriImages;
     }
 
-    public ArrayList<String> getUrlImages() {
+    public List<String> getUrlImages() {
         return urlImages;
     }
 }

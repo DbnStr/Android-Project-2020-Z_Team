@@ -17,7 +17,9 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import ru.mail.z_team.Logger;
+import ru.mail.z_team.databases.DatabaseStory;
 import ru.mail.z_team.databases.DatabaseUser;
+import ru.mail.z_team.databases.DatabaseWalk;
 import ru.mail.z_team.databases.DatabaseWalkAnnotation;
 import ru.mail.z_team.icon_fragments.DatabaseCallback;
 import ru.mail.z_team.map.Story;
@@ -80,10 +82,10 @@ public class GoOutRepository {
         logger.log("Post a walk");
         Date currentTime = new Date();
         String map = walk.toJson();
-        ArrayList<UserApi.Story> userApiStories = transformToUserApiStoryAll(stories, id, sdf.format(currentTime));
-        userApi.addWalk(id, sdf.format(currentTime), new UserApi.Walk(title, sdf.format(currentTime), name, map, userApiStories)).enqueue(new Callback<UserApi.Walk>() {
+        ArrayList<DatabaseStory> userApiStories = transformToUserApiStoryAll(stories, id, sdf.format(currentTime));
+        userApi.addWalk(id, sdf.format(currentTime), new DatabaseWalk(title, sdf.format(currentTime), name, id, map, userApiStories)).enqueue(new Callback<DatabaseWalk>() {
             @Override
-            public void onResponse(Call<UserApi.Walk> call, Response<UserApi.Walk> response) {
+            public void onResponse(Call<DatabaseWalk> call, Response<DatabaseWalk> response) {
                 if (response.isSuccessful()) {
                     postStatus.postValue(PostStatus.OK);
                 } else {
@@ -92,7 +94,7 @@ public class GoOutRepository {
             }
 
             @Override
-            public void onFailure(Call<UserApi.Walk> call, Throwable t) {
+            public void onFailure(Call<DatabaseWalk> call, Throwable t) {
                 logger.errorLog(t.getMessage());
                 postStatus.postValue(PostStatus.FAILED);
             }
@@ -115,21 +117,21 @@ public class GoOutRepository {
         });
     }
 
-    private ArrayList<UserApi.Story> transformToUserApiStoryAll(ArrayList<Story> stories,
+    private ArrayList<DatabaseStory> transformToUserApiStoryAll(ArrayList<Story> stories,
                                                                 String id,
                                                                 String date) {
-        ArrayList<UserApi.Story> res = new ArrayList<>();
+        ArrayList<DatabaseStory> res = new ArrayList<>();
         for (Story story : stories) {
             res.add(transformToUserApiStory(story, id, date, stories.indexOf(story)));
         }
         return res;
     }
 
-    private UserApi.Story transformToUserApiStory(Story story,
+    private DatabaseStory transformToUserApiStory(Story story,
                                                   String id,
                                                   String date,
                                                   int i) {
-        UserApi.Story apiStory = new UserApi.Story(story.getDescription());
+        DatabaseStory apiStory = new DatabaseStory(story.getDescription());
         apiStory.place = story.getPlace();
         apiStory.id = story.getId();
         apiStory.images = new ArrayList<>();

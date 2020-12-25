@@ -14,6 +14,7 @@ import java.util.Map;
 import retrofit2.Response;
 import ru.mail.z_team.ApplicationModified;
 import ru.mail.z_team.Logger;
+import ru.mail.z_team.databases.DatabaseWalk;
 import ru.mail.z_team.databases.DatabaseWalkAnnotation;
 import ru.mail.z_team.icon_fragments.DatabaseCallback;
 import ru.mail.z_team.icon_fragments.DatabaseNetworkControlExecutor;
@@ -83,16 +84,20 @@ public class WalksRepository {
 
                 insertWalkAnnotationListInLocalDB(Transformer.transformToLocalDBWalkAnnotationAll(response.body()));
 
-                userApi.getAllWalks(userId).enqueue(new DatabaseCallback<Map<String, UserApi.Walk>>(LOG_TAG) {
+                userApi.getAllWalks(userId).enqueue(new DatabaseCallback<Map<String, DatabaseWalk>>(LOG_TAG) {
                     @Override
-                    public void onNullResponse(Response<Map<String, UserApi.Walk>> response) {
+                    public void onNullResponse(Response<Map<String, DatabaseWalk>> response) {
                         logger.log("NULL");
                     }
 
                     @Override
-                    public void onSuccessResponse(Response<Map<String, UserApi.Walk>> response) {
+                    public void onSuccessResponse(Response<Map<String, DatabaseWalk>> response) {
                         localDatabase.databaseWriteExecutor.execute(() -> {
-                            userDao.deleteAllWalkAndAddNew(Transformer.transformToLocalDBWalkAll(response.body(), userId));
+                            List<DatabaseWalk> walks = new ArrayList<>();
+                            response.body().forEach((date, walk) -> {
+                                walks.add(walk);
+                            });
+                            userDao.deleteAllWalkAndAddNew(walks);
                             response.body().forEach((date, walk) -> userDao.deleteAllWalkStoryAndAddNew(Transformer.transformToLocalDBStoryAll(walk.stories, walk.date), walk.date));
                         });
                     }

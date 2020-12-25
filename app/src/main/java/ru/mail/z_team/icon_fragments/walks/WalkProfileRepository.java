@@ -13,6 +13,8 @@ import java.text.SimpleDateFormat;
 import retrofit2.Response;
 import ru.mail.z_team.ApplicationModified;
 import ru.mail.z_team.Logger;
+import ru.mail.z_team.databases.DatabaseStory;
+import ru.mail.z_team.databases.DatabaseWalk;
 import ru.mail.z_team.icon_fragments.DatabaseCallback;
 import ru.mail.z_team.icon_fragments.DatabaseNetworkControlExecutor;
 import ru.mail.z_team.icon_fragments.Transformer;
@@ -70,15 +72,15 @@ public class WalkProfileRepository {
         DatabaseNetworkControlExecutor executor = new DatabaseNetworkControlExecutor(context) {
             @Override
             public void networkRun() {
-                userApi.getStory(userId, dateOfWalk, number).enqueue(new DatabaseCallback<UserApi.Story>(LOG_TAG) {
+                userApi.getStory(userId, dateOfWalk, number).enqueue(new DatabaseCallback<DatabaseStory>(LOG_TAG) {
                     @Override
-                    public void onNullResponse(Response<UserApi.Story> response) {
+                    public void onNullResponse(Response<DatabaseStory> response) {
                         logger.log("EMPTY STORY");
                         currentDisplayedStory.postValue(new Story());
                     }
 
                     @Override
-                    public void onSuccessResponse(Response<UserApi.Story> response) {
+                    public void onSuccessResponse(Response<DatabaseStory> response) {
                         logger.log("successfully get walk story");
                         currentDisplayedStory.postValue(Transformer.transformToStory(response.body()));
                     }
@@ -112,14 +114,14 @@ public class WalkProfileRepository {
     }
 
     private void getUserWalkFromRemoteDB(final String userId, final String date) {
-        userApi.getWalkByDateAndId(userId, date).enqueue(new DatabaseCallback<UserApi.Walk>(LOG_TAG) {
+        userApi.getWalkByDateAndId(userId, date).enqueue(new DatabaseCallback<DatabaseWalk>(LOG_TAG) {
             @Override
-            public void onNullResponse(Response<UserApi.Walk> response) {
+            public void onNullResponse(Response<DatabaseWalk> response) {
                 logger.errorLog("This walk doesn't exist");
             }
 
             @Override
-            public void onSuccessResponse(Response<UserApi.Walk> response) {
+            public void onSuccessResponse(Response<DatabaseWalk> response) {
                 currentDisplayedWalk.postValue(Transformer.transformToWalk(response.body()));
             }
         });

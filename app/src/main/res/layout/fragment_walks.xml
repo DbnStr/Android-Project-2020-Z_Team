@@ -10,7 +10,7 @@
         android:layout_height="0dp"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="32dp"
-        android:text="You don't have walks yet"
+        android:text="You don't have databaseWalks yet"
         android:visibility="invisible"
         app:layout_constraintTop_toTopOf="parent" />
 
