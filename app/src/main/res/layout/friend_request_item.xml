@@ -6,17 +6,17 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="80dp"
+        android:layout_height="102dp"
         app:layout_constraintTop_toTopOf="parent"
         android:orientation="horizontal">
 
         <de.hdodenhof.circleimageview.CircleImageView
-            android:layout_width="75dp"
-            android:layout_height="75dp"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
             android:src="@drawable/ic_person"
             app:civ_border_width="5dp"
             app:civ_border_overlay="true"
-            android:layout_margin="2.5dp"
+            android:layout_margin="16dp"
             app:civ_border_color="@color/primaryDarkColor"/>
 
         <TextView
@@ -24,16 +24,17 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:padding="15dp"
+            android:padding="16dp"
             android:textSize="24sp"
             android:text="Anonymous"/>
+
         <Button
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="2"
             android:id="@+id/accept_friend_request_btn"
             android:text="@string/add_friend"
-            android:textSize="15sp"/>
+            android:textSize="16sp"/>
 
     </LinearLayout>
 
