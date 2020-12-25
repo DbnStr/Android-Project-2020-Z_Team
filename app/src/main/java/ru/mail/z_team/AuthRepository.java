@@ -9,6 +9,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
@@ -18,8 +19,9 @@ import java.util.concurrent.Executor;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import ru.mail.z_team.network.DatabaseApiRepository;
-import ru.mail.z_team.network.UserApi;
+import ru.mail.z_team.databases.DatabaseUser;
+import ru.mail.z_team.databases.network.DatabaseApiRepository;
+import ru.mail.z_team.databases.network.UserApi;
 
 public class AuthRepository implements Executor{
 
@@ -50,8 +52,8 @@ public class AuthRepository implements Executor{
         mAuthProgress = new MutableLiveData<>(new Pair<>(AuthProgress.IN_PROGRESS, ""));
         mAuth = FirebaseAuth.getInstance();
         mAuth.signInWithEmailAndPassword(email, password)
-                .addOnCompleteListener(this, new OnCompleteAuthProgressListener())
-                .addOnFailureListener(e -> {
+                .addOnCompleteListener((Executor) this, new OnCompleteAuthProgressListener())
+                .addOnFailureListener((OnFailureListener) e -> {
                     logger.errorLog(e.getMessage());
                     mAuthProgress.postValue(new Pair<>(AuthProgress.ERROR, e.getMessage()));
                 });
@@ -73,12 +75,10 @@ public class AuthRepository implements Executor{
     public void addNewUser() {
         String id = FirebaseAuth.getInstance().getUid();
         String email = FirebaseAuth.getInstance().getCurrentUser().getEmail();
-        UserApi.User user = new UserApi.User(id, email, "");
-        user.imageUrl = "no Image";
-        userApi.addUser(id, user)
-                .enqueue(new Callback<UserApi.User>() {
+        userApi.addUser(id, new DatabaseUser(id, email, ""))
+                .enqueue(new Callback<DatabaseUser>() {
             @Override
-            public void onResponse(Call<UserApi.User> call, Response<UserApi.User> response) {
+            public void onResponse(Call<DatabaseUser> call, Response<DatabaseUser> response) {
                 switch (response.code()) {
                     case FAILED_WRITE_DB_CODE:
                         logger.errorLog("Problem with Auth");
@@ -90,7 +90,7 @@ public class AuthRepository implements Executor{
             }
 
             @Override
-            public void onFailure(Call<UserApi.User> call, Throwable t) {
+            public void onFailure(Call<DatabaseUser> call, Throwable t) {
                 logger.errorLog("Fail with added player to database: " + t.getMessage());
             }
         });
@@ -98,14 +98,22 @@ public class AuthRepository implements Executor{
 
     public LiveData<RestoreProgress> restorePassword(String email) {
         final MutableLiveData<RestoreProgress> mRestoreProgress = new MutableLiveData<>(RestoreProgress.IN_PROGRESS);
-        mAuth.sendPasswordResetEmail(email).addOnCompleteListener(task -> {
-            if (task.isSuccessful()){
-                mRestoreProgress.postValue(RestoreProgress.OK);
+        mAuth.sendPasswordResetEmail(email).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if (task.isSuccessful()){
+                    mRestoreProgress.postValue(RestoreProgress.OK);
+                }
+                else{
+                    mRestoreProgress.postValue(RestoreProgress.FAILED);
+                }
             }
-            else{
-                mRestoreProgress.postValue(RestoreProgress.FAILED);
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                mRestoreProgress.postValue(RestoreProgress.ERROR);
             }
-        }).addOnFailureListener(e -> mRestoreProgress.postValue(RestoreProgress.ERROR));
+        });
         return  mRestoreProgress;
     }
 

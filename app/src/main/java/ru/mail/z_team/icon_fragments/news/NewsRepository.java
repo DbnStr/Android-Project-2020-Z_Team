@@ -14,8 +14,8 @@ import retrofit2.Response;
 import ru.mail.z_team.Logger;
 import ru.mail.z_team.icon_fragments.DatabaseCallback;
 import ru.mail.z_team.icon_fragments.Transformer;
-import ru.mail.z_team.network.DatabaseApiRepository;
-import ru.mail.z_team.network.UserApi;
+import ru.mail.z_team.databases.network.DatabaseApiRepository;
+import ru.mail.z_team.databases.network.UserApi;
 
 public class NewsRepository {
 

@@ -1,4 +1,4 @@
-package ru.mail.z_team.local_storage.story;
+package ru.mail.z_team.databases.local_storage.story;
 
 public class UserStory {
 

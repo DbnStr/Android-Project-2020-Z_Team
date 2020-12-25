@@ -12,13 +12,14 @@ import java.util.ArrayList;
 import retrofit2.Response;
 import ru.mail.z_team.ApplicationModified;
 import ru.mail.z_team.Logger;
+import ru.mail.z_team.databases.DatabaseUser;
 import ru.mail.z_team.icon_fragments.DatabaseCallback;
 import ru.mail.z_team.icon_fragments.DatabaseNetworkControlExecutor;
 import ru.mail.z_team.icon_fragments.Transformer;
-import ru.mail.z_team.local_storage.LocalDatabase;
-import ru.mail.z_team.local_storage.UserDao;
-import ru.mail.z_team.network.DatabaseApiRepository;
-import ru.mail.z_team.network.UserApi;
+import ru.mail.z_team.databases.local_storage.LocalDatabase;
+import ru.mail.z_team.databases.local_storage.UserDao;
+import ru.mail.z_team.databases.network.DatabaseApiRepository;
+import ru.mail.z_team.databases.network.UserApi;
 import ru.mail.z_team.user.Friend;
 import ru.mail.z_team.user.User;
 
@@ -86,14 +87,14 @@ public class FriendsRepository {
     }
 
     private void getUserFriendsFromRemoteDBAndAddTheseInLocalDB(final String userId) {
-        userApi.getUserById(userId).enqueue(new DatabaseCallback<UserApi.User>(LOG_TAG) {
+        userApi.getUserById(userId).enqueue(new DatabaseCallback<DatabaseUser>(LOG_TAG) {
             @Override
-            public void onNullResponse(Response<UserApi.User> response) {
+            public void onNullResponse(Response<DatabaseUser> response) {
                 logger.errorLog("Fail with update");
             }
 
             @Override
-            public void onSuccessResponse(Response<UserApi.User> response) {
+            public void onSuccessResponse(Response<DatabaseUser> response) {
                 currentUserFriends.postValue(Transformer.transformToUser(response.body()).getFriends());
 
                 replaceOldFriendsListInDbWithNew(Transformer.transformToUser(response.body()).getFriends(), userId);
@@ -181,15 +182,15 @@ public class FriendsRepository {
 
     public void checkUserExistence(String id) {
         logger.log("checkUserExistence");
-        userApi.getUserById(id).enqueue(new DatabaseCallback<UserApi.User>(LOG_TAG) {
+        userApi.getUserById(id).enqueue(new DatabaseCallback<DatabaseUser>(LOG_TAG) {
             @Override
-            public void onNullResponse(Response<UserApi.User> response) {
+            public void onNullResponse(Response<DatabaseUser> response) {
                 logger.log("posted false");
                 userExistence.postValue(false);
             }
 
             @Override
-            public void onSuccessResponse(Response<UserApi.User> response) {
+            public void onSuccessResponse(Response<DatabaseUser> response) {
                 userExistence.postValue(true);
             }
         });
@@ -204,24 +205,24 @@ public class FriendsRepository {
         logger.log("addFriend");
         String curUserId = FirebaseAuth.getInstance().getUid();
 
-        userApi.getUserById(newFriendId).enqueue(new DatabaseCallback<UserApi.User>(LOG_TAG) {
+        userApi.getUserById(newFriendId).enqueue(new DatabaseCallback<DatabaseUser>(LOG_TAG) {
             @Override
-            public void onNullResponse(Response<UserApi.User> response) {
+            public void onNullResponse(Response<DatabaseUser> response) {
                 logger.errorLog("Failed to get " + newFriendId + " user");
             }
 
             @Override
-            public void onSuccessResponse(Response<UserApi.User> response) {
+            public void onSuccessResponse(Response<DatabaseUser> response) {
                 UserApi.Friend friend = Transformer.transformToUserApiFriend(response.body());
 
-                userApi.getUserById(curUserId).enqueue(new DatabaseCallback<UserApi.User>(LOG_TAG) {
+                userApi.getUserById(curUserId).enqueue(new DatabaseCallback<DatabaseUser>(LOG_TAG) {
                     @Override
-                    public void onNullResponse(Response<UserApi.User> response) {
+                    public void onNullResponse(Response<DatabaseUser> response) {
                         logger.errorLog("failed to load " + curUserId + " user");
                     }
 
                     @Override
-                    public void onSuccessResponse(Response<UserApi.User> response) {
+                    public void onSuccessResponse(Response<DatabaseUser> response) {
                         UserApi.Friend friendsReq = Transformer.transformToUserApiFriend(response.body());
                         addFriendToFriendRequest(newFriendId, friendsReq);
                     }
@@ -292,14 +293,14 @@ public class FriendsRepository {
     }
 
     public void updateCurrentUserProfileData(String id) {
-        userApi.getUserById(id).enqueue(new DatabaseCallback<UserApi.User>(LOG_TAG) {
+        userApi.getUserById(id).enqueue(new DatabaseCallback<DatabaseUser>(LOG_TAG) {
             @Override
-            public void onNullResponse(Response<UserApi.User> response) {
+            public void onNullResponse(Response<DatabaseUser> response) {
                 logger.errorLog("failed to load user data");
             }
 
             @Override
-            public void onSuccessResponse(Response<UserApi.User> response) {
+            public void onSuccessResponse(Response<DatabaseUser> response) {
                 currentUserProfileData.postValue(Transformer.transformToUser(response.body()));
             }
         });

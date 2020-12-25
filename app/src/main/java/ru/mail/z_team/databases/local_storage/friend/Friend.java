@@ -1,4 +1,4 @@
-package ru.mail.z_team.local_storage.friend;
+package ru.mail.z_team.databases.local_storage.friend;
 
 
 import androidx.annotation.NonNull;

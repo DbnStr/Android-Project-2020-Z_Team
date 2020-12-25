@@ -16,11 +16,11 @@ import ru.mail.z_team.Logger;
 import ru.mail.z_team.icon_fragments.DatabaseCallback;
 import ru.mail.z_team.icon_fragments.DatabaseNetworkControlExecutor;
 import ru.mail.z_team.icon_fragments.Transformer;
-import ru.mail.z_team.local_storage.LocalDatabase;
-import ru.mail.z_team.local_storage.UserDao;
+import ru.mail.z_team.databases.local_storage.LocalDatabase;
+import ru.mail.z_team.databases.local_storage.UserDao;
 import ru.mail.z_team.map.Story;
-import ru.mail.z_team.network.DatabaseApiRepository;
-import ru.mail.z_team.network.UserApi;
+import ru.mail.z_team.databases.network.DatabaseApiRepository;
+import ru.mail.z_team.databases.network.UserApi;
 
 public class WalkProfileRepository {
     private static final String LOG_TAG = "WalkProfileRepository";

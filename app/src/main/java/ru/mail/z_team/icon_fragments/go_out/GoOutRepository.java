@@ -17,10 +17,11 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import ru.mail.z_team.Logger;
+import ru.mail.z_team.databases.DatabaseUser;
 import ru.mail.z_team.icon_fragments.DatabaseCallback;
 import ru.mail.z_team.map.Story;
-import ru.mail.z_team.network.DatabaseApiRepository;
-import ru.mail.z_team.network.UserApi;
+import ru.mail.z_team.databases.network.DatabaseApiRepository;
+import ru.mail.z_team.databases.network.UserApi;
 
 public class GoOutRepository {
 
@@ -44,14 +45,14 @@ public class GoOutRepository {
     public void postWalk(String title, FeatureCollection walk, ArrayList<Story> stories) {
         String currentUserId = FirebaseAuth.getInstance().getUid();
 
-        userApi.getUserById(currentUserId).enqueue(new DatabaseCallback<UserApi.User>(LOG_TAG) {
+        userApi.getUserById(currentUserId).enqueue(new DatabaseCallback<DatabaseUser>(LOG_TAG) {
             @Override
-            public void onNullResponse(Response<UserApi.User> response) {
+            public void onNullResponse(Response<DatabaseUser> response) {
                 logger.errorLog("Fail with update");
             }
 
             @Override
-            public void onSuccessResponse(Response<UserApi.User> response) {
+            public void onSuccessResponse(Response<DatabaseUser> response) {
                 String name = response.body().name;
                 userApi.getUserWalksAnnotationsById(currentUserId).enqueue(new DatabaseCallback<ArrayList<UserApi.WalkAnnotation>>(LOG_TAG) {
                     @Override

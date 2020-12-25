@@ -13,14 +13,15 @@ import java.util.List;
 import retrofit2.Response;
 import ru.mail.z_team.ApplicationModified;
 import ru.mail.z_team.Logger;
+import ru.mail.z_team.databases.DatabaseUser;
 import ru.mail.z_team.icon_fragments.DatabaseCallback;
 import ru.mail.z_team.icon_fragments.DatabaseNetworkControlExecutor;
 import ru.mail.z_team.icon_fragments.Transformer;
-import ru.mail.z_team.local_storage.LocalDatabase;
-import ru.mail.z_team.local_storage.UserDao;
-import ru.mail.z_team.local_storage.friend.UserFriend;
-import ru.mail.z_team.network.DatabaseApiRepository;
-import ru.mail.z_team.network.UserApi;
+import ru.mail.z_team.databases.local_storage.LocalDatabase;
+import ru.mail.z_team.databases.local_storage.UserDao;
+import ru.mail.z_team.databases.local_storage.friend.UserFriend;
+import ru.mail.z_team.databases.network.DatabaseApiRepository;
+import ru.mail.z_team.databases.network.UserApi;
 import ru.mail.z_team.user.Friend;
 import ru.mail.z_team.user.User;
 
@@ -71,14 +72,14 @@ public class ProfileRepository {
     }
 
     private void getUserFromRemoteDBAndAddHimInLocalDB(final String userId) {
-        userApi.getUserById(userId).enqueue(new DatabaseCallback<UserApi.User>(LOG_TAG) {
+        userApi.getUserById(userId).enqueue(new DatabaseCallback<DatabaseUser>(LOG_TAG) {
             @Override
-            public void onNullResponse(Response<UserApi.User> response) {
+            public void onNullResponse(Response<DatabaseUser> response) {
                 logger.errorLog("Fail with update");
             }
 
             @Override
-            public void onSuccessResponse(Response<UserApi.User> response) {
+            public void onSuccessResponse(Response<DatabaseUser> response) {
                 currentUserData.postValue(Transformer.transformToUser(response.body()));
 
                 addUserInLocalDB(response.body());
@@ -87,7 +88,7 @@ public class ProfileRepository {
     }
 
 
-    private void addUserInLocalDB(final UserApi.User user) {
+    private void addUserInLocalDB(final DatabaseUser user) {
         localDatabase.databaseWriteExecutor.execute(() -> {
             userDao.insert(Transformer.transformToLocalDBUser(user));
 
@@ -108,14 +109,14 @@ public class ProfileRepository {
 
     public void changeCurrentUserInformation(User newInformation) {
         String currentUserId = FirebaseAuth.getInstance().getUid();
-        userApi.changeUserInformation(currentUserId, Transformer.transformToUserApiUser(newInformation)).enqueue(new DatabaseCallback<UserApi.User>(LOG_TAG) {
+        userApi.changeUserInformation(currentUserId, Transformer.transformToUserApiUser(newInformation)).enqueue(new DatabaseCallback<DatabaseUser>(LOG_TAG) {
             @Override
-            public void onNullResponse(Response<UserApi.User> response) {
+            public void onNullResponse(Response<DatabaseUser> response) {
                 logger.errorLog("Failed with change information about " + currentUserId);
             }
 
             @Override
-            public void onSuccessResponse(Response<UserApi.User> response) {
+            public void onSuccessResponse(Response<DatabaseUser> response) {
                 logger.log("Change information about " + currentUserId);
 
                 localDatabase.databaseWriteExecutor.execute(() -> userDao.insert(Transformer.transformToLocalDBUser(newInformation)));

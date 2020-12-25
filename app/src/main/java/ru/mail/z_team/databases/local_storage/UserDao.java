@@ -1,4 +1,4 @@
-package ru.mail.z_team.local_storage;
+package ru.mail.z_team.databases.local_storage;
 
 import androidx.room.Dao;
 import androidx.room.Insert;
@@ -8,20 +8,21 @@ import androidx.room.Transaction;
 
 import java.util.List;
 
-import ru.mail.z_team.local_storage.friend.Friend;
-import ru.mail.z_team.local_storage.friend.UserFriend;
-import ru.mail.z_team.local_storage.story.Story;
-import ru.mail.z_team.local_storage.story.UserStory;
-import ru.mail.z_team.local_storage.walk.UserWalk;
-import ru.mail.z_team.local_storage.walk.Walk;
-import ru.mail.z_team.local_storage.walk_annotation.UserWalkAnnotation;
-import ru.mail.z_team.local_storage.walk_annotation.WalkAnnotation;
+import ru.mail.z_team.databases.DatabaseUser;
+import ru.mail.z_team.databases.local_storage.friend.Friend;
+import ru.mail.z_team.databases.local_storage.friend.UserFriend;
+import ru.mail.z_team.databases.local_storage.story.Story;
+import ru.mail.z_team.databases.local_storage.story.UserStory;
+import ru.mail.z_team.databases.local_storage.walk.UserWalk;
+import ru.mail.z_team.databases.local_storage.walk.Walk;
+import ru.mail.z_team.databases.local_storage.walk_annotation.UserWalkAnnotation;
+import ru.mail.z_team.databases.local_storage.walk_annotation.WalkAnnotation;
 
 @Dao
 public abstract class UserDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    public abstract void insert(User user);
+    public abstract void insert(DatabaseUser user);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     public abstract void insert(Friend friend);
@@ -86,16 +87,16 @@ public abstract class UserDao {
         return userWalk;
     }
 
-    @Query("SELECT * FROM user WHERE id = :id")
-    public abstract User getById(String id);
+    @Query("SELECT * FROM DatabaseUser WHERE id = :id")
+    public abstract DatabaseUser getById(String id);
 
-    @Query("SELECT friend.id, friend.friend_name AS fr_name " + "FROM friend, user " + "WHERE friend.current_user_id == user.id")
+    @Query("SELECT friend.id, friend.friend_name AS fr_name " + "FROM friend, DatabaseUser " + "WHERE friend.current_user_id == DatabaseUser.id")
     public abstract List<UserFriend> getUserFriends();
 
-    @Query("SELECT WalkAnnotation.title, WalkAnnotation.authorName, WalkAnnotation.authorId, WalkAnnotation.date " + "FROM WalkAnnotation, user " + "WHERE WalkAnnotation.authorId == user.id")
+    @Query("SELECT WalkAnnotation.title, WalkAnnotation.authorName, WalkAnnotation.authorId, WalkAnnotation.date " + "FROM WalkAnnotation, DatabaseUser " + "WHERE WalkAnnotation.authorId == DatabaseUser.id")
     public abstract List<UserWalkAnnotation> getUserWalksAnnotations();
 
-    @Query("SELECT Walk.title, Walk.authorName, Walk.authorId, Walk.date, Walk.walk " + "FROM Walk, User " + "WHERE Walk.authorId == user.id")
+    @Query("SELECT Walk.title, Walk.authorName, Walk.authorId, Walk.date, Walk.walk " + "FROM Walk, DatabaseUser " + "WHERE Walk.authorId == DatabaseUser.id")
     public abstract List<UserWalk> getUserWalks();
 
     @Query("SELECT * FROM walk WHERE authorId == :id AND date == :date")

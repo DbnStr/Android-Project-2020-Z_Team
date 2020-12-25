@@ -1,4 +1,4 @@
-package ru.mail.z_team.network;
+package ru.mail.z_team.databases.network;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -10,27 +10,9 @@ import retrofit2.http.GET;
 import retrofit2.http.PATCH;
 import retrofit2.http.PUT;
 import retrofit2.http.Path;
+import ru.mail.z_team.databases.DatabaseUser;
 
 public interface UserApi {
-
-    class User {
-        public String name;
-        public int age;
-        public ArrayList<Friend> friends;
-        public String imageUrl;
-        public String email;
-        public String id;
-
-        public User(String id, String email, String name) {
-            this.name = name;
-            this.id = id;
-            this.email = email;
-            this.friends = new ArrayList<>();
-        }
-
-        public User() {
-        }
-    }
 
     class Friend {
         public String name;
@@ -88,7 +70,7 @@ public interface UserApi {
     }
 
     @GET("/Users/{id}.json")
-    Call<User> getUserById(@Path("id") String id);
+    Call<DatabaseUser> getUserById(@Path("id") String id);
 
     @GET("/WalkAnnotation/{id}.json")
     Call<ArrayList<WalkAnnotation>> getUserWalksAnnotationsById(@Path("id") String id);
@@ -106,7 +88,7 @@ public interface UserApi {
     Call<ArrayList<Friend>> getUserFriendsById(@Path("id") String id);
 
     @PUT("/Users/{id}.json")
-    Call<User> addUser(@Path("id") String id, @Body User user);
+    Call<DatabaseUser> addUser(@Path("id") String id, @Body DatabaseUser user);
 
     @PUT("/WalkAnnotation/{id}/{num}.json")
     Call<WalkAnnotation> addWalkInfo(@Path("id") String id, @Path("num") int num, @Body WalkAnnotation walk);
@@ -133,7 +115,7 @@ public interface UserApi {
     Call<ArrayList<Friend>> getFriendRequestList(@Path("id") String id);
 
     @PATCH("/Users/{id}.json")
-    Call<User> changeUserInformation(@Path("id") String id, @Body User user);
+    Call<DatabaseUser> changeUserInformation(@Path("id") String id, @Body DatabaseUser user);
 
     @GET("WalkMaps/{id}/{date}/stories/{number}.json")
     Call<Story> getStory(@Path("id") String userId, @Path("date") String date, @Path("number") int number);

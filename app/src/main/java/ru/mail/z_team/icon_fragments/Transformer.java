@@ -13,14 +13,15 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import ru.mail.z_team.databases.DatabaseUser;
 import ru.mail.z_team.icon_fragments.walks.Walk;
-import ru.mail.z_team.local_storage.friend.UserFriend;
-import ru.mail.z_team.local_storage.story.UserStory;
-import ru.mail.z_team.local_storage.walk.UserWalk;
-import ru.mail.z_team.local_storage.walk_annotation.UserWalkAnnotation;
-import ru.mail.z_team.local_storage.walk_annotation.WalkAnnotation;
+import ru.mail.z_team.databases.local_storage.friend.UserFriend;
+import ru.mail.z_team.databases.local_storage.story.UserStory;
+import ru.mail.z_team.databases.local_storage.walk.UserWalk;
+import ru.mail.z_team.databases.local_storage.walk_annotation.UserWalkAnnotation;
+import ru.mail.z_team.databases.local_storage.walk_annotation.WalkAnnotation;
 import ru.mail.z_team.map.Story;
-import ru.mail.z_team.network.UserApi;
+import ru.mail.z_team.databases.network.UserApi;
 import ru.mail.z_team.user.Friend;
 import ru.mail.z_team.user.User;
 
@@ -38,7 +39,7 @@ public class Transformer {
 
     /* default User result */
 
-    public static User transformToUser(UserApi.User user) {
+    public static User transformToUser(DatabaseUser user) {
         String name = user.name;
         if (name == null) {
             name = "Anonymous";
@@ -54,17 +55,10 @@ public class Transformer {
                 user.id
         );
 
+        //возможно тут null
         u.setImageUrl(user.imageUrl);
 
         return u;
-    }
-
-    public static User transformToUser(ru.mail.z_team.local_storage.User user) {
-        return new User(
-                user.name,
-                user.age,
-                new ArrayList<>(),
-                user.id);
     }
 
     /* default Friend result */
@@ -204,8 +198,8 @@ public class Transformer {
 
     /* UserApi User result */
 
-    public static UserApi.User transformToUserApiUser(User user) {
-        UserApi.User result = new UserApi.User();
+    public static DatabaseUser transformToUserApiUser(User user) {
+        DatabaseUser result = new DatabaseUser();
         result.id = user.getId();
         result.name = user.getName();
         result.age = user.getAge();
@@ -215,7 +209,7 @@ public class Transformer {
 
     /* UserApi Friend result */
 
-    public static UserApi.Friend transformToUserApiFriend(UserApi.User user) {
+    public static UserApi.Friend transformToUserApiFriend(DatabaseUser user) {
         UserApi.Friend result = new UserApi.Friend();
         result.id = user.id;
         result.name = user.name;
@@ -224,8 +218,8 @@ public class Transformer {
 
     /* LocalDB User result */
 
-    public static ru.mail.z_team.local_storage.User transformToLocalDBUser(User user) {
-        ru.mail.z_team.local_storage.User result = new ru.mail.z_team.local_storage.User();
+    public static DatabaseUser transformToLocalDBUser(User user) {
+        DatabaseUser result = new DatabaseUser();
         result.name = user.name;
         result.id = user.id;
         result.age = user.age;
@@ -233,8 +227,8 @@ public class Transformer {
         return result;
     }
 
-    public static ru.mail.z_team.local_storage.User transformToLocalDBUser(UserApi.User user) {
-        ru.mail.z_team.local_storage.User result = new ru.mail.z_team.local_storage.User();
+    public static DatabaseUser transformToLocalDBUser(DatabaseUser user) {
+        DatabaseUser result = new DatabaseUser();
         String name = user.name;
         if (name == null) {
             name = "Anonymous";
@@ -248,16 +242,16 @@ public class Transformer {
 
     /* LocalDB Friend result */
 
-    public static List<ru.mail.z_team.local_storage.friend.Friend> transformToLocalDBFriendALl(List<Friend> friends, String currentUserId) {
-        List<ru.mail.z_team.local_storage.friend.Friend> result = new ArrayList<>();
+    public static List<ru.mail.z_team.databases.local_storage.friend.Friend> transformToLocalDBFriendALl(List<Friend> friends, String currentUserId) {
+        List<ru.mail.z_team.databases.local_storage.friend.Friend> result = new ArrayList<>();
         for (Friend friend : friends) {
             result.add(transformToLocalDBFriend(friend, currentUserId));
         }
         return result;
     }
 
-    public static ru.mail.z_team.local_storage.friend.Friend transformToLocalDBFriend(Friend friend, String currentUserId) {
-        return new ru.mail.z_team.local_storage.friend.Friend(
+    public static ru.mail.z_team.databases.local_storage.friend.Friend transformToLocalDBFriend(Friend friend, String currentUserId) {
+        return new ru.mail.z_team.databases.local_storage.friend.Friend(
                 friend.name,
                 friend.id,
                 currentUserId
@@ -279,8 +273,8 @@ public class Transformer {
 
     /* LocalDB Story result */
 
-    public static List<ru.mail.z_team.local_storage.story.Story> transformToLocalDBStoryAll(ArrayList<UserApi.Story> stories, String walkDate) {
-        List<ru.mail.z_team.local_storage.story.Story> result = new ArrayList<>();
+    public static List<ru.mail.z_team.databases.local_storage.story.Story> transformToLocalDBStoryAll(ArrayList<UserApi.Story> stories, String walkDate) {
+        List<ru.mail.z_team.databases.local_storage.story.Story> result = new ArrayList<>();
         if (stories != null) {
             for (UserApi.Story story : stories) {
                 result.add(transformToLocalDBStory(story, walkDate));
@@ -289,8 +283,8 @@ public class Transformer {
         return result;
     }
 
-    public static ru.mail.z_team.local_storage.story.Story transformToLocalDBStory(UserApi.Story story, String walkDate) {
-        ru.mail.z_team.local_storage.story.Story result = new ru.mail.z_team.local_storage.story.Story();
+    public static ru.mail.z_team.databases.local_storage.story.Story transformToLocalDBStory(UserApi.Story story, String walkDate) {
+        ru.mail.z_team.databases.local_storage.story.Story result = new ru.mail.z_team.databases.local_storage.story.Story();
         result.description = story.description;
         result.place = story.place;
         result.point = story.point;
@@ -319,14 +313,14 @@ public class Transformer {
 
     /* Walk LocalDB result */
 
-    public static List<ru.mail.z_team.local_storage.walk.Walk> transformToLocalDBWalkAll(Map<String, UserApi.Walk> walks, String userId) {
-        List<ru.mail.z_team.local_storage.walk.Walk> result = new ArrayList<>();
+    public static List<ru.mail.z_team.databases.local_storage.walk.Walk> transformToLocalDBWalkAll(Map<String, UserApi.Walk> walks, String userId) {
+        List<ru.mail.z_team.databases.local_storage.walk.Walk> result = new ArrayList<>();
         walks.forEach((k, walk) -> result.add(transformToLocalDBWalk(walk, userId)));
         return result;
     }
 
-    public static ru.mail.z_team.local_storage.walk.Walk transformToLocalDBWalk(UserApi.Walk walk, String userId) {
-        return new ru.mail.z_team.local_storage.walk.Walk(
+    public static ru.mail.z_team.databases.local_storage.walk.Walk transformToLocalDBWalk(UserApi.Walk walk, String userId) {
+        return new ru.mail.z_team.databases.local_storage.walk.Walk(
                 walk.title,
                 walk.authorName,
                 userId,

@@ -1,4 +1,4 @@
-package ru.mail.z_team.local_storage.walk_annotation;
+package ru.mail.z_team.databases.local_storage.walk_annotation;
 
 import androidx.annotation.NonNull;
 import androidx.room.Entity;
