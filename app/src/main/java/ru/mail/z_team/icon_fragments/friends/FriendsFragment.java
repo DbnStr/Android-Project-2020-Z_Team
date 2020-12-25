@@ -5,12 +5,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.viewpager.widget.ViewPager;
 
 import com.google.android.material.tabs.TabLayout;
@@ -22,17 +22,12 @@ import ru.mail.z_team.R;
 public class FriendsFragment extends Fragment {
 
     private static final String LOG_TAG = "FriendsFragment";
-    private static final String FRIEND_REQUEST_FRAGMENT_TAG = "FRIENDS REQUESTS FRAGMENT";
     private Logger logger;
-
-    private FriendAdapter adapter;
 
     private FriendsViewModel viewModel;
 
     private Button addFriendBtn;
     private TextInputLayout fieldAddFriend;
-    private TextView noFriends;
-
     int container;
 
     public FriendsFragment() {}
@@ -41,6 +36,7 @@ public class FriendsFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         logger = new Logger(LOG_TAG, true);
         logger.log("OnCreate");
+        viewModel = new ViewModelProvider(this).get(FriendsViewModel.class);
         super.onCreate(savedInstanceState);
     }
 
@@ -51,7 +47,6 @@ public class FriendsFragment extends Fragment {
 
         addFriendBtn = view.findViewById(R.id.add_friend_by_id_btn);
         fieldAddFriend = view.findViewById(R.id.add_friend_by_id_et);
-        noFriends = view.findViewById(R.id.no_friend_tv);
         this.container = R.id.current_menu_container;
 
         ViewPager viewPager = view.findViewById(R.id.viewpager);
@@ -74,7 +69,6 @@ public class FriendsFragment extends Fragment {
                 fieldAddFriend.setFocusable(true);
             } else {
                 logger.log("addFriendBtn");
-                noFriends.setVisibility(View.INVISIBLE);
                 viewModel.checkUserExistence(id);
 
                 ExistenceObserver<Boolean> observer = new ExistenceObserver<>(id);

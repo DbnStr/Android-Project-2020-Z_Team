@@ -4,16 +4,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <TextView
-        android:id="@+id/no_friend_tv"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="16dp"
-        android:gravity="center_horizontal"
-        android:text="@string/add_your_first_friend"
-        android:visibility="invisible"
-        app:layout_constraintTop_toBottomOf="@+id/friend_request" />
-
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/tabs_friends"
         android:layout_width="match_parent"
@@ -48,7 +38,8 @@
 
             <com.google.android.material.textfield.TextInputEditText
                 android:layout_width="match_parent"
-                android:layout_height="match_parent" />
+                android:layout_height="wrap_content"
+                android:textSize="24sp"/>
 
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -56,7 +47,7 @@
             android:id="@+id/add_friend_by_id_btn"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_margin="10dp"
+            android:layout_margin="8dp"
             android:background="@drawable/ic_add_cycle" />
 
     </LinearLayout>

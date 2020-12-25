@@ -22,10 +22,7 @@
         android:layout_height="match_parent"
         android:visibility="invisible"
         android:text="@string/add_your_first_friend"
-        android:textSize="24sp"
-        android:padding="16dp"
-        android:textAlignment="center"
-        android:textColor="@color/primaryDarkColor"/>
+        style="@style/NoSthText"/>
 
     <TextView
         android:id="@+id/no_friend_request"
@@ -33,9 +30,6 @@
         android:layout_height="match_parent"
         android:visibility="invisible"
         android:text="@string/you_have_no_friend_requests"
-        android:textSize="24sp"
-        android:padding="16dp"
-        android:textAlignment="center"
-        android:textColor="@color/primaryDarkColor"/>
+        style="@style/NoSthText"/>
 </FrameLayout>
 

@@ -40,4 +40,7 @@
     <string name="enter_user_id">Enter User ID</string>
     <string name="add_your_first_friend">Add your first friend</string>
     <string name="anonymous">Anonymous</string>
+    <string name="you_don_t_have_walks_yet">You don\'t have walks yet</string>
+    <string name="add_walk">Add Walk</string>
+    <string name="you_don_t_have_any_friend_to_watch_their_news">You don\'t have any friends to watch their news</string>
 </resources>

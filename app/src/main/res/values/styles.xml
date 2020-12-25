@@ -12,6 +12,13 @@
         <item name="android:padding">16dp</item>
     </style>
 
+    <style name="NoSthText" parent="Widget.AppCompat.TextView">
+        <item name="android:textSize">24sp</item>
+        <item name="android:padding">16dp</item>
+        <item name="android:textColor">@color/primaryDarkColor</item>
+        <item name="android:textAlignment">center</item>
+    </style>
+
     <style name="MainTheme" parent="Theme.MaterialComponents.Light.DarkActionBar">
         <item name="colorPrimary">@color/primaryColor</item>
         <item name="colorPrimaryDark">@color/primaryDarkColor</item>

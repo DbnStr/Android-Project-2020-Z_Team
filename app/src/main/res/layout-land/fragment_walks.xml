@@ -7,11 +7,11 @@
     <TextView
         android:id="@+id/no_walks_tv"
         android:visibility="invisible"
-        android:text="You don't have walks yet"
+        android:text="@string/you_don_t_have_walks_yet"
         android:layout_gravity="center_horizontal"
         android:layout_width="match_parent"
-        android:layout_marginTop="32dp"
-        android:layout_height="0dp"
+        android:layout_height="match_parent"
+        style="@style/NoSthText"
         app:layout_constraintTop_toTopOf="parent"/>
 
     <androidx.recyclerview.widget.RecyclerView
@@ -26,9 +26,10 @@
         android:id="@+id/map_activity_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom|right"
+        android:layout_gravity="bottom|end"
         android:layout_margin="16dp"
         android:background="@color/secondaryColor"
-        app:srcCompat="@drawable/ic_plus_24"/>
+        app:srcCompat="@drawable/ic_plus_24"
+        android:contentDescription="@string/add_walk" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
