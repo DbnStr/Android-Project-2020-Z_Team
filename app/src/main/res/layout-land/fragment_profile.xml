@@ -37,14 +37,6 @@
             android:text="@string/edit"
             app:layout_constraintTop_toBottomOf="@id/linear_age" />
 
-        <Button
-            android:id="@+id/save_changes_btn"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="16dp"
-            android:text="@string/save_changes"
-            app:layout_constraintTop_toBottomOf="@id/edit_btn" />
-
 
         <LinearLayout
             android:id="@+id/linear_name"
@@ -56,14 +48,14 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="name:" />
+                android:text="@string/name" />
 
             <EditText
                 android:id="@+id/profile_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="16dp"
-                android:hint="Your name"
+                android:hint="@string/your_name"
                 android:text="@string/profile"
                 android:textColor="@color/primaryDarkColor"
                 android:textSize="20sp"/>
@@ -79,14 +71,14 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="age:" />
+                android:text="@string/age" />
 
             <EditText
                 android:id="@+id/profile_age"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="16dp"
-                android:hint="Your age"
+                android:hint="@string/your_age"
                 android:text="@string/profile"
                 android:textColor="@color/primaryDarkColor"
                 android:textSize="20sp"/>

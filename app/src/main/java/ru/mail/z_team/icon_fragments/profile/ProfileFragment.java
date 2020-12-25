@@ -56,7 +56,7 @@ public class ProfileFragment extends Fragment {
     private ProfileViewModel profileViewModel;
     private EditText name, age;
     private ImageView image;
-    private Button editBtn, saveChangesBtn;
+    private Button editBtn;
     private User user;
 
     private Uri imageUri;
@@ -80,7 +80,6 @@ public class ProfileFragment extends Fragment {
         age = view.findViewById(R.id.profile_age);
         image = view.findViewById(R.id.profile_image);
         editBtn = view.findViewById(R.id.edit_btn);
-        saveChangesBtn = view.findViewById(R.id.save_changes_btn);
 
         return view;
     }
@@ -92,10 +91,6 @@ public class ProfileFragment extends Fragment {
         disableEditAbilityAll();
 
         editBtn.setOnClickListener(v -> enableEditAbilityAll());
-        saveChangesBtn.setOnClickListener(v -> {
-            profileViewModel.changeCurrentUserInformation(getProfileInfo());
-            disableEditAbilityAll();
-        });
 
         Observer<User> observer = user -> {
             if (user != null) {
@@ -115,6 +110,9 @@ public class ProfileFragment extends Fragment {
         disableEditAbility(name);
         disableEditAbility(age);
         image.setClickable(false);
+
+        editBtn.setText(getString(R.string.edit));
+        editBtn.setOnClickListener(v -> enableEditAbilityAll());
     }
 
     private void disableEditAbility(EditText editText) {
@@ -130,6 +128,12 @@ public class ProfileFragment extends Fragment {
         image.setClickable(true);
         image.setOnClickListener(v -> {
             showImagePickDialog();
+        });
+
+        editBtn.setText(getString(R.string.save_changes));
+        editBtn.setOnClickListener(v -> {
+            profileViewModel.changeCurrentUserInformation(getProfileInfo());
+            disableEditAbilityAll();
         });
     }
 

@@ -43,4 +43,8 @@
     <string name="you_don_t_have_walks_yet">You don\'t have walks yet</string>
     <string name="add_walk">Add Walk</string>
     <string name="you_don_t_have_any_friend_to_watch_their_news">You don\'t have any friends to watch their news</string>
+    <string name="your_age">Your age</string>
+    <string name="your_name">Your name</string>
+    <string name="name">name:</string>
+    <string name="age">age:</string>
 </resources>
