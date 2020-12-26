@@ -12,7 +12,6 @@ import ru.mail.z_team.databases.DatabaseStory;
 import ru.mail.z_team.databases.DatabaseUser;
 import ru.mail.z_team.databases.DatabaseFriend;
 import ru.mail.z_team.databases.DatabaseWalk;
-import ru.mail.z_team.databases.local_storage.story.Story;
 import ru.mail.z_team.databases.DatabaseWalkAnnotation;
 
 @Dao
@@ -22,7 +21,7 @@ public abstract class UserDao {
     public abstract void insert(DatabaseUser user);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    public abstract void insert(LocalDbFriend localDbFriend);
+    public abstract void insert(DatabaseFriend databaseFriend);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     public abstract void insert(DatabaseWalkAnnotation walkAnnotation);
@@ -31,9 +30,9 @@ public abstract class UserDao {
     public abstract void insert(DatabaseWalk databaseWalk);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    public abstract void insert(Story story);
+    public abstract void insert(DatabaseStory story);
 
-    @Query("DELETE FROM LocalDbFriend")
+    @Query("DELETE FROM DatabaseFriend")
     public abstract void deleteAllFriends();
 
     @Query("DELETE FROM DatabaseWalkAnnotation")
@@ -42,7 +41,7 @@ public abstract class UserDao {
     @Query("DELETE FROM DatabaseWalk")
     public abstract void deleteAllWalks();
 
-    @Query("DELETE FROM story WHERE walkDate == :walkDate")
+    @Query("DELETE FROM DatabaseStory WHERE walkDate == :walkDate")
     public abstract void deleteAllStoryByIdWalk(String walkDate);
 
     @Transaction
@@ -54,9 +53,9 @@ public abstract class UserDao {
     }
 
     @Transaction
-    public void deleteAllFriendsAndAddNew(List<LocalDbFriend> localDbFriends) {
+    public void deleteAllFriendsAndAddNew(List<DatabaseFriend> localDbFriends) {
         deleteAllFriends();
-        for (LocalDbFriend localDbFriend : localDbFriends) {
+        for (DatabaseFriend localDbFriend : localDbFriends) {
             insert(localDbFriend);
         }
     }
@@ -70,9 +69,9 @@ public abstract class UserDao {
     }
 
     @Transaction
-    public void deleteAllWalkStoryAndAddNew(List<Story> stories, String walkDate) {
+    public void deleteAllWalkStoryAndAddNew(List<DatabaseStory> stories, String walkDate) {
         deleteAllStoryByIdWalk(walkDate);
-        for (Story story : stories) {
+        for (DatabaseStory story : stories) {
             insert(story);
         }
     }
@@ -94,15 +93,15 @@ public abstract class UserDao {
     @Query("SELECT * FROM DatabaseUser WHERE id = :id")
     public abstract DatabaseUser getUserWithoutFriendsById(String id);
 
-    @Query("SELECT LocalDbFriend.id, LocalDbFriend.friend_name AS fr_name " + "FROM LocalDbFriend " + "WHERE LocalDbFriend.current_user_id == :id")
-    public abstract List<DatabaseFriend> getUserFriends(String id);
+    @Query("SELECT * FROM DatabaseFriend WHERE current_user_id == :parentUserId")
+    public abstract List<DatabaseFriend> getUserFriends(String parentUserId);
 
-    @Query("SELECT * FROM DatabaseWalkAnnotation WHERE DatabaseWalkAnnotation.authorId == :authorId")
+    @Query("SELECT * FROM DatabaseWalkAnnotation WHERE authorId == :authorId")
     public abstract List<DatabaseWalkAnnotation> getUserWalksAnnotations(String authorId);
 
     @Query("SELECT * FROM DatabaseWalk WHERE authorId == :id AND date == :date")
     public abstract DatabaseWalk getUserWalk(String id, String date);
 
-    @Query("SELECT Story.description, Story.place, Story.point, Story.id " + "FROM Story " + "WHERE story.walkDate = :walkDate")
+    @Query("SELECT * FROM DatabaseStory WHERE walkDate = :walkDate")
     public abstract List<DatabaseStory> getWalkStoriesByDate(String walkDate);
 }

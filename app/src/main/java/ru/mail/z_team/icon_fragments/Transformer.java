@@ -16,7 +16,6 @@ import ru.mail.z_team.databases.DatabaseStory;
 import ru.mail.z_team.databases.DatabaseUser;
 import ru.mail.z_team.databases.DatabaseWalk;
 import ru.mail.z_team.databases.DatabaseWalkAnnotation;
-import ru.mail.z_team.databases.local_storage.LocalDbFriend;
 import ru.mail.z_team.icon_fragments.walks.Walk;
 import ru.mail.z_team.icon_fragments.walks.WalkAnnotation;
 import ru.mail.z_team.map.Story;
@@ -149,16 +148,16 @@ public class Transformer {
 
     /* LocalDB LocalDbFriend result */
 
-    public static List<LocalDbFriend> transformToLocalDBFriendALl(List<Friend> friends, String currentUserId) {
-        List<LocalDbFriend> result = new ArrayList<>();
+    public static List<DatabaseFriend> transformToLocalDBFriendALl(List<Friend> friends, String currentUserId) {
+        List<DatabaseFriend> result = new ArrayList<>();
         for (Friend friend : friends) {
             result.add(transformToLocalDBFriend(friend, currentUserId));
         }
         return result;
     }
 
-    public static LocalDbFriend transformToLocalDBFriend(Friend friend, String currentUserId) {
-        return new LocalDbFriend(
+    public static DatabaseFriend transformToLocalDBFriend(Friend friend, String currentUserId) {
+        return new DatabaseFriend(
                 friend.name,
                 friend.id,
                 currentUserId
@@ -167,23 +166,14 @@ public class Transformer {
 
     /* LocalDB Story result */
 
-    public static List<ru.mail.z_team.databases.local_storage.story.Story> transformToLocalDBStoryAll(List<DatabaseStory> stories, String walkDate) {
-        List<ru.mail.z_team.databases.local_storage.story.Story> result = new ArrayList<>();
+    public static List<DatabaseStory> addWalkDateToAllStory(List<DatabaseStory> stories, String walkDate) {
+        List<DatabaseStory> result = new ArrayList<>();
         if (stories != null) {
             for (DatabaseStory story : stories) {
-                result.add(transformToLocalDBStory(story, walkDate));
+                story.walkDate = walkDate;
+                result.add(story);
             }
         }
-        return result;
-    }
-
-    public static ru.mail.z_team.databases.local_storage.story.Story transformToLocalDBStory(DatabaseStory story, String walkDate) {
-        ru.mail.z_team.databases.local_storage.story.Story result = new ru.mail.z_team.databases.local_storage.story.Story();
-        result.description = story.description;
-        result.place = story.place;
-        result.point = story.point;
-        result.id = story.id;
-        result.walkDate = walkDate;
         return result;
     }
 

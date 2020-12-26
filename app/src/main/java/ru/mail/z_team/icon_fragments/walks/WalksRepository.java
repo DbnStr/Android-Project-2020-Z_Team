@@ -98,7 +98,7 @@ public class WalksRepository {
                                 walks.add(walk);
                             });
                             userDao.deleteAllWalkAndAddNew(walks);
-                            response.body().forEach((date, walk) -> userDao.deleteAllWalkStoryAndAddNew(Transformer.transformToLocalDBStoryAll(walk.stories, walk.date), walk.date));
+                            response.body().forEach((date, walk) -> userDao.deleteAllWalkStoryAndAddNew(Transformer.addWalkDateToAllStory(walk.stories, walk.date), walk.date));
                         });
                     }
                 });
