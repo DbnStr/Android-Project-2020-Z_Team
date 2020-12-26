@@ -16,6 +16,7 @@ import ru.mail.z_team.databases.DatabaseStory;
 import ru.mail.z_team.databases.DatabaseUser;
 import ru.mail.z_team.databases.DatabaseWalk;
 import ru.mail.z_team.databases.DatabaseWalkAnnotation;
+import ru.mail.z_team.icon_fragments.go_out.UIWalk;
 import ru.mail.z_team.icon_fragments.walks.Walk;
 import ru.mail.z_team.icon_fragments.walks.WalkAnnotation;
 import ru.mail.z_team.map.Story;
@@ -45,7 +46,7 @@ public class Transformer {
         if (user.friends != null) {
             userFriends.addAll(Transformer.transformToFriendAll(user.friends));
         }
-        User u =  new User(
+        User u = new User(
                 name,
                 user.age,
                 userFriends,
@@ -97,10 +98,22 @@ public class Transformer {
         Walk result = new Walk();
         result.setTitle(databaseWalk.title);
         result.setAuthorName(databaseWalk.authorName);
-        FeatureCollection map = FeatureCollection.fromJson(databaseWalk.walk);
+        FeatureCollection map = FeatureCollection.fromJson(databaseWalk.walkInfo);
         result.setMap(map);
         result.setStories(transformToStoryAll(databaseWalk.stories));
         result.setDate(getDate(databaseWalk.date));
+        return result;
+    }
+
+    public static DatabaseWalk transformToWalk(UIWalk uiWalk, String authorName, String authorId, String date) {
+        DatabaseWalk result = new DatabaseWalk();
+        result.title = uiWalk.getTitle();
+        result.walkInfo = uiWalk.getWalkInfo().toJson();
+        //должнгы быть истории, но проблема с goOutRepository(непонятно как перенести трансформ)
+        result.authorName = authorName;
+        result.authorId = authorId;
+        result.date = date;
+
         return result;
     }
 
@@ -146,17 +159,15 @@ public class Transformer {
         return result;
     }
 
-    /* LocalDB LocalDbFriend result */
-
-    public static List<DatabaseFriend> transformToLocalDBFriendALl(List<Friend> friends, String currentUserId) {
+    public static List<DatabaseFriend> transformToDatabaseFriendAll(List<Friend> friends, String currentUserId) {
         List<DatabaseFriend> result = new ArrayList<>();
         for (Friend friend : friends) {
-            result.add(transformToLocalDBFriend(friend, currentUserId));
+            result.add(transformToDatabaseFriend(friend, currentUserId));
         }
         return result;
     }
 
-    public static DatabaseFriend transformToLocalDBFriend(Friend friend, String currentUserId) {
+    public static DatabaseFriend transformToDatabaseFriend(Friend friend, String currentUserId) {
         return new DatabaseFriend(
                 friend.name,
                 friend.id,
@@ -164,7 +175,7 @@ public class Transformer {
         );
     }
 
-    /* LocalDB Story result */
+    /* DatabaseStory result */
 
     public static List<DatabaseStory> addWalkDateToAllStory(List<DatabaseStory> stories, String walkDate) {
         List<DatabaseStory> result = new ArrayList<>();

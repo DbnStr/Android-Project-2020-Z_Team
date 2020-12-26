@@ -40,7 +40,7 @@ public interface UserApi {
     Call<DatabaseUser> addUser(@Path("id") String id, @Body DatabaseUser user);
 
     @PUT("/WalkAnnotation/{id}/{num}.json")
-    Call<DatabaseWalkAnnotation> addWalkInfo(@Path("id") String id, @Path("num") int num, @Body DatabaseWalkAnnotation walk);
+    Call<DatabaseWalkAnnotation> addWalkAnnotation(@Path("id") String id, @Path("num") int num, @Body DatabaseWalkAnnotation walk);
 
     @PUT("/WalkMaps/{id}/{date}.json")
     Call<DatabaseWalk> addWalk(@Path("id") String id, @Path("date") String date, @Body DatabaseWalk walk);

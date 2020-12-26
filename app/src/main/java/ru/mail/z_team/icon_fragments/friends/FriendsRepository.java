@@ -104,7 +104,7 @@ public class FriendsRepository {
     }
 
     private void replaceOldFriendsListInDbWithNew(final ArrayList<Friend> newFriends, final String userId) {
-        localDatabase.databaseWriteExecutor.execute(() -> userDao.deleteAllFriendsAndAddNew(Transformer.transformToLocalDBFriendALl(newFriends, userId)));
+        localDatabase.databaseWriteExecutor.execute(() -> userDao.deleteAllFriendsAndAddNew(Transformer.transformToDatabaseFriendAll(newFriends, userId)));
     }
 
     private void getCurrentUserFriendsFromLocalDB() {

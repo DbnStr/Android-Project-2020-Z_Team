@@ -95,7 +95,7 @@ public class ProfileRepository {
             User currentUser = Transformer.transformToUser(user);
             ArrayList<Friend> friends = currentUser.getFriends();
             for (Friend friend : friends) {
-                userDao.insert(Transformer.transformToLocalDBFriend(friend, user.id));
+                userDao.insert(Transformer.transformToDatabaseFriend(friend, user.id));
             }
 
             List<DatabaseFriend> fr = userDao.getUserFriends(currentUser.id);

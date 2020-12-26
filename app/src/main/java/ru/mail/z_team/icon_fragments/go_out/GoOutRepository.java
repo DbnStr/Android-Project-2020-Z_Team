@@ -7,7 +7,6 @@ import androidx.lifecycle.MutableLiveData;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-import com.mapbox.geojson.FeatureCollection;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -21,10 +20,11 @@ import ru.mail.z_team.databases.DatabaseStory;
 import ru.mail.z_team.databases.DatabaseUser;
 import ru.mail.z_team.databases.DatabaseWalk;
 import ru.mail.z_team.databases.DatabaseWalkAnnotation;
-import ru.mail.z_team.icon_fragments.DatabaseCallback;
-import ru.mail.z_team.map.Story;
 import ru.mail.z_team.databases.network.DatabaseApiRepository;
 import ru.mail.z_team.databases.network.UserApi;
+import ru.mail.z_team.icon_fragments.DatabaseCallback;
+import ru.mail.z_team.icon_fragments.Transformer;
+import ru.mail.z_team.map.Story;
 
 public class GoOutRepository {
 
@@ -45,7 +45,7 @@ public class GoOutRepository {
         this.context = context;
     }
 
-    public void postWalk(String title, FeatureCollection walk, ArrayList<Story> stories) {
+    public void postWalk(UIWalk uiWalk) {
         String currentUserId = FirebaseAuth.getInstance().getUid();
 
         userApi.getUserById(currentUserId).enqueue(new DatabaseCallback<DatabaseUser>(LOG_TAG) {
@@ -56,34 +56,39 @@ public class GoOutRepository {
 
             @Override
             public void onSuccessResponse(Response<DatabaseUser> response) {
-                String name = response.body().name;
-                userApi.getUserWalksAnnotationsById(currentUserId).enqueue(new DatabaseCallback<ArrayList<DatabaseWalkAnnotation>>(LOG_TAG) {
-                    @Override
-                    public void onNullResponse(Response<ArrayList<DatabaseWalkAnnotation>> response) {
-                        addWalkInDb(0, title, currentUserId, name, walk, stories);
-                    }
+                String currentUserName = response.body().name;
+                String date = sdf.format(new Date());
+                DatabaseWalk databaseWalk = Transformer.transformToWalk(uiWalk, currentUserName, currentUserId, date);
+                databaseWalk.stories = transformToDatabaseStoryAll(uiWalk.getStories(), currentUserId, date);
+                DatabaseWalkAnnotation walkAnnotation = new DatabaseWalkAnnotation(uiWalk.getTitle(), date, currentUserName, currentUserId);
 
-                    @Override
-                    public void onSuccessResponse(Response<ArrayList<DatabaseWalkAnnotation>> response) {
-                        int count = response.body().size();
-                        addWalkInDb(count, title, currentUserId, name, walk, stories);
-                    }
-                });
+                postWalkAndWalkAnnotationInRemoteDatabase(databaseWalk, walkAnnotation);
             }
         });
     }
 
-    private void addWalkInDb(int currentWalkNumber,
-                             String title,
-                             String id,
-                             String name,
-                             FeatureCollection walk,
-                             ArrayList<Story> stories) {
+    private void postWalkAndWalkAnnotationInRemoteDatabase(DatabaseWalk walk, DatabaseWalkAnnotation walkAnnotation) {
+        userApi.getUserWalksAnnotationsById(walk.authorId).enqueue(new DatabaseCallback<ArrayList<DatabaseWalkAnnotation>>(LOG_TAG) {
+            @Override
+            public void onNullResponse(Response<ArrayList<DatabaseWalkAnnotation>> response) {
+                addWalkInRemoteDB(walk);
+                addWalkAnnotationInRemoteDB(0, walkAnnotation);
+            }
+
+            @Override
+            public void onSuccessResponse(Response<ArrayList<DatabaseWalkAnnotation>> response) {
+                int count = response.body().size();
+
+                addWalkInRemoteDB(walk);
+                addWalkAnnotationInRemoteDB(count, walkAnnotation);
+            }
+        });
+    }
+
+
+    private void addWalkInRemoteDB(DatabaseWalk walk) {
         logger.log("Post a walk");
-        Date currentTime = new Date();
-        String map = walk.toJson();
-        ArrayList<DatabaseStory> userApiStories = transformToUserApiStoryAll(stories, id, sdf.format(currentTime));
-        userApi.addWalk(id, sdf.format(currentTime), new DatabaseWalk(title, sdf.format(currentTime), name, id, map, userApiStories)).enqueue(new Callback<DatabaseWalk>() {
+        userApi.addWalk(walk.authorId, walk.date, walk).enqueue(new Callback<DatabaseWalk>() {
             @Override
             public void onResponse(Call<DatabaseWalk> call, Response<DatabaseWalk> response) {
                 if (response.isSuccessful()) {
@@ -99,7 +104,11 @@ public class GoOutRepository {
                 postStatus.postValue(PostStatus.FAILED);
             }
         });
-        userApi.addWalkInfo(id, currentWalkNumber, new DatabaseWalkAnnotation(title, sdf.format(currentTime), name, id)).enqueue(new Callback<DatabaseWalkAnnotation>() {
+    }
+
+    private void addWalkAnnotationInRemoteDB(int currentWalkNumber, DatabaseWalkAnnotation walkAnnotation) {
+        logger.log("Post a walk annotation");
+        userApi.addWalkAnnotation(walkAnnotation.authorId, currentWalkNumber, walkAnnotation).enqueue(new Callback<DatabaseWalkAnnotation>() {
             @Override
             public void onResponse(Call<DatabaseWalkAnnotation> call, Response<DatabaseWalkAnnotation> response) {
                 if (response.isSuccessful()) {
@@ -117,20 +126,20 @@ public class GoOutRepository {
         });
     }
 
-    private ArrayList<DatabaseStory> transformToUserApiStoryAll(ArrayList<Story> stories,
-                                                                String id,
-                                                                String date) {
+    private ArrayList<DatabaseStory> transformToDatabaseStoryAll(ArrayList<Story> stories,
+                                                                 String authorId,
+                                                                 String date) {
         ArrayList<DatabaseStory> res = new ArrayList<>();
         for (Story story : stories) {
-            res.add(transformToUserApiStory(story, id, date, stories.indexOf(story)));
+            res.add(transformToDatabaseStory(story, authorId, date, stories.indexOf(story)));
         }
         return res;
     }
 
-    private DatabaseStory transformToUserApiStory(Story story,
-                                                  String id,
-                                                  String date,
-                                                  int i) {
+    private DatabaseStory transformToDatabaseStory(Story story,
+                                                   String authorId,
+                                                   String date,
+                                                   int i) {
         DatabaseStory apiStory = new DatabaseStory(story.getDescription());
         apiStory.place = story.getPlace();
         apiStory.id = story.getId();
@@ -138,7 +147,7 @@ public class GoOutRepository {
         apiStory.point = story.getPoint().toJson();
         for (int j = 0; j < story.getUriImages().size(); j++) {
             StorageReference storageReference = FirebaseStorage.getInstance().getReference()
-                    .child("WalkMaps/" + id + "/" + date + "/stories/" + i + "/images/"
+                    .child("WalkMaps/" + authorId + "/" + date + "/stories/" + i + "/images/"
                             + story.getUriImages().get(j).getLastPathSegment());
             storageReference.putFile(story.getUriImages().get(j)).addOnCompleteListener(task -> {
                 if (task.isSuccessful()) {

@@ -21,17 +21,17 @@ public class DatabaseWalk {
 
     public String date;
 
-    public String walk;
+    public String walkInfo;
 
     @Ignore
     public List<DatabaseStory> stories;
 
-    public DatabaseWalk(@NonNull String title, String date, String authorName, String authorId, String walk, ArrayList<DatabaseStory> stories) {
+    public DatabaseWalk(@NonNull String title, String date, String authorName, String authorId, String walkInfo, ArrayList<DatabaseStory> stories) {
         this.title = title;
         this.date = date;
         this.authorName = authorName;
         this.authorId = authorId;
-        this.walk = walk;
+        this.walkInfo = walkInfo;
         this.stories = stories;
     }
 
