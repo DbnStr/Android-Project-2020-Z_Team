@@ -10,7 +10,6 @@
         app:layout_constraintTop_toTopOf="parent"
         android:orientation="horizontal">
         <de.hdodenhof.circleimageview.CircleImageView
-            xmlns:app="http://schemas.android.com/apk/res-auto"
             android:id="@+id/user_image"
             android:layout_width="90dp"
             android:layout_height="90dp"
@@ -24,8 +23,8 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:padding="16dp"
-            android:textSize="28sp"
-            android:text="Anonymous"/>
+            style="@style/H1Text"
+            android:text="@string/anonymous"/>
 
     </LinearLayout>
 

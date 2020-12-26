@@ -60,6 +60,7 @@ public class FriendsFragment extends Fragment {
                 new FriendsPagerAdapter(getChildFragmentManager(), 0));
 
         if (savedInstanceState != null) {
+            logger.log("restore instance: " + savedInstanceState.getInt(PAGE_ARG));
             viewPager.setCurrentItem(savedInstanceState.getInt(PAGE_ARG));
         }
 
@@ -118,6 +119,7 @@ public class FriendsFragment extends Fragment {
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
+        logger.log("save instance: " + viewPager.getCurrentItem());
         outState.putInt(PAGE_ARG, viewPager.getCurrentItem());
         super.onSaveInstanceState(outState);
     }

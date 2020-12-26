@@ -36,8 +36,8 @@
                     android:id="@+id/news_item_author"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:text="Who knows who"
-                    android:textSize="24sp"/>
+                    android:text="@string/anonymous"
+                    style="@style/H1Text"/>
             </LinearLayout>
 
             <LinearLayout
@@ -49,10 +49,9 @@
                     android:id="@+id/news_item_title"
                     android:layout_width="match_parent"
                     android:layout_height="40dp"
-                    android:textSize="24sp"
+                    style="@style/H1Text"
                     android:layout_marginStart="10dp"
-                    android:textStyle="italic"
-                    android:text="Title"/>
+                    android:text="@string/title"/>
 
                 <TextView
                     android:id="@+id/news_item_date"
@@ -61,7 +60,7 @@
                     android:layout_height="30dp"
                     android:padding="5dp"
                     android:textSize="12sp"
-                    android:text="published after death"/>
+                    android:text="@string/published_after_death"/>
 
             </LinearLayout>
 

@@ -13,7 +13,7 @@
         android:layout_width="match_parent"
         tools:text="place"
         android:layout_margin="16dp"
-        android:textSize="24sp"
+        style="@style/H1Text"
         android:layout_height="wrap_content"/>
 
     <TextView

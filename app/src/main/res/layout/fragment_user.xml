@@ -14,7 +14,6 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <de.hdodenhof.circleimageview.CircleImageView
-            xmlns:app="http://schemas.android.com/apk/res-auto"
             android:id="@+id/user_image"
             android:layout_width="200dp"
             android:layout_height="200dp"
@@ -35,7 +34,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="name:" />
+            android:text="@string/name" />
 
         <TextView
             android:id="@+id/user_name"
@@ -43,8 +42,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="16dp"
             android:text="@string/anonymous"
-            android:textColor="@color/primaryDarkColor"
-            android:textSize="24sp"/>
+            style="@style/H1Text"/>
     </LinearLayout>
 
     <LinearLayout
@@ -57,7 +55,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="age:" />
+            android:text="@string/age" />
 
         <TextView
             android:id="@+id/user_age"
@@ -65,8 +63,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="16dp"
             android:text="@string/zero_int"
-            android:textColor="@color/primaryDarkColor"
-            android:textSize="24sp"/>
+            style="@style/H1Text"/>
 
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

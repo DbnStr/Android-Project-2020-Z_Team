@@ -1,7 +1,6 @@
 package ru.mail.z_team.icon_fragments.friends;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -40,7 +39,6 @@ public class PageFragment extends Fragment {
     }
 
     public static PageFragment newInstance(int page) {
-        Log.d("PageFragment", "newInstance");
         Bundle args = new Bundle();
         args.putInt(ARG_PAGE, page);
         PageFragment fragment = new PageFragment();
@@ -50,7 +48,6 @@ public class PageFragment extends Fragment {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        logger.log("OnCreate");
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             mPage = getArguments().getInt(ARG_PAGE);
@@ -76,9 +73,6 @@ public class PageFragment extends Fragment {
 
         final RecyclerView recyclerView = view.findViewById(R.id.recycler_friends);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-
-
-        logger.log("onViewCreated");
 
         viewModel = new ViewModelProvider(this).get(FriendsViewModel.class);
         viewModel.updateCurrentUserFriends();

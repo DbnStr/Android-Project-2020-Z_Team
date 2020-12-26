@@ -21,20 +21,21 @@
 
         <TextView
             android:id="@+id/friend_request_item"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:padding="16dp"
-            android:textSize="24sp"
-            android:text="Anonymous"/>
+            android:text="@string/anonymous"
+            style="@style/H1Text"/>
 
         <Button
-            android:layout_width="match_parent"
+            android:id="@+id/accept_friend_request_btn"
+            style="@style/CustomButton"
+            android:layout_width="64dp"
             android:layout_height="match_parent"
             android:layout_weight="2"
-            android:id="@+id/accept_friend_request_btn"
             android:text="@string/add_friend"
-            android:textSize="16sp"/>
+            android:textSize="16sp" />
 
     </LinearLayout>
 

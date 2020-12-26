@@ -27,10 +27,9 @@
                 android:id="@+id/walk_item_title"
                 android:layout_width="match_parent"
                 android:layout_height="40dp"
-                android:textSize="24sp"
                 android:layout_marginStart="10dp"
-                android:textStyle="italic"
-                android:text="Title"/>
+                style="@style/H1Text"
+                android:text="@string/title"/>
 
             <TextView
                 android:id="@+id/walk_item_date"
@@ -39,7 +38,7 @@
                 android:layout_height="30dp"
                 android:padding="5dp"
                 android:textSize="12sp"
-                android:text="published after death"/>
+                android:text="@string/published_after_death"/>
 
         </LinearLayout>
 

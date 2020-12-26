@@ -21,7 +21,6 @@ public class FriendsPagerAdapter extends FragmentStatePagerAdapter {
     @NonNull
     @Override
     public Fragment getItem(int position) {
-        logger.log("getItem");
         return PageFragment.newInstance(position);
     }
 

@@ -8,6 +8,7 @@
         android:id="@+id/tabs_friends"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        style="@style/CustomTabs"
         app:layout_constraintTop_toBottomOf="@id/add_friend_by_id_layout" />
 
     <androidx.viewpager.widget.ViewPager
@@ -33,13 +34,13 @@
             android:layout_marginTop="8dp"
             android:layout_marginEnd="0dp"
             android:hint="@string/enter_user_id"
+            app:hintTextColor="@color/primaryDarkColor"
             app:layout_constraintTop_toTopOf="parent"
             app:startIconDrawable="@drawable/add_friend">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textSize="24sp"/>
+                android:layout_height="wrap_content"/>
 
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -48,7 +49,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_margin="8dp"
-            android:background="@drawable/ic_add_cycle" />
+            android:background="@drawable/ic_baseline_add_circle_outline_24" />
 
     </LinearLayout>
 

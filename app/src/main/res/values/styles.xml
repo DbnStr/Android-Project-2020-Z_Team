@@ -7,9 +7,11 @@
     </style>
 
     <style name="CustomButton" parent="Widget.AppCompat.Button.Colored">
-        <item name="android:background">@color/secondaryColor</item>
-        <item name="android:textStyle">italic</item>
-        <item name="android:padding">16dp</item>
+        <item name="android:background">@color/primaryDarkColor</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:layout_margin">16dp</item>
+        <item name="android:padding">8dp</item>
+        <item name="android:radius">16dp</item>
     </style>
 
     <style name="NoSthText" parent="Widget.AppCompat.TextView">
@@ -19,12 +21,28 @@
         <item name="android:textAlignment">center</item>
     </style>
 
+    <style name="H1Text" parent="Widget.AppCompat.TextView">
+        <item name="android:textSize">@dimen/H1_text</item>
+        <item name="android:textColor">@color/primaryDarkColor</item>
+    </style>
+
+    <style name="H1EditText" parent="Widget.AppCompat.EditText">
+        <item name="android:textSize">@dimen/H1_text</item>
+        <item name="android:inputType">text</item>
+        <item name="android:textColor">@color/primaryDarkColor</item>
+    </style>
+
     <style name="MainTheme" parent="Theme.MaterialComponents.Light.DarkActionBar">
         <item name="colorPrimary">@color/primaryColor</item>
         <item name="colorPrimaryDark">@color/primaryDarkColor</item>
         <item name="colorAccent">@color/secondaryColor</item>
         <item name="colorSecondary">@color/secondaryColor</item>
         <item name="colorSecondaryVariant">@color/secondaryDarkColor</item>
+    </style>
+
+    <style name="CustomTabs" parent="Widget.Design.TabLayout">
+        <item name="tabSelectedTextColor">@color/secondaryColor</item>
+        <item name="android:textColor">@color/primaryDarkColor</item>
     </style>
 
 </resources>

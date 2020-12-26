@@ -14,7 +14,6 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <de.hdodenhof.circleimageview.CircleImageView
-            xmlns:app="http://schemas.android.com/apk/res-auto"
             android:id="@+id/profile_image"
             android:layout_width="200dp"
             android:layout_height="200dp"
@@ -30,8 +29,8 @@
         android:id="@+id/edit_btn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="16dp"
         android:text="@string/edit"
+        style="@style/CustomButton"
         app:layout_constraintTop_toBottomOf="@id/linear_age" />
 
     <LinearLayout
@@ -45,17 +44,16 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="16dp"
-            android:text="name:" />
+            android:text="@string/name" />
 
         <EditText
             android:id="@+id/profile_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="16dp"
-            android:hint="Your name"
+            android:hint="@string/your_name"
             android:text="@string/profile"
-            android:textColor="@color/primaryDarkColor"
-            android:textSize="20sp"/>
+            style="@style/H1EditText"/>
     </LinearLayout>
 
     <LinearLayout
@@ -69,17 +67,16 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="16dp"
-            android:text="age:" />
+            android:text="@string/age" />
 
         <EditText
             android:id="@+id/profile_age"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="16dp"
-            android:hint="Your age"
+            android:hint="@string/your_age"
             android:text="@string/profile"
-            android:textColor="@color/primaryDarkColor"
-            android:textSize="20sp"/>
+            style="@style/H1EditText"/>
 
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

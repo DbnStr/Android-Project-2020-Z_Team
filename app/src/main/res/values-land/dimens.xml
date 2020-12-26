@@ -2,5 +2,5 @@
 <resources>
     <dimen name="standard_70">70dp</dimen>
     <dimen name="standard_140">140dp</dimen>
-    <dimen name="H1_text">24sp</dimen>
+    <dimen name="H1_text">28sp</dimen>
 </resources>

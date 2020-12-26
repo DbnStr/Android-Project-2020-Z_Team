@@ -40,7 +40,6 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull FriendViewHolder holder, int position) {
-        logger.log("onBindViewHolder " + position);
         String name = friends.get(position).getName();
         if (name.equals("")) {
             name = "No Name";
@@ -52,7 +51,7 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendViewHolder> {
 
                 User user = new User(
                         friend.name,
-                        14,
+                        0,
                         new ArrayList<>(),
                         friend.id
                         );
@@ -67,7 +66,6 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendViewHolder> {
     }
 
     public void setFriends(ArrayList<Friend> users) {
-        logger.log("setFriends: " + users.size());
         friends.clear();
         friends.addAll(users);
         this.notifyDataSetChanged();
