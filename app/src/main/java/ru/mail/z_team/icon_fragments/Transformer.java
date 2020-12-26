@@ -17,8 +17,8 @@ import ru.mail.z_team.databases.DatabaseUser;
 import ru.mail.z_team.databases.DatabaseWalk;
 import ru.mail.z_team.databases.DatabaseWalkAnnotation;
 import ru.mail.z_team.databases.local_storage.LocalDbFriend;
-import ru.mail.z_team.databases.local_storage.walk_annotation.WalkAnnotation;
 import ru.mail.z_team.icon_fragments.walks.Walk;
+import ru.mail.z_team.icon_fragments.walks.WalkAnnotation;
 import ru.mail.z_team.map.Story;
 import ru.mail.z_team.user.Friend;
 import ru.mail.z_team.user.User;
@@ -26,9 +26,9 @@ import ru.mail.z_team.user.User;
 public class Transformer {
     /*
         function order
-        for result : User -> LocalDbFriend -> WalkAnnotation -> DatabaseWalk -> Story
-        for type of result: default type -> userApi type -> local_storage type
-        for type of arguments : default type -> userApi type -> local_storage type
+        for result : User -> Friend -> WalkAnnotation -> Walk -> Story
+        for type of result: default type -> database type
+        for type of arguments : default type -> database type
      */
 
     @SuppressLint("SimpleDateFormat")
@@ -59,7 +59,7 @@ public class Transformer {
         return u;
     }
 
-    /* default LocalDbFriend result */
+    /* default Friend result */
 
     public static ArrayList<Friend> transformToFriendAll(List<DatabaseFriend> friends) {
         ArrayList<Friend> result = new ArrayList<>();
@@ -75,16 +75,16 @@ public class Transformer {
 
     /* default WalkAnnotation result */
 
-    public static ArrayList<ru.mail.z_team.icon_fragments.walks.WalkAnnotation> transformToWalkAnnotationAll(List<DatabaseWalkAnnotation> walksAnnotations) {
-        ArrayList<ru.mail.z_team.icon_fragments.walks.WalkAnnotation> result = new ArrayList<>();
+    public static ArrayList<WalkAnnotation> transformToWalkAnnotationAll(List<DatabaseWalkAnnotation> walksAnnotations) {
+        ArrayList<WalkAnnotation> result = new ArrayList<>();
         for (DatabaseWalkAnnotation walksAnnotation : walksAnnotations) {
             result.add(transformToWalkAnnotation(walksAnnotation));
         }
         return result;
     }
 
-    public static ru.mail.z_team.icon_fragments.walks.WalkAnnotation transformToWalkAnnotation(DatabaseWalkAnnotation walkAnnotation) {
-        ru.mail.z_team.icon_fragments.walks.WalkAnnotation result = new ru.mail.z_team.icon_fragments.walks.WalkAnnotation();
+    public static WalkAnnotation transformToWalkAnnotation(DatabaseWalkAnnotation walkAnnotation) {
+        WalkAnnotation result = new WalkAnnotation();
         result.setTitle(walkAnnotation.title);
         result.setAuthorName(walkAnnotation.authorName);
         result.setAuthorId(walkAnnotation.authorId);
@@ -92,7 +92,7 @@ public class Transformer {
         return result;
     }
 
-    /* default DatabaseWalk result */
+    /* default Walk result */
 
     public static Walk transformToWalk(DatabaseWalk databaseWalk) {
         Walk result = new Walk();
@@ -127,9 +127,9 @@ public class Transformer {
         return story;
     }
 
-    /* UserApi User result */
+    /* DatabaseUser result */
 
-    public static DatabaseUser transformToUserApiUser(User user) {
+    public static DatabaseUser transformToDatabaseUser(User user) {
         DatabaseUser result = new DatabaseUser();
         result.id = user.getId();
         result.name = user.getName();
@@ -138,23 +138,12 @@ public class Transformer {
         return result;
     }
 
-    /* UserApi LocalDbFriend result */
+    /* DatabaseFriend result */
 
-    public static DatabaseFriend transformToUserApiFriend(DatabaseUser user) {
+    public static DatabaseFriend transformToDatabaseFriend(DatabaseUser user) {
         DatabaseFriend result = new DatabaseFriend();
         result.id = user.id;
         result.name = user.name;
-        return result;
-    }
-
-    /* LocalDB User result */
-
-    public static DatabaseUser transformToLocalDBUser(User user) {
-        DatabaseUser result = new DatabaseUser();
-        result.name = user.name;
-        result.id = user.id;
-        result.age = user.age;
-
         return result;
     }
 
@@ -174,19 +163,6 @@ public class Transformer {
                 friend.id,
                 currentUserId
         );
-    }
-
-    /* LocalDB WalkAnnotation result */
-
-    private static Date getDate(String date) {
-        Date result;
-        try {
-            result = sdf.parse(date);
-        } catch (ParseException e) {
-            result = new Date();
-            e.printStackTrace();
-        }
-        return result;
     }
 
     /* LocalDB Story result */
@@ -211,21 +187,16 @@ public class Transformer {
         return result;
     }
 
-    /* WalkAnnotation LocalDB result*/
+    /* helper methods */
 
-    public static List<WalkAnnotation> transformToLocalDBWalkAnnotationAll(List<DatabaseWalkAnnotation> walksAnnotations) {
-        List<WalkAnnotation> result = new ArrayList<>();
-        for (DatabaseWalkAnnotation walkAnnotation : walksAnnotations) {
-            result.add(transformToLocalDBWalkAnnotation(walkAnnotation));
+    private static Date getDate(String date) {
+        Date result;
+        try {
+            result = sdf.parse(date);
+        } catch (ParseException e) {
+            result = new Date();
+            e.printStackTrace();
         }
         return result;
-    }
-
-    public static WalkAnnotation transformToLocalDBWalkAnnotation(DatabaseWalkAnnotation walkAnnotation) {
-        return new WalkAnnotation(
-                walkAnnotation.title,
-                walkAnnotation.authorName,
-                walkAnnotation.authorId,
-                walkAnnotation.date);
     }
 }

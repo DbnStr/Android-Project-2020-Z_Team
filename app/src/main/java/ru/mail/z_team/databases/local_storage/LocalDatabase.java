@@ -8,10 +8,10 @@ import java.util.concurrent.Executors;
 
 import ru.mail.z_team.databases.DatabaseUser;
 import ru.mail.z_team.databases.DatabaseWalk;
+import ru.mail.z_team.databases.DatabaseWalkAnnotation;
 import ru.mail.z_team.databases.local_storage.story.Story;
-import ru.mail.z_team.databases.local_storage.walk_annotation.WalkAnnotation;
 
-@Database(entities = {DatabaseUser.class, LocalDbFriend.class, WalkAnnotation.class, DatabaseWalk.class, Story.class}, version = 1)
+@Database(entities = {DatabaseUser.class, LocalDbFriend.class, DatabaseWalkAnnotation.class, DatabaseWalk.class, Story.class}, version = 1)
 public abstract class LocalDatabase extends RoomDatabase {
 
     private static final int NUMBER_OF_THREADS = 4;

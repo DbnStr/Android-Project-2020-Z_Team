@@ -109,7 +109,7 @@ public class ProfileRepository {
 
     public void changeCurrentUserInformation(User newInformation) {
         String currentUserId = FirebaseAuth.getInstance().getUid();
-        userApi.changeUserInformation(currentUserId, Transformer.transformToUserApiUser(newInformation)).enqueue(new DatabaseCallback<DatabaseUser>(LOG_TAG) {
+        userApi.changeUserInformation(currentUserId, Transformer.transformToDatabaseUser(newInformation)).enqueue(new DatabaseCallback<DatabaseUser>(LOG_TAG) {
             @Override
             public void onNullResponse(Response<DatabaseUser> response) {
                 logger.errorLog("Failed with change information about " + currentUserId);
@@ -119,7 +119,7 @@ public class ProfileRepository {
             public void onSuccessResponse(Response<DatabaseUser> response) {
                 logger.log("Change information about " + currentUserId);
 
-                localDatabase.databaseWriteExecutor.execute(() -> userDao.insert(Transformer.transformToLocalDBUser(newInformation)));
+                localDatabase.databaseWriteExecutor.execute(() -> userDao.insert(Transformer.transformToDatabaseUser(newInformation)));
             }
         });
     }

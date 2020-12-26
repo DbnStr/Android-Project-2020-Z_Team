@@ -215,7 +215,7 @@ public class FriendsRepository {
 
             @Override
             public void onSuccessResponse(Response<DatabaseUser> response) {
-                DatabaseFriend friend = Transformer.transformToUserApiFriend(response.body());
+                DatabaseFriend friend = Transformer.transformToDatabaseFriend(response.body());
 
                 userApi.getUserById(curUserId).enqueue(new DatabaseCallback<DatabaseUser>(LOG_TAG) {
                     @Override
@@ -225,7 +225,7 @@ public class FriendsRepository {
 
                     @Override
                     public void onSuccessResponse(Response<DatabaseUser> response) {
-                        DatabaseFriend friendsReq = Transformer.transformToUserApiFriend(response.body());
+                        DatabaseFriend friendsReq = Transformer.transformToDatabaseFriend(response.body());
                         addFriendToFriendRequest(newFriendId, friendsReq);
                     }
                 });

@@ -1,7 +1,14 @@
 package ru.mail.z_team.databases;
 
+import androidx.annotation.NonNull;
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
+
+@Entity
 public class DatabaseWalkAnnotation {
 
+    @NonNull
+    @PrimaryKey
     public String title;
 
     public String authorName;
@@ -10,7 +17,7 @@ public class DatabaseWalkAnnotation {
 
     public String date;
 
-    public DatabaseWalkAnnotation(String title, String date, String authorName, String authorId) {
+    public DatabaseWalkAnnotation(@NonNull String title, String date, String authorName, String authorId) {
         this.title = title;
         this.date = date;
         this.authorName = authorName;

@@ -14,7 +14,6 @@ import ru.mail.z_team.databases.DatabaseFriend;
 import ru.mail.z_team.databases.DatabaseWalk;
 import ru.mail.z_team.databases.local_storage.story.Story;
 import ru.mail.z_team.databases.DatabaseWalkAnnotation;
-import ru.mail.z_team.databases.local_storage.walk_annotation.WalkAnnotation;
 
 @Dao
 public abstract class UserDao {
@@ -26,7 +25,7 @@ public abstract class UserDao {
     public abstract void insert(LocalDbFriend localDbFriend);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    public abstract void insert(WalkAnnotation walkAnnotation);
+    public abstract void insert(DatabaseWalkAnnotation walkAnnotation);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     public abstract void insert(DatabaseWalk databaseWalk);
@@ -37,7 +36,7 @@ public abstract class UserDao {
     @Query("DELETE FROM LocalDbFriend")
     public abstract void deleteAllFriends();
 
-    @Query("DELETE FROM WalkAnnotation")
+    @Query("DELETE FROM DatabaseWalkAnnotation")
     public abstract void deleteAllWalksAnnotations();
 
     @Query("DELETE FROM DatabaseWalk")
@@ -47,9 +46,9 @@ public abstract class UserDao {
     public abstract void deleteAllStoryByIdWalk(String walkDate);
 
     @Transaction
-    public void deleteAllWalkAnnotationAndAddNew(List<WalkAnnotation> walkAnnotations) {
+    public void deleteAllWalkAnnotationAndAddNew(List<DatabaseWalkAnnotation> walkAnnotations) {
         deleteAllWalksAnnotations();
-        for (WalkAnnotation walkAnnotation : walkAnnotations) {
+        for (DatabaseWalkAnnotation walkAnnotation : walkAnnotations) {
             insert(walkAnnotation);
         }
     }
@@ -98,8 +97,8 @@ public abstract class UserDao {
     @Query("SELECT LocalDbFriend.id, LocalDbFriend.friend_name AS fr_name " + "FROM LocalDbFriend " + "WHERE LocalDbFriend.current_user_id == :id")
     public abstract List<DatabaseFriend> getUserFriends(String id);
 
-    @Query("SELECT WalkAnnotation.title, WalkAnnotation.authorName, WalkAnnotation.authorId, WalkAnnotation.date " + "FROM WalkAnnotation, DatabaseUser " + "WHERE WalkAnnotation.authorId == DatabaseUser.id")
-    public abstract List<DatabaseWalkAnnotation> getUserWalksAnnotations();
+    @Query("SELECT * FROM DatabaseWalkAnnotation WHERE DatabaseWalkAnnotation.authorId == :authorId")
+    public abstract List<DatabaseWalkAnnotation> getUserWalksAnnotations(String authorId);
 
     @Query("SELECT * FROM DatabaseWalk WHERE authorId == :id AND date == :date")
     public abstract DatabaseWalk getUserWalk(String id, String date);

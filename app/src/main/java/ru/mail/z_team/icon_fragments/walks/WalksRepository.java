@@ -82,7 +82,7 @@ public class WalksRepository {
                 logger.log("Successful update current user walks");
                 currentUserWalks.postValue(Transformer.transformToWalkAnnotationAll(response.body()));
 
-                insertWalkAnnotationListInLocalDB(Transformer.transformToLocalDBWalkAnnotationAll(response.body()));
+                insertWalkAnnotationListInLocalDB(response.body());
 
                 userApi.getAllWalks(userId).enqueue(new DatabaseCallback<Map<String, DatabaseWalk>>(LOG_TAG) {
                     @Override
@@ -106,13 +106,14 @@ public class WalksRepository {
         });
     }
 
-    private void insertWalkAnnotationListInLocalDB(final List<ru.mail.z_team.databases.local_storage.walk_annotation.WalkAnnotation> walksAnnotations) {
+    private void insertWalkAnnotationListInLocalDB(final List<DatabaseWalkAnnotation> walksAnnotations) {
         localDatabase.databaseWriteExecutor.execute(() ->
                 userDao.deleteAllWalkAnnotationAndAddNew(walksAnnotations));
     }
 
     private void getCurrentUserWalksAnnotationsFromLocalD() {
+        String currentUserId = FirebaseAuth.getInstance().getUid();
         localDatabase.databaseWriteExecutor.execute(() ->
-                currentUserWalks.postValue(Transformer.transformToWalkAnnotationAll(userDao.getUserWalksAnnotations())));
+                currentUserWalks.postValue(Transformer.transformToWalkAnnotationAll(userDao.getUserWalksAnnotations(currentUserId))));
     }
 }
