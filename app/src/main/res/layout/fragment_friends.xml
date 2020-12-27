@@ -37,7 +37,7 @@
             android:layout_weight="1"
             android:layout_marginStart="16dp"
             android:layout_marginTop="8dp"
-            android:layout_marginEnd="0dp"
+            android:layout_marginEnd="8dp"
             android:hint="@string/enter_user_id"
             app:hintTextColor="@color/secondaryDarkColor"
             app:layout_constraintTop_toTopOf="parent"
@@ -46,14 +46,15 @@
             <com.google.android.material.textfield.TextInputEditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:background="@drawable/custom_edit_text_shape"
                 android:textColor="@color/secondaryDarkColor"/>
 
         </com.google.android.material.textfield.TextInputLayout>
 
         <Button
             android:id="@+id/add_friend_by_id_btn"
-            android:layout_width="56dp"
-            android:layout_height="56dp"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
             android:layout_margin="8dp"
             android:layout_weight="0"
             android:layout_gravity="center"

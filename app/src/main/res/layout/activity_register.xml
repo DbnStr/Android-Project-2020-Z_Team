@@ -9,7 +9,11 @@
         android:id="@+id/emailEt"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="16dp"
+
+        android:paddingTop="8dp"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:paddingBottom="16dp"
         android:background="@color/secondaryLightColor"
         app:startIconDrawable="@drawable/ic_email"
         app:layout_constraintTop_toTopOf="parent"
@@ -19,6 +23,7 @@
         <com.google.android.material.textfield.TextInputEditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="@drawable/custom_edit_text_shape"
             android:textColor="@color/secondaryDarkColor"/>
 
     </com.google.android.material.textfield.TextInputLayout>
@@ -27,7 +32,10 @@
         android:id="@+id/passwordEt"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="16dp"
+        android:paddingTop="8dp"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:paddingBottom="16dp"
         android:background="@drawable/top_shape"
         app:endIconMode="password_toggle"
         app:startIconDrawable="@drawable/ic_lock"
@@ -39,6 +47,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="textPassword"
+            android:background="@drawable/custom_edit_text_shape"
             android:textColor="@color/secondaryDarkColor"/>
 
     </com.google.android.material.textfield.TextInputLayout>

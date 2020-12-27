@@ -11,13 +11,18 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
+        android:padding="8dp"
         app:startIconDrawable="@drawable/ic_walk"
         app:layout_constraintTop_toTopOf="parent"
+        app:hintTextColor="@color/secondaryDarkColor"
+        android:background="@drawable/custom_button_shape"
         android:hint="Walk's Title">
 
         <com.google.android.material.textfield.TextInputEditText
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:textColor="@color/secondaryDarkColor"
+            android:background="@drawable/custom_edit_text_shape"/>
 
     </com.google.android.material.textfield.TextInputLayout>
 

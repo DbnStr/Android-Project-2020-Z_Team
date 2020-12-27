@@ -23,13 +23,18 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
+        android:padding="8dp"
         android:hint="description"
+        android:background="@drawable/custom_button_shape"
+        app:hintTextColor="@color/secondaryDarkColor"
         app:startIconDrawable="@drawable/ic_point"
         app:layout_constraintTop_toBottomOf="@id/story_place">
 
         <com.google.android.material.textfield.TextInputEditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:textColor="@color/secondaryDarkColor"
+            android:background="@drawable/custom_edit_text_shape"
             android:maxHeight="300dp"/>
 
     </com.google.android.material.textfield.TextInputLayout>
