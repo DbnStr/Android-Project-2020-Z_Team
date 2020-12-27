@@ -35,6 +35,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="16dp"
             style="@style/CustomButton"
+            android:background="@drawable/custom_button_shape"
             android:text="@string/edit"
             app:layout_constraintTop_toBottomOf="@id/linear_age" />
 

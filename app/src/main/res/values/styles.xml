@@ -14,12 +14,15 @@
         <item name="colorSecondaryVariant">@color/secondaryDarkColor</item>
     </style>
 
-    <style name="CustomButton" parent="Widget.AppCompat.Button.Colored">
-        <item name="android:background">@color/primaryDarkColor</item>
+    <style name="CustomButton" parent="Widget.AppCompat.Button">
+        <item name="android:background">@color/primaryColor</item>
         <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/primaryTextColor</item>
         <item name="android:layout_margin">16dp</item>
         <item name="android:padding">8dp</item>
-        <item name="android:radius">16dp</item>
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerRadius">16dp</item>
+
     </style>
 
     <style name="NoSthText" parent="Widget.AppCompat.TextView">
@@ -45,8 +48,6 @@
     <style name="CustomTabs" parent="Widget.Design.TabLayout">
         <item name="tabSelectedTextColor">@color/secondaryColor</item>
         <item name="android:textColor">@color/primaryDarkColor</item>
-        <item name="cornerFamily">rounded</item>
-        <item name="cornerRadius">16dp</item>
     </style>
 
 </resources>

@@ -81,6 +81,7 @@
             android:layout_height="wrap_content"
             android:text="@string/upload"
             style="@style/CustomButton"
+            android:background="@drawable/custom_button_shape"
             android:layout_margin="16dp" />
 
     </LinearLayout>

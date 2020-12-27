@@ -26,6 +26,7 @@
         android:text="Add Walk"
         app:layout_constraintTop_toBottomOf="@id/walk_title_et"
         style="@style/CustomButton"
+        android:background="@drawable/custom_button_shape"
         android:layout_marginTop="8dp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"

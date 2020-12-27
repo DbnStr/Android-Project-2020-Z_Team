@@ -31,11 +31,11 @@
         <Button
             android:id="@+id/accept_friend_request_btn"
             style="@style/CustomButton"
+            android:background="@drawable/custom_button_shape"
             android:layout_width="64dp"
             android:layout_height="match_parent"
             android:layout_weight="2"
-            android:text="@string/add_friend"
-            android:textSize="16sp" />
+            android:text="@string/add_friend"/>
 
     </LinearLayout>
 
