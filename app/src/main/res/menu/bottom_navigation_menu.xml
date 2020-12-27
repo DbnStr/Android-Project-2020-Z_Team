@@ -3,25 +3,15 @@
     <item
         android:id="@+id/news_feed_icon"
         android:enabled="true"
+        android:checked="false"
         android:icon="@drawable/ic_baseline_fiber_new_24"
         android:visible="true"
         android:title="@string/news"/>
     <item
         android:id="@+id/walks_icon"
         android:enabled="true"
+        android:checked="false"
         android:icon="@drawable/ic_baseline_map_24"
         android:visible="true"
         android:title="@string/walkAnnotations"/>
-    <item
-        android:id="@+id/friends_icon"
-        android:enabled="true"
-        android:icon="@drawable/ic_baseline_people_24"
-        android:visible="true"
-        android:title="@string/friends"/>
-    <item
-        android:id="@+id/profile_icon"
-        android:enabled="true"
-        android:icon="@drawable/ic_baseline_person_pin_24"
-        android:visible="true"
-        android:title="@string/profile"/>
 </menu>

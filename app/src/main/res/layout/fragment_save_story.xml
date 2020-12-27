@@ -48,7 +48,7 @@
                 android:background="@drawable/ic_baseline_add_a_photo_24"
                 android:layout_width="60dp"
                 android:layout_height="60dp"
-                android:layout_margin="16dp"/>
+                android:layout_margin="8dp"/>
 
             <LinearLayout
                 android:id="@+id/story_photo_count_layout"

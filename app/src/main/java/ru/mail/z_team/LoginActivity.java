@@ -47,6 +47,7 @@ public class LoginActivity extends AppCompatActivity implements LifecycleOwner {
 
         ActionBar actionBar = getSupportActionBar();
         actionBar.setTitle("Login");
+        actionBar.setDisplayHomeAsUpEnabled(true);
 
         signInBtn = findViewById(R.id.sign_in);
         emailEt = findViewById(R.id.emailEt);
@@ -100,16 +101,13 @@ public class LoginActivity extends AppCompatActivity implements LifecycleOwner {
 
         toRegistration.setOnClickListener(new TvListener());
         recoverPassword.setOnClickListener(new TvListener());
-        signInBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String email = emailEt.getEditText().getText().toString().trim();
-                String password = passwordEt.getEditText().getText().toString().trim();
-                if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-                    emailEt.setError("Invalid Email");
-                } else {
-                    loginUser(email, password);
-                }
+        signInBtn.setOnClickListener(v -> {
+            String email = emailEt.getEditText().getText().toString().trim();
+            String password = passwordEt.getEditText().getText().toString().trim();
+            if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+                emailEt.setError("Invalid Email");
+            } else {
+                loginUser(email, password);
             }
         });
     }

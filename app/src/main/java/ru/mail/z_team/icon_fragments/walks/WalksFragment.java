@@ -1,6 +1,7 @@
 package ru.mail.z_team.icon_fragments.walks;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -47,6 +48,8 @@ public class WalksFragment extends Fragment {
         logger.log("create view");
         noWalks = view.findViewById(R.id.no_walks_tv);
         toMapBtn = view.findViewById(R.id.map_activity_btn);
+        toMapBtn.setColorFilter(Color.argb(255, 255, 255, 255));
+
         newsRefreshLayout = view.findViewById(R.id.swipe_to_refresh_walks);
 
         return view;
@@ -76,13 +79,10 @@ public class WalksFragment extends Fragment {
             }
         });
 
-        newsRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                viewModel.updateCurrentUserWalksAnnotations();
-                //Todo : убирать значок прогрузки только тогда, когда прогулки подргузятся
-                newsRefreshLayout.setRefreshing(false);
-            }
+        newsRefreshLayout.setOnRefreshListener(() -> {
+            viewModel.updateCurrentUserWalksAnnotations();
+            //Todo : убирать значок прогрузки только тогда, когда прогулки подргузятся
+            newsRefreshLayout.setRefreshing(false);
         });
     }
 }

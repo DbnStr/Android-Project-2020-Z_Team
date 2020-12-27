@@ -36,7 +36,7 @@ public class RegisterActivity extends AppCompatActivity {
 
         ActionBar actionBar = getSupportActionBar();
         actionBar.setTitle("Create Account");
-        Log.d("RegisterActivity", "onCreate");
+        actionBar.setDisplayHomeAsUpEnabled(true);
 
         registerBtn = findViewById(R.id.register);
         emailEt = findViewById(R.id.emailEt);

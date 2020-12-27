@@ -14,6 +14,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
@@ -100,6 +101,9 @@ public class MapFragment extends Fragment {
         addStoryButton = view.findViewById(R.id.add_story_btn);
         saveMapButton = view.findViewById(R.id.save_map_btn);
         openMenuButton = view.findViewById(R.id.open_menu_btn);
+        addStoryButton.setColorFilter(Color.argb(255, 255, 255, 255));
+        saveMapButton.setColorFilter(Color.argb(255, 255, 255, 255));
+        openMenuButton.setColorFilter(Color.argb(255, 255, 255, 255));
 
         viewModel = new ViewModelProvider(this).get(MapViewModel.class);
         if (savedInstanceState != null) {
@@ -186,12 +190,14 @@ public class MapFragment extends Fragment {
         isMenuOpen = true;
         addStoryButton.animate().translationY(-getResources().getDimension(R.dimen.standard_70));
         saveMapButton.animate().translationY(-getResources().getDimension(R.dimen.standard_140));
+        openMenuButton.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.primaryLightColor));
     }
 
     private void closeMenu(){
         isMenuOpen = false;
         addStoryButton.animate().translationY(0);
         saveMapButton.animate().translationY(0);
+        openMenuButton.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.secondaryColor));
     }
 
     private void animateCamera(MapboxMap mapboxMap) {
