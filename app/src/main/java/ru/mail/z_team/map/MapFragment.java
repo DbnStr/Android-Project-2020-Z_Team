@@ -228,7 +228,6 @@ public class MapFragment extends Fragment {
                     .zoom(14)
                     .tilt(20)
                     .build();
-            //new LatLng(55.765762, 37.685479)
             mapboxMap.animateCamera(CameraUpdateFactory.newCameraPosition(position), 7000);
         }
     }
@@ -362,6 +361,7 @@ public class MapFragment extends Fragment {
     }
 
     private void getRoute(MapboxMap mapboxMap, Point startPos, Point destinationPos) {
+        logger.log("getRoute");
         MapboxDirections client = MapboxDirections.builder()
                 .origin(startPos)
                 .destination(destinationPos)
@@ -381,6 +381,7 @@ public class MapFragment extends Fragment {
                 }
 
                 if (mapboxMap != null) {
+                    logger.log("getRoutes: mapboxMap not null");
                     mapboxMap.getStyle(style -> {
                         GeoJsonSource source = style.getSourceAs(ROUTE_SOURCE_ID);
 

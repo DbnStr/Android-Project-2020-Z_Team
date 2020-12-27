@@ -28,7 +28,9 @@
             android:name="com.google.firebase.messaging.default_notification_icon"
             android:resource="@drawable/ic_baseline_wb_sunny_24" />
 
-        <activity android:theme="@style/MainTheme" android:name=".map.MapActivity"></activity>
+        <activity
+            android:theme="@style/MainTheme"
+            android:name=".map.MapActivity" />
         <activity android:name=".MainActivity" />
         <activity android:theme="@style/MainTheme" android:name=".MainMenuActivity">
             <intent-filter>
