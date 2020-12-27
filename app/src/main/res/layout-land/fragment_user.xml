@@ -12,6 +12,7 @@
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:gravity="center_horizontal"
+        android:background="@drawable/tab_shape"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
@@ -21,7 +22,7 @@
             android:layout_height="200dp"
             android:layout_margin="32dp"
             android:src="@drawable/user_icon"
-            app:civ_border_color="@color/primaryDarkColor"
+            app:civ_border_color="@color/secondaryDarkColor"
             app:civ_border_overlay="true"
             app:civ_border_width="10dp" />
     </RelativeLayout>
@@ -30,6 +31,7 @@
         android:id="@+id/linear_user_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
         android:orientation="horizontal"
         app:layout_constraintLeft_toRightOf="@id/user_image_layout"
         app:layout_constraintTop_toTopOf="parent">
@@ -53,6 +55,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
+        android:layout_marginStart="16dp"
         app:layout_constraintLeft_toRightOf="@id/user_image_layout"
         app:layout_constraintTop_toBottomOf="@id/linear_user_name">
 

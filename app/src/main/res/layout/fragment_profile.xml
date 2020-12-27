@@ -22,7 +22,7 @@
             app:civ_border_width="10dp"
             app:civ_border_overlay="true"
             android:layout_margin="32dp"
-            app:civ_border_color="@color/primaryDarkColor"/>
+            app:civ_border_color="@color/secondaryDarkColor"/>
 
     </RelativeLayout>
 
