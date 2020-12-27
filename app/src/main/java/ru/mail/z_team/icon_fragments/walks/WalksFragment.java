@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -30,7 +31,7 @@ public class WalksFragment extends Fragment {
 
     TextView noWalks;
     FloatingActionButton toMapBtn;
-    SwipeRefreshLayout newsRefreshLayout;
+    SwipeRefreshLayout walksRefreshLayout;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -47,7 +48,7 @@ public class WalksFragment extends Fragment {
         logger.log("create view");
         noWalks = view.findViewById(R.id.no_walks_tv);
         toMapBtn = view.findViewById(R.id.map_activity_btn);
-        newsRefreshLayout = view.findViewById(R.id.swipe_to_refresh_walks);
+        walksRefreshLayout = view.findViewById(R.id.swipe_to_refresh_walks);
 
         return view;
     }
@@ -76,13 +77,19 @@ public class WalksFragment extends Fragment {
             }
         });
 
-        newsRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                viewModel.updateCurrentUserWalksAnnotations();
-                //Todo : убирать значок прогрузки только тогда, когда прогулки подргузятся
-                newsRefreshLayout.setRefreshing(false);
-            }
+        walksRefreshLayout.setOnRefreshListener(() -> {
+            viewModel.updateCurrentUserWalksAnnotations();
+            viewModel.getRefreshStatus()
+                    .observe(getActivity(), refreshStatus -> {
+                        if (refreshStatus == WalksRepository.RefreshStatus.FAILED) {
+                            Toast toast = Toast.makeText(getContext(),
+                                    "Fail with update", Toast.LENGTH_SHORT);
+                            toast.show();
+                        }
+                        walksRefreshLayout.setRefreshing(false);
+                        viewModel.getRefreshStatus().removeObservers(getActivity());
+                    });
+            walksRefreshLayout.setRefreshing(false);
         });
     }
 }

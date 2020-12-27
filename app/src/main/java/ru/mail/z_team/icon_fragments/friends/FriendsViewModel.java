@@ -22,14 +22,17 @@ public class FriendsViewModel extends AndroidViewModel {
     private final LiveData<ArrayList<Friend>> currentUserFriends;
     private final LiveData<ArrayList<Friend>> currentUserFriendRequestList;
     private final LiveData<User> currentDisplayedUser;
+    private final LiveData<FriendsRepository.RefreshStatus> refreshStatus;
 
     public FriendsViewModel(@NonNull Application application) {
         super(application);
         logger = new Logger(LOG_TAG, true);
+
         repository = new FriendsRepository(getApplication());
         currentDisplayedUser = repository.getCurrentUserProfileData();
         currentUserFriends = repository.getCurrentUserFriends();
         currentUserFriendRequestList = repository.getCurrentUserFriendsRequestList();
+        refreshStatus = repository.getRefreshStatus();
     }
 
     public LiveData<ArrayList<Friend>> getCurrentUserFriends() {
@@ -38,6 +41,10 @@ public class FriendsViewModel extends AndroidViewModel {
 
     public LiveData<ArrayList<Friend>> getCurrentUserFriendRequestList() {
         return currentUserFriendRequestList;
+    }
+
+    public LiveData<FriendsRepository.RefreshStatus> getRefreshStatus() {
+        return refreshStatus;
     }
 
     public void updateCurrentUserFriends() {

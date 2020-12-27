@@ -10,13 +10,15 @@ import com.google.firebase.auth.FirebaseAuth;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import retrofit2.Call;
 import retrofit2.Response;
 import ru.mail.z_team.Logger;
 import ru.mail.z_team.databases.DatabaseWalkAnnotation;
-import ru.mail.z_team.icon_fragments.DatabaseCallback;
-import ru.mail.z_team.icon_fragments.Transformer;
 import ru.mail.z_team.databases.network.DatabaseApiRepository;
 import ru.mail.z_team.databases.network.UserApi;
+import ru.mail.z_team.icon_fragments.DatabaseCallback;
+import ru.mail.z_team.icon_fragments.Transformer;
+import ru.mail.z_team.icon_fragments.walks.WalkAnnotation;
 
 public class NewsRepository {
 
@@ -25,16 +27,21 @@ public class NewsRepository {
 
     private final UserApi userApi;
 
-    private final MutableLiveData<ArrayList<ru.mail.z_team.icon_fragments.walks.WalkAnnotation>> currentUserNews = new MutableLiveData<>();
+    private final MutableLiveData<ArrayList<WalkAnnotation>> currentUserNews = new MutableLiveData<>();
+    private final MutableLiveData<RefreshStatus> refreshStatus = new MutableLiveData<>();
 
     public NewsRepository(Context context) {
         userApi = DatabaseApiRepository.from(context).getUserApi();
         logger = new Logger(LOG_TAG, true);
     }
 
-    public LiveData<ArrayList<ru.mail.z_team.icon_fragments.walks.WalkAnnotation>> getNews() {
+    public LiveData<ArrayList<WalkAnnotation>> getNews() {
         logger.log("get news " + currentUserNews.toString());
         return currentUserNews;
+    }
+
+    public LiveData<RefreshStatus> getRefreshStatus() {
+        return refreshStatus;
     }
 
     public void updateCurrentUserNews() {
@@ -44,6 +51,7 @@ public class NewsRepository {
             @Override
             public void onNullResponse(Response<ArrayList<String>> response) {
                 currentUserNews.postValue(new ArrayList<>());
+                refreshStatus.postValue(RefreshStatus.OK);
                 logger.log(curId + " doesn't have friends");
             }
 
@@ -52,11 +60,17 @@ public class NewsRepository {
                 logger.log(curId + " have friends " + response.body().size());
                 compileNewsAndPostInCurrentNews(response.body());
             }
+
+            @Override
+            public void onFailure(Call<ArrayList<String>> call, Throwable t) {
+                super.onFailure(call, t);
+                refreshStatus.postValue(RefreshStatus.FAILED);
+            }
         });
     }
 
     private void compileNewsAndPostInCurrentNews(ArrayList<String> ids) {
-        ArrayList<ru.mail.z_team.icon_fragments.walks.WalkAnnotation> news = new ArrayList<>();
+        ArrayList<WalkAnnotation> news = new ArrayList<>();
 
         logger.log("Compile news");
         for (String id : ids) {
@@ -73,8 +87,14 @@ public class NewsRepository {
                     news.addAll(Transformer.transformToWalkAnnotationAll(response.body()));
                     Collections.sort(news);
                     currentUserNews.postValue(news);
+                    refreshStatus.postValue(RefreshStatus.OK);
                 }
             });
         }
+    }
+
+    public enum RefreshStatus {
+        OK,
+        FAILED
     }
 }

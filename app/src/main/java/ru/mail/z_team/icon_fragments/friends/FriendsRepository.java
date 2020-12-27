@@ -14,13 +14,13 @@ import ru.mail.z_team.ApplicationModified;
 import ru.mail.z_team.Logger;
 import ru.mail.z_team.databases.DatabaseFriend;
 import ru.mail.z_team.databases.DatabaseUser;
-import ru.mail.z_team.icon_fragments.DatabaseCallback;
-import ru.mail.z_team.icon_fragments.DatabaseNetworkControlExecutor;
-import ru.mail.z_team.icon_fragments.Transformer;
 import ru.mail.z_team.databases.local_storage.LocalDatabase;
 import ru.mail.z_team.databases.local_storage.UserDao;
 import ru.mail.z_team.databases.network.DatabaseApiRepository;
 import ru.mail.z_team.databases.network.UserApi;
+import ru.mail.z_team.icon_fragments.DatabaseCallback;
+import ru.mail.z_team.icon_fragments.DatabaseNetworkControlExecutor;
+import ru.mail.z_team.icon_fragments.Transformer;
 import ru.mail.z_team.user.Friend;
 import ru.mail.z_team.user.User;
 
@@ -40,6 +40,7 @@ public class FriendsRepository {
     private final MutableLiveData<ArrayList<Friend>> currentUserFriendRequestList = new MutableLiveData<>();
     private final MutableLiveData<User> currentUserProfileData = new MutableLiveData<>();
     private final MutableLiveData<Boolean> userExistence = new MutableLiveData<>();
+    private final MutableLiveData<RefreshStatus> refreshStatus = new MutableLiveData<>();
 
     public FriendsRepository(Context context) {
         this.context = context;
@@ -69,6 +70,10 @@ public class FriendsRepository {
         return currentUserFriendRequestList;
     }
 
+    public LiveData<RefreshStatus> getRefreshStatus() {
+        return refreshStatus;
+    }
+
     public void updateCurrentUserFriends() {
         String currentUserId = FirebaseAuth.getInstance().getUid();
 
@@ -92,11 +97,13 @@ public class FriendsRepository {
             @Override
             public void onNullResponse(Response<DatabaseUser> response) {
                 logger.errorLog("Fail with update");
+                refreshStatus.postValue(RefreshStatus.FAILED);
             }
 
             @Override
             public void onSuccessResponse(Response<DatabaseUser> response) {
                 currentUserFriends.postValue(Transformer.transformToUser(response.body()).getFriends());
+                refreshStatus.postValue(RefreshStatus.OK);
 
                 replaceOldFriendsListInDbWithNew(Transformer.transformToUser(response.body()).getFriends(), userId);
             }
@@ -109,8 +116,10 @@ public class FriendsRepository {
 
     private void getCurrentUserFriendsFromLocalDB() {
         String currentUserId = FirebaseAuth.getInstance().getUid();
-        localDatabase.databaseWriteExecutor.execute(() ->
-                currentUserFriends.postValue(Transformer.transformToFriendAll(userDao.getUserFriends(currentUserId))));
+        localDatabase.databaseWriteExecutor.execute(() -> {
+                currentUserFriends.postValue(Transformer.transformToFriendAll(userDao.getUserFriends(currentUserId)));
+                refreshStatus.postValue(RefreshStatus.OK);
+        });
     }
 
     public void acceptFriendRequest(int number) {
@@ -306,5 +315,10 @@ public class FriendsRepository {
                 currentUserProfileData.postValue(Transformer.transformToUser(response.body()));
             }
         });
+    }
+
+    public enum RefreshStatus {
+        OK,
+        FAILED
     }
 }

@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import retrofit2.Call;
 import retrofit2.Response;
 import ru.mail.z_team.ApplicationModified;
 import ru.mail.z_team.Logger;
@@ -34,7 +35,8 @@ public class WalksRepository {
     private final UserDao userDao;
     private final LocalDatabase localDatabase;
 
-    private final MutableLiveData<ArrayList<WalkAnnotation>> currentUserWalks = new MutableLiveData<>();
+    private final MutableLiveData<ArrayList<WalkAnnotation>> currentUserWalksAnnotations = new MutableLiveData<>();
+    private final MutableLiveData<RefreshStatus> refreshStatus = new MutableLiveData<>();
 
     private final Context context;
 
@@ -49,8 +51,12 @@ public class WalksRepository {
         userDao = localDatabase.getUserDao();
     }
 
-    public LiveData<ArrayList<WalkAnnotation>> getCurrentUserWalks() {
-        return currentUserWalks;
+    public LiveData<ArrayList<WalkAnnotation>> getCurrentUserWalksAnnotations() {
+        return currentUserWalksAnnotations;
+    }
+
+    public LiveData<RefreshStatus> getRefreshStatus() {
+        return refreshStatus;
     }
 
     public void updateCurrentUserWalksAnnotations() {
@@ -73,14 +79,16 @@ public class WalksRepository {
         userApi.getUserWalksAnnotationsById(userId).enqueue(new DatabaseCallback<ArrayList<DatabaseWalkAnnotation>>(LOG_TAG) {
             @Override
             public void onNullResponse(Response<ArrayList<DatabaseWalkAnnotation>> response) {
-                logger.log("Walks was empty");
-                currentUserWalks.postValue(new ArrayList<>());
+                logger.log("WalksAnnotations was empty");
+                currentUserWalksAnnotations.postValue(new ArrayList<>());
+                refreshStatus.postValue(RefreshStatus.OK);
             }
 
             @Override
             public void onSuccessResponse(Response<ArrayList<DatabaseWalkAnnotation>> response) {
                 logger.log("Successful update current user walks");
-                currentUserWalks.postValue(Transformer.transformToWalkAnnotationAll(response.body()));
+                currentUserWalksAnnotations.postValue(Transformer.transformToWalkAnnotationAll(response.body()));
+                refreshStatus.postValue(RefreshStatus.OK);
 
                 insertWalkAnnotationListInLocalDB(response.body());
 
@@ -103,6 +111,12 @@ public class WalksRepository {
                     }
                 });
             }
+
+            @Override
+            public void onFailure(Call<ArrayList<DatabaseWalkAnnotation>> call, Throwable t) {
+                super.onFailure(call, t);
+                refreshStatus.postValue(RefreshStatus.FAILED);
+            }
         });
     }
 
@@ -113,7 +127,13 @@ public class WalksRepository {
 
     private void getCurrentUserWalksAnnotationsFromLocalD() {
         String currentUserId = FirebaseAuth.getInstance().getUid();
+        refreshStatus.postValue(RefreshStatus.OK);
         localDatabase.databaseWriteExecutor.execute(() ->
-                currentUserWalks.postValue(Transformer.transformToWalkAnnotationAll(userDao.getUserWalksAnnotations(currentUserId))));
+                currentUserWalksAnnotations.postValue(Transformer.transformToWalkAnnotationAll(userDao.getUserWalksAnnotations(currentUserId))));
+    }
+
+    public enum RefreshStatus {
+        OK,
+        FAILED
     }
 }

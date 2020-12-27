@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -108,7 +109,7 @@ public class FriendsFragment extends Fragment {
 
         friendRequestBtn.setOnClickListener(v -> {
             FragmentManager fragmentManager = getParentFragmentManager();
-            FriendRequestFragment friendRequestFragment = (FriendRequestFragment)fragmentManager.findFragmentByTag(FRIEND_REQUEST_FRAGMENT_TAG);
+            FriendRequestFragment friendRequestFragment = (FriendRequestFragment) fragmentManager.findFragmentByTag(FRIEND_REQUEST_FRAGMENT_TAG);
             if (friendRequestFragment == null) {
                 replaceFragment(FRIEND_REQUEST_FRAGMENT_TAG, fragmentManager, container, new FriendRequestFragment());
             } else {
@@ -117,9 +118,17 @@ public class FriendsFragment extends Fragment {
         });
 
         friendsRefreshLayout.setOnRefreshListener(() -> {
+            viewModel.getRefreshStatus()
+                    .observe(getActivity(), refreshStatus -> {
+                        if (refreshStatus == FriendsRepository.RefreshStatus.FAILED) {
+                            Toast toast = Toast.makeText(getContext(),
+                                    "Fail with update", Toast.LENGTH_SHORT);
+                            toast.show();
+                        }
+                        friendsRefreshLayout.setRefreshing(false);
+                        viewModel.getRefreshStatus().removeObservers(getActivity());
+                    });
             viewModel.updateCurrentUserFriends();
-            //Todo : как-то проверять процесс обновления друзей(полученя даннъы из дб), и только при успехе убирать значок обновления
-            friendsRefreshLayout.setRefreshing(false);
         });
     }
 
