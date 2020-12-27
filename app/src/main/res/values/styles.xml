@@ -51,8 +51,8 @@
     </style>
 
     <style name="CustomTabs" parent="Widget.Design.TabLayout">
-        <item name="tabSelectedTextColor">@color/secondaryColor</item>
-        <item name="android:textColor">@color/primaryDarkColor</item>
+        <item name="tabSelectedTextColor">@color/secondaryDarkColor</item>
+        <item name="tabTextColor">@color/primaryTextColor</item>
     </style>
 
 </resources>

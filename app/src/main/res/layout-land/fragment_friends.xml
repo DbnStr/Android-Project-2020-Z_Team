@@ -9,6 +9,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         style="@style/CustomTabs"
+        android:background="@color/secondaryLightColor"
         app:layout_constraintTop_toBottomOf="@id/add_friend_by_id_layout" />
 
     <androidx.viewpager.widget.ViewPager
@@ -25,32 +26,37 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
+        android:background="@color/secondaryLightColor"
         app:layout_constraintTop_toTopOf="parent">
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/add_friend_by_id_et"
-            android:layout_width="624dp"
-            android:layout_height="56dp"
+            android:layout_width="match_parent"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="0dp"
             android:hint="@string/enter_user_id"
-            app:hintTextColor="@color/primaryDarkColor"
+            app:hintTextColor="@color/secondaryDarkColor"
             app:layout_constraintTop_toTopOf="parent"
             app:startIconDrawable="@drawable/add_friend">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:layout_width="match_parent"
-                android:layout_height="34dp" />
+                android:layout_height="32dp"
+                android:textColor="@color/secondaryDarkColor"/>
 
         </com.google.android.material.textfield.TextInputLayout>
 
         <Button
             android:id="@+id/add_friend_by_id_btn"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_margin="8dp"
-            android:layout_marginStart="16dp"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginLeft="8dp"
+            android:layout_gravity="center"
+            android:layout_weight="0"
             android:background="@drawable/ic_baseline_add_circle_outline_24"/>
 
     </LinearLayout>
