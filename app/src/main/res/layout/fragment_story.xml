@@ -12,8 +12,9 @@
         android:id="@+id/displayed_story_place"
         android:layout_width="match_parent"
         tools:text="place"
-        android:layout_margin="16dp"
+        android:padding="16dp"
         style="@style/H1Text"
+        android:background="@drawable/top_shape"
         android:layout_height="wrap_content"/>
 
 
@@ -31,10 +32,8 @@
             tools:text="description"
             android:gravity="center_horizontal"
             android:textSize="28sp"
-            android:textColor="#000000"
+            android:textColor="@color/secondaryDarkColor"
             android:layout_marginTop="16dp"/>
-
-
     </ScrollView>
 
     <HorizontalScrollView

@@ -12,9 +12,10 @@
         app:layout_constraintTop_toTopOf="parent"
         android:layout_width="match_parent"
         android:textSize="24sp"
-        android:layout_margin="16dp"
+        android:padding="16dp"
         tools:text="place"
         style="@style/H1Text"
+        android:background="@drawable/top_shape"
         android:layout_height="wrap_content"/>
 
     <com.google.android.material.textfield.TextInputLayout
