@@ -98,6 +98,9 @@ public class StoryFragment extends Fragment {
                 StorageReference reference = FirebaseStorage.getInstance().getReferenceFromUrl(getString(R.string.base_storage_url) + url);
                 reference.getDownloadUrl().addOnSuccessListener(uri -> Picasso.get()
                         .load(uri)
+                        .noFade()
+                        .resize(imageView.getHeight(), imageView.getHeight())
+                        .centerCrop()
                         .placeholder(ContextCompat.getDrawable(getActivity(), R.drawable.ic_baseline_photo_24))
                         .into(imageView)).addOnFailureListener(e -> logger.errorLog(e.getMessage()));
             }
