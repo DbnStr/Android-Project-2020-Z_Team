@@ -101,7 +101,7 @@ public class ProfileRepository {
                                         Glide.with(context.getApplicationContext())
                                                 .asBitmap()
                                                 .load(reference)
-                                                .submit(100, 100)
+                                                .submit(800, 800)
                                                 .get();
                                 user.bitmap = bitmap;
                                 currentUserData.postValue(user);
