@@ -57,11 +57,8 @@ public class FriendRequestAdapter extends RecyclerView.Adapter<FriendRequestView
     }
 
     public void setFriends(ArrayList<Friend> users) {
-        friends = users;
-        if (users.isEmpty()) {
-            this.notifyDataSetChanged();
-        } else {
-            this.notifyItemRangeChanged(0, friends.size());
-        }
+        friends.clear();
+        friends.addAll(users);
+        this.notifyDataSetChanged();
     }
 }
