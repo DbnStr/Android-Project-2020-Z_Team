@@ -184,7 +184,6 @@ public class ProfileFragment extends Fragment {
         });
     }
 
-    @SuppressLint("SetTextI18n")
     private void setProfileData(@NonNull User user) {
         name.setText(user.getName());
         age.setText(String.valueOf(user.getAge()));

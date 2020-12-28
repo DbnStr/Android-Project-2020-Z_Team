@@ -1,6 +1,7 @@
 package ru.mail.z_team.icon_fragments.walks;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -50,7 +51,7 @@ public class WalksFragment extends Fragment {
         toMapBtn = view.findViewById(R.id.map_activity_btn);
         toMapBtn.setColorFilter(Color.argb(255, 255, 255, 255));
 
-        newsRefreshLayout = view.findViewById(R.id.swipe_to_refresh_walks);
+        walksRefreshLayout = view.findViewById(R.id.swipe_to_refresh_walks);
 
         return view;
     }
