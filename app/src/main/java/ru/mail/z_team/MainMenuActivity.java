@@ -105,6 +105,10 @@ public class MainMenuActivity extends AppCompatActivity implements BottomNavigat
                 .commitAllowingStateLoss();
     }
 
+    private void changeBottomNavigationView(BottomNavigationView bnv1, BottomNavigationView bnv2) {
+        bnv1.setLabelVisibilityMode(LabelVisibilityMode.LABEL_VISIBILITY_SELECTED);
+        bnv2.setLabelVisibilityMode(LabelVisibilityMode.LABEL_VISIBILITY_UNLABELED);
+    }
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         final Fragment fragment;
@@ -113,29 +117,25 @@ public class MainMenuActivity extends AppCompatActivity implements BottomNavigat
 
         switch (item.getItemId()) {
             case R.id.news_feed_icon:
-                bottomNavigationView.setLabelVisibilityMode(LabelVisibilityMode.LABEL_VISIBILITY_SELECTED);
-                bottomNavigationView2.setLabelVisibilityMode(LabelVisibilityMode.LABEL_VISIBILITY_UNLABELED);
+                changeBottomNavigationView(bottomNavigationView, bottomNavigationView2);
                 fragment = new NewsFragment();
                 nFragment = (NewsFragment) fragmentManager.findFragmentByTag(NEWS_TAG);
                 tag = NEWS_TAG;
                 break;
             case R.id.walks_icon:
-                bottomNavigationView.setLabelVisibilityMode(LabelVisibilityMode.LABEL_VISIBILITY_SELECTED);
-                bottomNavigationView2.setLabelVisibilityMode(LabelVisibilityMode.LABEL_VISIBILITY_UNLABELED);
+                changeBottomNavigationView(bottomNavigationView, bottomNavigationView2);
                 fragment = new WalksFragment();
                 nFragment = (WalksFragment) fragmentManager.findFragmentByTag(WALKS_TAG);
                 tag = WALKS_TAG;
                 break;
             case R.id.friends_icon:
-                bottomNavigationView2.setLabelVisibilityMode(LabelVisibilityMode.LABEL_VISIBILITY_SELECTED);
-                bottomNavigationView.setLabelVisibilityMode(LabelVisibilityMode.LABEL_VISIBILITY_UNLABELED);
+                changeBottomNavigationView(bottomNavigationView2, bottomNavigationView);
                 fragment = new FriendsFragment();
                 nFragment = (FriendsFragment) fragmentManager.findFragmentByTag(FRIENDS_TAG);
                 tag = FRIENDS_TAG;
                 break;
             case R.id.profile_icon:
-                bottomNavigationView2.setLabelVisibilityMode(LabelVisibilityMode.LABEL_VISIBILITY_SELECTED);
-                bottomNavigationView.setLabelVisibilityMode(LabelVisibilityMode.LABEL_VISIBILITY_UNLABELED);
+                changeBottomNavigationView(bottomNavigationView2, bottomNavigationView);
                 fragment = new ProfileFragment();
                 nFragment = (ProfileFragment) fragmentManager.findFragmentByTag(PROFILE_TAG);
                 tag = PROFILE_TAG;

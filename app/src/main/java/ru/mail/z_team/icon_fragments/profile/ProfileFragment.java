@@ -98,9 +98,7 @@ public class ProfileFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        disableEditAbilityAll();
-
-        editAndSaveBtn.setOnClickListener(v -> enableEditAbilityAll());
+        changeToStableMode();
 
         Observer<User> observer = user -> {
             if (user != null) {
@@ -116,22 +114,23 @@ public class ProfileFragment extends Fragment {
                 .observe(getViewLifecycleOwner(), observer);
     }
 
-    private void disableEditAbilityAll() {
-        disableEditAbility(name);
-        disableEditAbility(age);
-        image.setClickable(false);
-
-        editAndSaveBtn.setText(getString(R.string.edit));
-        editAndSaveBtn.setOnClickListener(v -> enableEditAbilityAll());
-    }
-
     private void disableEditAbility(EditText editText) {
         editText.setEnabled(false);
         editText.setCursorVisible(false);
         editText.setBackgroundColor(Color.TRANSPARENT);
     }
 
-    private void enableEditAbilityAll() {
+    private void changeToStableMode() {
+        disableEditAbility(name);
+        disableEditAbility(age);
+
+        image.setClickable(false);
+
+        editAndSaveBtn.setText(getString(R.string.edit));
+        editAndSaveBtn.setOnClickListener(v -> changeToEditMode());
+    }
+
+    private void changeToEditMode() {
         enableEditAbility(name);
         enableEditAbility(age);
 
@@ -143,7 +142,7 @@ public class ProfileFragment extends Fragment {
         editAndSaveBtn.setText(getString(R.string.save_changes));
         editAndSaveBtn.setOnClickListener(v -> {
             profileViewModel.changeCurrentUserInformation(getProfileInfo());
-            disableEditAbilityAll();
+            changeToStableMode();
         });
     }
 

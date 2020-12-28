@@ -32,7 +32,7 @@ public class PageFragment extends Fragment {
 
     public static final String ARG_PAGE = "ARG_PAGE";
 
-    private int mPage;
+    private int currentPageId;
 
     public PageFragment() {
 
@@ -50,7 +50,7 @@ public class PageFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mPage = getArguments().getInt(ARG_PAGE);
+            currentPageId = getArguments().getInt(ARG_PAGE);
         }
     }
 
@@ -77,7 +77,7 @@ public class PageFragment extends Fragment {
         viewModel = new ViewModelProvider(this).get(FriendsViewModel.class);
         viewModel.updateCurrentUserFriends();
         viewModel.updateCurrentUserFriendRequestList();
-        if (mPage == 0) {
+        if (currentPageId == 0) {
             logger.log("friendFragment");
             adapter = new FriendAdapter(getActivity());
             recyclerView.setAdapter(adapter);
@@ -97,7 +97,7 @@ public class PageFragment extends Fragment {
                 //Todo : как-то проверять процесс обновления друзей(полученя даннъы из дб), и только при успехе убирать значок обновления
                 friendsRefreshLayout.setRefreshing(false);
             });
-        } else if (mPage == 1) {
+        } else if (currentPageId == 1) {
             logger.log("friendRequestFragment");
             FriendRequestAdapter friendRequestAdapter = new FriendRequestAdapter(getActivity(), viewModel);
             recyclerView.setAdapter(friendRequestAdapter);
