@@ -105,8 +105,8 @@ public class ProfileRepository {
                                                 .get();
                                 user.bitmap = bitmap;
                                 currentUserData.postValue(user);
-                            } catch (Error | ExecutionException |
-                                    InterruptedException error) {
+                            } catch (Error | ExecutionException
+                                    | InterruptedException error) {
                                 logger.log(error.getMessage());
                             }
                         }
