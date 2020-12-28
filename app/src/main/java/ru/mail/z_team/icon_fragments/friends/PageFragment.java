@@ -16,6 +16,8 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.muddzdev.styleabletoastlibrary.StyleableToast;
 
+import java.util.ArrayList;
+
 import ru.mail.z_team.Logger;
 import ru.mail.z_team.R;
 import ru.mail.z_team.icon_fragments.friends.friend_request.FriendRequestAdapter;
@@ -88,6 +90,7 @@ public class PageFragment extends Fragment {
                         logger.log("get user friends... " + friends.toString());
                         if (friends.isEmpty()) {
                             noFriends.setVisibility(View.VISIBLE);
+                            adapter.setFriends(new ArrayList<>());
                         } else {
                             noFriends.setVisibility(View.INVISIBLE);
                             adapter.setFriends(friends);
@@ -95,7 +98,7 @@ public class PageFragment extends Fragment {
                     });
 
             friendsRefreshLayout.setOnRefreshListener(() -> {
-                viewModel.getRefreshStatus()
+                viewModel.getFriendListRefreshStatus()
                         .observe(getActivity(), refreshStatus -> {
                             if (refreshStatus == FriendsRepository.RefreshStatus.FAILED) {
                                 StyleableToast toast = StyleableToast.makeText(getContext(),
@@ -103,7 +106,7 @@ public class PageFragment extends Fragment {
                                 toast.show();
                             }
                             friendsRefreshLayout.setRefreshing(false);
-                            viewModel.getRefreshStatus().removeObservers(getActivity());
+                            viewModel.getFriendListRefreshStatus().removeObservers(getActivity());
                         });
                 viewModel.updateCurrentUserFriends();
             });
@@ -113,21 +116,30 @@ public class PageFragment extends Fragment {
             recyclerView.setAdapter(friendRequestAdapter);
 
             viewModel.getCurrentUserFriendRequestList()
-                    .observe(getActivity(), friends -> {
-                        logger.log("get user friend requests... " + friends.toString());
-                        if (friends.isEmpty()) {
+                    .observe(getActivity(), friendsRequests -> {
+                        logger.log("get user friend requests... " + friendsRequests.toString());
+                        if (friendsRequests.isEmpty()) {
                             noFriendRequests.setVisibility(View.VISIBLE);
+                            friendRequestAdapter.setFriends(new ArrayList<>());
                             logger.log("no requests");
                         } else {
                             noFriendRequests.setVisibility(View.INVISIBLE);
-                            friendRequestAdapter.setFriends(friends);
+                            friendRequestAdapter.setFriends(friendsRequests);
                         }
                     });
 
             friendsRefreshLayout.setOnRefreshListener(() -> {
-                viewModel.updateCurrentUserFriendRequestList();
-                //Todo : как-то проверять процесс обновления друзей(полученя даннъы из дб), и только при успехе убирать значок обновления
-                friendsRefreshLayout.setRefreshing(false);
+                viewModel.getFriendRequestRefreshStatus()
+                        .observe(getActivity(), refreshStatus -> {
+                            if (refreshStatus == FriendsRepository.RefreshStatus.FAILED) {
+                                StyleableToast toast = StyleableToast.makeText(getContext(),
+                                        "Fail with update", R.style.CustomToast);
+                                toast.show();
+                            }
+                            friendsRefreshLayout.setRefreshing(false);
+                            viewModel.getFriendListRefreshStatus().removeObservers(getActivity());
+                        });
+                viewModel.updateCurrentUserFriends();
             });
         }
     }
