@@ -37,7 +37,7 @@ public class GoOutRepository {
     private final MutableLiveData<GoOutRepository.PostStatus> postStatus = new MutableLiveData<>();
 
     SimpleDateFormat sdf =
-            new SimpleDateFormat("EEE, MMM d, yyyy hh:mm:ss a z");
+            new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
 
     public GoOutRepository(Context context) {
         userApi = DatabaseApiRepository.from(context).getUserApi();
