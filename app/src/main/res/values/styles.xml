@@ -4,6 +4,7 @@
         <item name="colorPrimary">@color/primaryColor</item>
         <item name="colorPrimaryDark">@color/primaryDarkColor</item>
         <item name="colorAccent">@color/secondaryColor</item>
+        <item name="alertDialogTheme">@style/AlertDialog</item>
     </style>
 
     <style name="MainTheme" parent="Theme.MaterialComponents.Light.DarkActionBar">
@@ -12,6 +13,7 @@
         <item name="colorAccent">@color/secondaryColor</item>
         <item name="colorSecondary">@color/secondaryColor</item>
         <item name="colorSecondaryVariant">@color/secondaryDarkColor</item>
+        <item name="alertDialogTheme">@style/AlertDialog</item>
     </style>
 
     <style name="CustomButton" parent="Widget.AppCompat.Button">
@@ -55,4 +57,11 @@
         <item name="tabTextColor">@color/primaryTextColor</item>
     </style>
 
+    <style name="AlertDialog" parent="Theme.MaterialComponents.Light.Dialog.Alert">
+        <item name="android:textColorPrimary">@color/secondaryDarkColor</item>
+        <item name="android:textSize">24sp</item>
+        <item name="android:windowBackground">@drawable/alert_dialog_shape</item>
+        <item name="colorAccent">@color/secondaryDarkColor</item>
+        <item name="android:alpha">0.5</item>
+    </style>
 </resources>

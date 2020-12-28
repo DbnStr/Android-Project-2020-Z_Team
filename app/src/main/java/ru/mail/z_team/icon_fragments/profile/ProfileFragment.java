@@ -3,6 +3,8 @@ package ru.mail.z_team.icon_fragments.profile;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -16,6 +18,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -37,6 +40,7 @@ import ru.mail.z_team.R;
 import ru.mail.z_team.user.User;
 
 import static android.app.Activity.RESULT_OK;
+import static android.content.Context.CLIPBOARD_SERVICE;
 
 public class ProfileFragment extends Fragment {
 
@@ -48,6 +52,8 @@ public class ProfileFragment extends Fragment {
     private static final int PICK_CAMERA_CODE = 300;
     private static final int PICK_GALLERY_CODE = 400;
 
+    private static final CharSequence PLAIN_TEXT = "plain-text";
+
     private String[] cameraPermissions;
     private String[] storagePermissions;
 
@@ -55,8 +61,9 @@ public class ProfileFragment extends Fragment {
 
     private ProfileViewModel profileViewModel;
     private EditText name, age;
+    private TextView idTextView;
     private ImageView image;
-    private Button editBtn;
+    private Button editAndSaveBtn, copyIdBtn;
     private User user;
 
     private Uri imageUri;
@@ -79,7 +86,9 @@ public class ProfileFragment extends Fragment {
         name = view.findViewById(R.id.profile_name);
         age = view.findViewById(R.id.profile_age);
         image = view.findViewById(R.id.profile_image);
-        editBtn = view.findViewById(R.id.edit_btn);
+        editAndSaveBtn = view.findViewById(R.id.edit_btn);
+        copyIdBtn = view.findViewById(R.id.profile_copy_id);
+        idTextView = view.findViewById(R.id.profile_id);
 
         return view;
     }
@@ -90,7 +99,7 @@ public class ProfileFragment extends Fragment {
 
         disableEditAbilityAll();
 
-        editBtn.setOnClickListener(v -> enableEditAbilityAll());
+        editAndSaveBtn.setOnClickListener(v -> enableEditAbilityAll());
 
         Observer<User> observer = user -> {
             if (user != null) {
@@ -111,8 +120,8 @@ public class ProfileFragment extends Fragment {
         disableEditAbility(age);
         image.setClickable(false);
 
-        editBtn.setText(getString(R.string.edit));
-        editBtn.setOnClickListener(v -> enableEditAbilityAll());
+        editAndSaveBtn.setText(getString(R.string.edit));
+        editAndSaveBtn.setOnClickListener(v -> enableEditAbilityAll());
     }
 
     private void disableEditAbility(EditText editText) {
@@ -130,8 +139,8 @@ public class ProfileFragment extends Fragment {
             showImagePickDialog();
         });
 
-        editBtn.setText(getString(R.string.save_changes));
-        editBtn.setOnClickListener(v -> {
+        editAndSaveBtn.setText(getString(R.string.save_changes));
+        editAndSaveBtn.setOnClickListener(v -> {
             profileViewModel.changeCurrentUserInformation(getProfileInfo());
             disableEditAbilityAll();
         });
@@ -167,10 +176,25 @@ public class ProfileFragment extends Fragment {
         return info;
     }
 
+    private void initCopyBtn() {
+        copyIdBtn.setOnClickListener(v -> {
+            ClipboardManager clipboardManager = (ClipboardManager) getActivity()
+                    .getSystemService(CLIPBOARD_SERVICE);
+            ClipData clipData = ClipData.newPlainText(PLAIN_TEXT, idTextView.getText());
+            clipboardManager.setPrimaryClip(clipData);
+            Toast.makeText(getContext(), "Text is сopied to сlipboard",
+                    Toast.LENGTH_LONG).show();
+        });
+    }
+
     @SuppressLint("SetTextI18n")
     private void setProfileData(@NonNull User user) {
         name.setText(user.getName());
         age.setText(String.valueOf(user.getAge()));
+        idTextView.setText(user.getId());
+
+        initCopyBtn();
+
         if (user.getImageUrl() != null
                 && !user.getImageUrl().isEmpty()
                 && !user.getImageUrl().equals("no Image")) {

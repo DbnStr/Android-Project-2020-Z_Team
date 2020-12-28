@@ -46,7 +46,7 @@
     <string name="your_age">Your age</string>
     <string name="your_name">Your name</string>
     <string name="name">name:</string>
-    <string name="age">age:</string>
+    <string name="age">age: </string>
     <string name="published_after_death">published after death</string>
     <string name="title">Title</string>
 </resources>
