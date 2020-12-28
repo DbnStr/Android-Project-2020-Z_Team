@@ -73,16 +73,22 @@ public class FriendsViewModel extends AndroidViewModel {
         logger.log("addFriend");
         ArrayList<Friend> friends = currentUserFriends.getValue();
         if (! isFriendWithIDAdded(friends, id)) {
-            repository.addFriendToCurrentUserAndAddFriendRequestToFriend(id, friends.size());
+            if (friends == null) {
+                repository.addFriendToCurrentUserAndAddFriendRequestToFriend(id, 0);
+            } else {
+                repository.addFriendToCurrentUserAndAddFriendRequestToFriend(id, friends.size());
+            }
         } else {
             logger.errorLog("LocalDbFriend already added");
         }
     }
 
     private boolean isFriendWithIDAdded(ArrayList<Friend> friends, String id) {
-        for(Friend friend : friends) {
-            if (friend.id.equals(id)) {
-                return true;
+        if (friends != null) {
+            for (Friend friend : friends) {
+                if (friend.id.equals(id)) {
+                    return true;
+                }
             }
         }
         return false;
