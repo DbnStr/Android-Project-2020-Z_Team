@@ -1,5 +1,6 @@
 package ru.mail.z_team.map;
 
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.widget.Toast;
 
@@ -13,6 +14,7 @@ import com.mapbox.android.core.permissions.PermissionsListener;
 import com.mapbox.android.core.permissions.PermissionsManager;
 import com.mapbox.geojson.Feature;
 import com.mapbox.geojson.FeatureCollection;
+import com.muddzdev.styleabletoastlibrary.StyleableToast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -77,11 +79,17 @@ public class MapActivity extends AppCompatActivity implements PermissionsListene
     }
 
     public void openMapFragment() {
-        if (fragmentManager.findFragmentById(container) == null) {
-            fragmentManager
-                    .beginTransaction()
-                    .replace(container, new MapFragment(), MAP_TAG)
-                    .commit();
+        LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+        if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+            if (fragmentManager.findFragmentById(container) == null) {
+                fragmentManager
+                        .beginTransaction()
+                        .replace(container, new MapFragment(), MAP_TAG)
+                        .commit();
+            }
+        }
+        else {
+            StyleableToast.makeText(this, "Turn on GPS", R.style.CustomToast).show();
         }
     }
 
