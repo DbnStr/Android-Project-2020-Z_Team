@@ -15,14 +15,14 @@ import ru.mail.z_team.ApplicationModified;
 import ru.mail.z_team.Logger;
 import ru.mail.z_team.databases.DatabaseStory;
 import ru.mail.z_team.databases.DatabaseWalk;
+import ru.mail.z_team.databases.local_storage.LocalDatabase;
+import ru.mail.z_team.databases.local_storage.UserDao;
+import ru.mail.z_team.databases.network.DatabaseApiRepository;
+import ru.mail.z_team.databases.network.UserApi;
 import ru.mail.z_team.icon_fragments.DatabaseCallback;
 import ru.mail.z_team.icon_fragments.DatabaseNetworkControlExecutor;
 import ru.mail.z_team.icon_fragments.Transformer;
-import ru.mail.z_team.databases.local_storage.LocalDatabase;
-import ru.mail.z_team.databases.local_storage.UserDao;
 import ru.mail.z_team.map.Story;
-import ru.mail.z_team.databases.network.DatabaseApiRepository;
-import ru.mail.z_team.databases.network.UserApi;
 
 public class WalkProfileRepository {
     private static final String LOG_TAG = "WalkProfileRepository";
@@ -41,7 +41,7 @@ public class WalkProfileRepository {
 
     @SuppressLint("SimpleDateFormat")
     SimpleDateFormat sdf =
-            new SimpleDateFormat("EEE, MMM d, yyyy hh:mm:ss a z");
+            new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
 
     public WalkProfileRepository(Context context) {
         this.context = context;
