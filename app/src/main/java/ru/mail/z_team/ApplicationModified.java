@@ -9,8 +9,8 @@ import android.os.Build;
 import ru.mail.z_team.map.MapRepository;
 import androidx.room.Room;
 
-import ru.mail.z_team.local_storage.LocalDatabase;
-import ru.mail.z_team.network.DatabaseApiRepository;
+import ru.mail.z_team.databases.local_storage.LocalDatabase;
+import ru.mail.z_team.databases.network.DatabaseApiRepository;
 
 public class ApplicationModified extends Application {
 

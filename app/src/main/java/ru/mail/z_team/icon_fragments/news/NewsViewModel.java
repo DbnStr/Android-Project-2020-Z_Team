@@ -18,6 +18,7 @@ public class NewsViewModel extends AndroidViewModel {
 
     private final NewsRepository repository;
     private final LiveData<ArrayList<WalkAnnotation>> currentUserNews;
+    private final LiveData<NewsRepository.RefreshStatus> refreshStatus;
 
     public NewsViewModel(@NonNull Application application) {
         super(application);
@@ -26,15 +27,20 @@ public class NewsViewModel extends AndroidViewModel {
 
         repository = new NewsRepository(getApplication());
         currentUserNews = repository.getNews();
-    }
-
-    public void updateCurrentUserNews() {
-        logger.log("updateNews");
-        repository.updateCurrentUserNews();
+        refreshStatus = repository.getRefreshStatus();
     }
 
     public LiveData<ArrayList<WalkAnnotation>> getCurrentUserNews() {
         logger.log("getNews");
         return currentUserNews;
+    }
+
+    public LiveData<NewsRepository.RefreshStatus> getRefreshStatus() {
+        return refreshStatus;
+    }
+
+    public void updateCurrentUserNews() {
+        logger.log("updateNews");
+        repository.updateCurrentUserNews();
     }
 }

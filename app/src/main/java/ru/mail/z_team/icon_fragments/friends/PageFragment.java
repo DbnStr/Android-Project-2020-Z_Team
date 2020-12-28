@@ -14,6 +14,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.muddzdev.styleabletoastlibrary.StyleableToast;
+
 import ru.mail.z_team.Logger;
 import ru.mail.z_team.R;
 import ru.mail.z_team.icon_fragments.friends.friend_request.FriendRequestAdapter;
@@ -93,9 +95,17 @@ public class PageFragment extends Fragment {
                     });
 
             friendsRefreshLayout.setOnRefreshListener(() -> {
+                viewModel.getRefreshStatus()
+                        .observe(getActivity(), refreshStatus -> {
+                            if (refreshStatus == FriendsRepository.RefreshStatus.FAILED) {
+                                StyleableToast toast = StyleableToast.makeText(getContext(),
+                                        "Fail with update", R.style.CustomToast);
+                                toast.show();
+                            }
+                            friendsRefreshLayout.setRefreshing(false);
+                            viewModel.getRefreshStatus().removeObservers(getActivity());
+                        });
                 viewModel.updateCurrentUserFriends();
-                //Todo : как-то проверять процесс обновления друзей(полученя даннъы из дб), и только при успехе убирать значок обновления
-                friendsRefreshLayout.setRefreshing(false);
             });
         } else if (currentPageId == 1) {
             logger.log("friendRequestFragment");

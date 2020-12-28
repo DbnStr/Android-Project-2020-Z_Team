@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -75,7 +76,16 @@ public class NewsFragment extends Fragment {
 
         newsRefreshLayout.setOnRefreshListener(() -> {
             viewModel.updateCurrentUserNews();
-            //Todo : как-то проверять процесс обновления новостей(полученя даннъы из дб), и только при успехе убирать значок обновления
+            viewModel.getRefreshStatus()
+                    .observe(getActivity(), refreshStatus -> {
+                        if (refreshStatus == NewsRepository.RefreshStatus.FAILED) {
+                            Toast toast = Toast.makeText(getContext(),
+                                    "Fail with update", Toast.LENGTH_SHORT);
+                            toast.show();
+                        }
+                        newsRefreshLayout.setRefreshing(false);
+                        viewModel.getRefreshStatus().removeObservers(getActivity());
+                    });
             newsRefreshLayout.setRefreshing(false);
         });
     }

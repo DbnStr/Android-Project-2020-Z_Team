@@ -42,7 +42,7 @@
                 android:id="@+id/profile_id"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/alert_dialog_shape"
+                android:background="@drawable/id_text_view_shape"
                 android:layout_margin="16dp"
                 android:padding="8dp"
                 android:scrollHorizontally="true"
@@ -67,7 +67,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="16dp"
-            android:background="@drawable/alert_dialog_shape"
+            android:background="@drawable/id_text_view_shape"
             android:layout_below="@id/profile_id_layout2"/>
     </RelativeLayout>
 

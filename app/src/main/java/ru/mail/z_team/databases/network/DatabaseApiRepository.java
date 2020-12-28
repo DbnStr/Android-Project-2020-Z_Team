@@ -1,4 +1,4 @@
-package ru.mail.z_team.network;
+package ru.mail.z_team.databases.network;
 
 import android.content.Context;
 

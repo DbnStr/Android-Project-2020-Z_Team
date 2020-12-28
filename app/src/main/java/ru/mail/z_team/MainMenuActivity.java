@@ -88,7 +88,7 @@ public class MainMenuActivity extends AppCompatActivity implements BottomNavigat
         }
     }
 
-    public void openUserProfile(User user){
+    public void openUserProfile(User user) {
         fragmentManager
                 .beginTransaction()
                 .replace(container, new UserFragment(user), USER_TAG)
@@ -109,6 +109,7 @@ public class MainMenuActivity extends AppCompatActivity implements BottomNavigat
         bnv1.setLabelVisibilityMode(LabelVisibilityMode.LABEL_VISIBILITY_SELECTED);
         bnv2.setLabelVisibilityMode(LabelVisibilityMode.LABEL_VISIBILITY_UNLABELED);
     }
+
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         final Fragment fragment;
@@ -169,7 +170,7 @@ public class MainMenuActivity extends AppCompatActivity implements BottomNavigat
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();
-        if (id == R.id.logout_action){
+        if (id == R.id.logout_action) {
             firebaseAuth.signOut();
             startMainActivityAndFinishThis();
         }
@@ -183,5 +184,10 @@ public class MainMenuActivity extends AppCompatActivity implements BottomNavigat
     private void startMainActivityAndFinishThis() {
         startActivity(new Intent(MainMenuActivity.this, MainActivity.class));
         finish();
+    }
+
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
     }
 }

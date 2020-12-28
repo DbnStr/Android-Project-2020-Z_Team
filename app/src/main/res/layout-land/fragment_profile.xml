@@ -37,7 +37,7 @@
                 android:id="@+id/profile_id"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/alert_dialog_shape"
+                android:background="@drawable/id_text_view_shape"
                 android:layout_marginLeft="@dimen/image_margin"
                 android:layout_marginRight="@dimen/image_margin"
                 android:padding="8dp"
@@ -64,7 +64,7 @@
         <TextView
             android:layout_width="16dp"
             android:layout_height="match_parent"
-            android:background="@drawable/alert_dialog_shape"
+            android:background="@drawable/id_text_view_shape"
             android:layout_toEndOf="@id/profile_image"/>
     </RelativeLayout>
 

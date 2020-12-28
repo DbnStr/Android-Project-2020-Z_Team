@@ -1,11 +1,11 @@
-package ru.mail.z_team.local_storage.walk;
+package ru.mail.z_team.databases;
 
 import androidx.annotation.NonNull;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
 @Entity
-public class Walk {
+public class DatabaseWalkAnnotation {
 
     @NonNull
     @PrimaryKey
@@ -17,13 +17,10 @@ public class Walk {
 
     public String date;
 
-    public String walk;
-
-    public Walk(@NonNull String title, String authorName, String authorId, String date, String walk) {
+    public DatabaseWalkAnnotation(@NonNull String title, String date, String authorName, String authorId) {
         this.title = title;
+        this.date = date;
         this.authorName = authorName;
         this.authorId = authorId;
-        this.date = date;
-        this.walk = walk;
     }
 }

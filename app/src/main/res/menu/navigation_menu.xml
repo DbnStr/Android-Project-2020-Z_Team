@@ -11,7 +11,7 @@
         android:id="@+id/nav_go_out"
         android:title="Go Out"/>
     <item
-        android:id="@+id/friends"
+        android:id="@+id/localDbFriends"
         android:title="Friends"/>
     <item
         android:id="@+id/nav_profile"

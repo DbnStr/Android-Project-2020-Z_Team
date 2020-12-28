@@ -6,7 +6,7 @@ import java.util.ArrayList;
 
 import ru.mail.z_team.map.Story;
 
-public class Walk extends WalkAnnotation{
+public class Walk extends WalkAnnotation {
     FeatureCollection map;
     ArrayList<Story> stories;
 

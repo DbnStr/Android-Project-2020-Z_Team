@@ -2,6 +2,8 @@ package ru.mail.z_team.icon_fragments;
 
 import android.util.Log;
 
+import java.util.concurrent.ExecutionException;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -13,7 +15,7 @@ public abstract class DatabaseCallback<T> implements Callback<T> {
 
     public abstract void onNullResponse(Response<T> response);
 
-    public abstract void onSuccessResponse(Response<T> response);
+    public abstract void onSuccessResponse(Response<T> response) throws ExecutionException, InterruptedException;
 
     protected DatabaseCallback(final String logTag) {
         this.logTag = logTag;
@@ -31,7 +33,11 @@ public abstract class DatabaseCallback<T> implements Callback<T> {
             return;
         }
         if (response.isSuccessful()) {
-            onSuccessResponse(response);
+            try {
+                onSuccessResponse(response);
+            } catch (ExecutionException | InterruptedException e) {
+                e.printStackTrace();
+            }
         }
     }
 

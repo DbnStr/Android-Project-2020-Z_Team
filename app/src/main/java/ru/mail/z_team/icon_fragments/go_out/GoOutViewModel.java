@@ -28,9 +28,10 @@ public class GoOutViewModel extends AndroidViewModel {
         repository = new GoOutRepository(getApplication());
     }
 
-    public void postWalk(String title, FeatureCollection walk, ArrayList<Story> stories) {
+    public void postWalk(String title, FeatureCollection walkInfo, ArrayList<Story> stories) {
         logger.log("postWalk");
-        repository.postWalk(title, walk, stories);
+        UIWalk uiWalk  = new UIWalk(title, walkInfo, stories);
+        repository.postWalk(uiWalk);
         postWalkStatus.addSource(repository.getPostStatus(), postStatus -> {
             if (postStatus == GoOutRepository.PostStatus.FAILED){
                 postWalkStatus.postValue(getApplication().getString(R.string.FAILED));
