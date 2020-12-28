@@ -97,8 +97,7 @@ public class PageFragment extends Fragment {
                 //Todo : как-то проверять процесс обновления друзей(полученя даннъы из дб), и только при успехе убирать значок обновления
                 friendsRefreshLayout.setRefreshing(false);
             });
-        }
-        else if (mPage == 1) {
+        } else if (mPage == 1) {
             logger.log("friendRequestFragment");
             FriendRequestAdapter friendRequestAdapter = new FriendRequestAdapter(getActivity(), viewModel);
             recyclerView.setAdapter(friendRequestAdapter);
