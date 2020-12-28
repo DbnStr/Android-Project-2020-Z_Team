@@ -10,10 +10,10 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
@@ -41,6 +41,7 @@ import com.mapbox.mapboxsdk.style.layers.LineLayer;
 import com.mapbox.mapboxsdk.style.layers.SymbolLayer;
 import com.mapbox.mapboxsdk.style.sources.GeoJsonSource;
 import com.mapbox.mapboxsdk.utils.BitmapUtils;
+import com.muddzdev.styleabletoastlibrary.StyleableToast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -100,6 +101,9 @@ public class MapFragment extends Fragment {
         addStoryButton = view.findViewById(R.id.add_story_btn);
         saveMapButton = view.findViewById(R.id.save_map_btn);
         openMenuButton = view.findViewById(R.id.open_menu_btn);
+        addStoryButton.setColorFilter(Color.argb(255, 255, 255, 255));
+        saveMapButton.setColorFilter(Color.argb(255, 255, 255, 255));
+        openMenuButton.setColorFilter(Color.argb(255, 255, 255, 255));
 
         viewModel = new ViewModelProvider(this).get(MapViewModel.class);
         if (savedInstanceState != null) {
@@ -164,7 +168,7 @@ public class MapFragment extends Fragment {
                     addStory(mapboxMap);
                 }
                 else {
-                    Toast.makeText(getActivity(), "Build your route first", Toast.LENGTH_LONG).show();
+                    StyleableToast.makeText(getActivity(), "Build your route first", R.style.CustomToast).show();
                 }
             });
             saveMapButton.setOnClickListener(v -> {
@@ -176,7 +180,7 @@ public class MapFragment extends Fragment {
                             .commitAllowingStateLoss();
                 }
                 else {
-                    Toast.makeText(getActivity(), "Build a walk to save one", Toast.LENGTH_LONG).show();
+                    StyleableToast.makeText(getActivity(), "Build a walk to save one", R.style.CustomToast).show();
                 }
             });
         }));
@@ -186,12 +190,14 @@ public class MapFragment extends Fragment {
         isMenuOpen = true;
         addStoryButton.animate().translationY(-getResources().getDimension(R.dimen.standard_70));
         saveMapButton.animate().translationY(-getResources().getDimension(R.dimen.standard_140));
+        openMenuButton.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.primaryLightColor));
     }
 
     private void closeMenu(){
         isMenuOpen = false;
         addStoryButton.animate().translationY(0);
         saveMapButton.animate().translationY(0);
+        openMenuButton.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.secondaryColor));
     }
 
     private void animateCamera(MapboxMap mapboxMap) {
@@ -222,7 +228,6 @@ public class MapFragment extends Fragment {
                     .zoom(14)
                     .tilt(20)
                     .build();
-            //new LatLng(55.765762, 37.685479)
             mapboxMap.animateCamera(CameraUpdateFactory.newCameraPosition(position), 7000);
         }
     }
@@ -356,6 +361,7 @@ public class MapFragment extends Fragment {
     }
 
     private void getRoute(MapboxMap mapboxMap, Point startPos, Point destinationPos) {
+        logger.log("getRoute");
         MapboxDirections client = MapboxDirections.builder()
                 .origin(startPos)
                 .destination(destinationPos)
@@ -375,6 +381,7 @@ public class MapFragment extends Fragment {
                 }
 
                 if (mapboxMap != null) {
+                    logger.log("getRoutes: mapboxMap not null");
                     mapboxMap.getStyle(style -> {
                         GeoJsonSource source = style.getSourceAs(ROUTE_SOURCE_ID);
 

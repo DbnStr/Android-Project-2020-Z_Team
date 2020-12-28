@@ -1,7 +1,6 @@
 package ru.mail.z_team.icon_fragments.walks;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -55,8 +54,6 @@ public class StoryFragment extends Fragment {
             if (story == null) {
                 dateOfWalk = getArguments().getString("dateOfWalk");
                 numberInStoryList = getArguments().getInt("numberInStoryList");
-                Log.d("StoryFragment" , "dateOfWalk" + dateOfWalk);
-                Log.d("StoryFrgment", numberInStoryList + "ds");
             }
         }
     }
@@ -98,6 +95,9 @@ public class StoryFragment extends Fragment {
                 StorageReference reference = FirebaseStorage.getInstance().getReferenceFromUrl(getString(R.string.base_storage_url) + url);
                 reference.getDownloadUrl().addOnSuccessListener(uri -> Picasso.get()
                         .load(uri)
+                        .noFade()
+                        .resize(imageView.getHeight(), imageView.getHeight())
+                        .centerCrop()
                         .placeholder(ContextCompat.getDrawable(getActivity(), R.drawable.ic_baseline_photo_24))
                         .into(imageView)).addOnFailureListener(e -> logger.errorLog(e.getMessage()));
             }

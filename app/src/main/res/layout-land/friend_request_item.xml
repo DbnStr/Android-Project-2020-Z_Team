@@ -1,36 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/news_card"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
-
+    android:layout_margin="8dp"
+    android:checkable="true"
+    android:clickable="true"
+    android:focusable="true"
+    android:outlineAmbientShadowColor="@color/secondaryColor"
+    app:cardBackgroundColor="@color/card_back"
+    app:cardCornerRadius="16dp"
+    app:cardElevation="8dp"
+    app:checkedIcon="@color/primaryLightColor">
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="80dp"
+        android:layout_height="wrap_content"
         app:layout_constraintTop_toTopOf="parent"
         android:orientation="horizontal">
-        <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="2"
-            android:layout_margin="2.5dp"
-            android:background="@drawable/user_icon"/>
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:layout_width="88dp"
+            android:layout_height="88dp"
+            android:src="@drawable/ic_person"
+            app:civ_border_width="5dp"
+            app:civ_border_overlay="true"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            app:civ_border_color="@color/primaryDarkColor"/>
+
         <TextView
             android:id="@+id/friend_request_item"
-            android:layout_width="match_parent"
+            android:layout_width="423dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:padding="15dp"
-            android:textSize="24sp"
-            android:text="Anonymous"/>
+            android:padding="16dp"
+            android:text="@string/anonymous"
+            style="@style/H1Text" />
+
         <Button
-            android:layout_width="match_parent"
+            android:id="@+id/accept_friend_request_btn"
+            style="@style/CustomButton"
+            android:background="@drawable/custom_button_shape"
+            android:layout_width="64dp"
             android:layout_height="match_parent"
             android:layout_weight="2"
-            android:id="@+id/accept_friend_request_btn"
-            android:text="@string/add_friend"
-            android:textSize="15sp"/>
-
+            android:text="@string/add_friend"/>
     </LinearLayout>
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+</com.google.android.material.card.MaterialCardView>

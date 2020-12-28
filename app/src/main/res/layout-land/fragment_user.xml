@@ -1,76 +1,90 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_height="match_parent"
     android:layout_width="match_parent"
+    android:layout_height="match_parent"
     tools:context=".MainMenuActivity">
+
 
     <RelativeLayout
         android:id="@+id/user_image_layout"
-        app:layout_constraintTop_toTopOf="parent"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:gravity="center_horizontal">
+        android:gravity="center_horizontal"
+        android:background="@color/secondaryLightColor"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
-        <ImageView
+        <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/user_image"
             android:layout_width="200dp"
             android:layout_height="200dp"
-            android:layout_margin="25dp"
-            android:src="@drawable/user_icon" />
+            android:layout_margin="32dp"
+            android:src="@drawable/user_icon"
+            app:civ_border_color="@color/secondaryDarkColor"
+            app:civ_border_overlay="true"
+            app:civ_border_width="10dp" />
     </RelativeLayout>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+    <RelativeLayout
+        android:id="@+id/white_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:background="@drawable/tab_shape"
+        app:layout_constraintLeft_toRightOf="@id/user_image_layout">
+
+        <TextView
+            android:layout_width="16dp"
+            android:layout_height="match_parent"
+            android:background="@drawable/alert_dialog_shape"/>
+    </RelativeLayout>
 
 
+    <LinearLayout
+        android:id="@+id/linear_user_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:orientation="horizontal"
+        app:layout_constraintLeft_toRightOf="@id/user_image_layout"
+        app:layout_constraintTop_toTopOf="parent">
 
-        <LinearLayout
-            android:id="@+id/linear_user_name"
-            app:layout_constraintTop_toTopOf="parent"
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/name" />
+
+        <TextView
+            android:id="@+id/user_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:layout_margin="16dp"
+            android:text="@string/anonymous"
+            style="@style/H1Text"/>
+    </LinearLayout>
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="name:" />
+    <LinearLayout
+        android:id="@+id/linear_user_age"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginStart="16dp"
+        app:layout_constraintLeft_toRightOf="@id/user_image_layout"
+        app:layout_constraintTop_toBottomOf="@id/linear_user_name">
 
-            <TextView
-                android:id="@+id/user_name"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="15dp"
-                android:text="@string/anonymous"
-                android:textColor="@color/primaryDarkColor"
-                android:textSize="20sp" />
-        </LinearLayout>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/age" />
 
-        <LinearLayout
-            android:id="@+id/linear_user_age"
-            app:layout_constraintTop_toBottomOf="@id/linear_user_name"
+        <TextView
+            android:id="@+id/user_age"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:layout_margin="16dp"
+            android:text="@string/zero_int"
+            style="@style/H1Text"/>
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="age:" />
-
-            <TextView
-                android:id="@+id/user_age"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="15dp"
-                android:text="@string/zero_int"
-                android:textColor="@color/primaryDarkColor"
-                android:textSize="20sp" />
-
-        </LinearLayout>
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-</LinearLayout>
+    </LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

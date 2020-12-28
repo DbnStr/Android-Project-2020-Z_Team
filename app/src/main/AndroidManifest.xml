@@ -29,12 +29,14 @@
             android:name="com.google.firebase.messaging.default_notification_icon"
             android:resource="@drawable/ic_baseline_wb_sunny_24" />
 
-        <activity android:theme="@style/MainTheme" android:name=".map.MapActivity"></activity>
+        <activity
+            android:theme="@style/MainTheme"
+            android:name=".map.MapActivity" />
         <activity android:name=".MainActivity" />
-        <activity android:theme="@style/MainTheme" android:name=".MainMenuActivity">
+        <activity android:theme="@style/MainTheme" android:name=".MainMenuActivity"
+            android:windowSoftInputMode="adjustPan">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>

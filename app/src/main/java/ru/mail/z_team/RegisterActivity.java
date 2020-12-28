@@ -8,7 +8,6 @@ import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
@@ -17,6 +16,7 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
+import com.muddzdev.styleabletoastlibrary.StyleableToast;
 
 public class RegisterActivity extends AppCompatActivity {
 
@@ -36,7 +36,7 @@ public class RegisterActivity extends AppCompatActivity {
 
         ActionBar actionBar = getSupportActionBar();
         actionBar.setTitle("Create Account");
-        Log.d("RegisterActivity", "onCreate");
+        actionBar.setDisplayHomeAsUpEnabled(true);
 
         registerBtn = findViewById(R.id.register);
         emailEt = findViewById(R.id.emailEt);
@@ -53,17 +53,17 @@ public class RegisterActivity extends AppCompatActivity {
                 progressDialog.show();
             } else if (authState == getString(R.string.SUCCESS)) {
                 progressDialog.dismiss();
-                Toast.makeText(RegisterActivity.this, message + " registered",
-                        Toast.LENGTH_SHORT).show();
+                StyleableToast.makeText(RegisterActivity.this, message + " registered",
+                        R.style.CustomToast).show();
                 startActivity(new Intent(RegisterActivity.this, MainMenuActivity.class));
                 finish();
             } else if (authState == getString(R.string.FAILED)) {
                 progressDialog.dismiss();
-                Toast.makeText(RegisterActivity.this, "Registration failed.",
-                        Toast.LENGTH_SHORT).show();
+                StyleableToast.makeText(RegisterActivity.this, "Registration failed.",
+                        R.style.CustomToast).show();
             } else if (authState == getString(R.string.ERROR)) {
                 progressDialog.dismiss();
-                Toast.makeText(RegisterActivity.this, message, Toast.LENGTH_LONG).show();
+                StyleableToast.makeText(RegisterActivity.this, message, R.style.CustomToast).show();
             }
         });
 

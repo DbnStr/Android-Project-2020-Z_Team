@@ -48,7 +48,9 @@ public class WalksFragment extends Fragment {
         logger.log("create view");
         noWalks = view.findViewById(R.id.no_walks_tv);
         toMapBtn = view.findViewById(R.id.map_activity_btn);
-        walksRefreshLayout = view.findViewById(R.id.swipe_to_refresh_walks);
+        toMapBtn.setColorFilter(Color.argb(255, 255, 255, 255));
+
+        newsRefreshLayout = view.findViewById(R.id.swipe_to_refresh_walks);
 
         return view;
     }

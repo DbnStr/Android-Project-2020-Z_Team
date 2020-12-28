@@ -1,6 +1,7 @@
 package ru.mail.z_team;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -13,6 +14,8 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.bottomnavigation.LabelVisibilityMode;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
@@ -22,6 +25,7 @@ import ru.mail.z_team.icon_fragments.profile.ProfileFragment;
 import ru.mail.z_team.icon_fragments.walks.WalkAnnotation;
 import ru.mail.z_team.icon_fragments.walks.WalkFragment;
 import ru.mail.z_team.icon_fragments.walks.WalksFragment;
+import ru.mail.z_team.map.MapActivity;
 import ru.mail.z_team.user.User;
 import ru.mail.z_team.user.UserFragment;
 
@@ -41,7 +45,8 @@ public class MainMenuActivity extends AppCompatActivity implements BottomNavigat
     FragmentManager fragmentManager;
     int container;
     ActionBar actionBar;
-    BottomNavigationView bottomNavigationView;
+    BottomNavigationView bottomNavigationView, bottomNavigationView2;
+    FloatingActionButton goOutBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,7 +60,13 @@ public class MainMenuActivity extends AppCompatActivity implements BottomNavigat
         fragmentManager = getSupportFragmentManager();
         container = R.id.current_menu_container;
         bottomNavigationView = findViewById(R.id.bottom_navigation);
+        bottomNavigationView2 = findViewById(R.id.bottom_navigation2);
+        goOutBtn = findViewById(R.id.go_out_btn);
+        goOutBtn.setColorFilter(Color.argb(255, 255, 255, 255));
+
         bottomNavigationView.setOnNavigationItemSelectedListener(this);
+        bottomNavigationView2.setOnNavigationItemSelectedListener(this);
+        goOutBtn.setOnClickListener(v -> startActivity(new Intent(this, MapActivity.class)));
 
         if (getSupportFragmentManager().findFragmentById(container) == null) {
             getSupportFragmentManager()
@@ -82,7 +93,7 @@ public class MainMenuActivity extends AppCompatActivity implements BottomNavigat
                 .beginTransaction()
                 .replace(container, new UserFragment(user), USER_TAG)
                 .addToBackStack(null)
-                .commitAllowingStateLoss();
+                .commit();
     }
 
     public void openWalkProfile(WalkAnnotation walk) {
@@ -94,6 +105,10 @@ public class MainMenuActivity extends AppCompatActivity implements BottomNavigat
                 .commitAllowingStateLoss();
     }
 
+    private void changeBottomNavigationView(BottomNavigationView bnv1, BottomNavigationView bnv2) {
+        bnv1.setLabelVisibilityMode(LabelVisibilityMode.LABEL_VISIBILITY_SELECTED);
+        bnv2.setLabelVisibilityMode(LabelVisibilityMode.LABEL_VISIBILITY_UNLABELED);
+    }
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         final Fragment fragment;
@@ -102,21 +117,25 @@ public class MainMenuActivity extends AppCompatActivity implements BottomNavigat
 
         switch (item.getItemId()) {
             case R.id.news_feed_icon:
+                changeBottomNavigationView(bottomNavigationView, bottomNavigationView2);
                 fragment = new NewsFragment();
                 nFragment = (NewsFragment) fragmentManager.findFragmentByTag(NEWS_TAG);
                 tag = NEWS_TAG;
                 break;
             case R.id.walks_icon:
+                changeBottomNavigationView(bottomNavigationView, bottomNavigationView2);
                 fragment = new WalksFragment();
                 nFragment = (WalksFragment) fragmentManager.findFragmentByTag(WALKS_TAG);
                 tag = WALKS_TAG;
                 break;
             case R.id.friends_icon:
+                changeBottomNavigationView(bottomNavigationView2, bottomNavigationView);
                 fragment = new FriendsFragment();
                 nFragment = (FriendsFragment) fragmentManager.findFragmentByTag(FRIENDS_TAG);
                 tag = FRIENDS_TAG;
                 break;
             case R.id.profile_icon:
+                changeBottomNavigationView(bottomNavigationView2, bottomNavigationView);
                 fragment = new ProfileFragment();
                 nFragment = (ProfileFragment) fragmentManager.findFragmentByTag(PROFILE_TAG);
                 tag = PROFILE_TAG;
