@@ -1,5 +1,6 @@
 package ru.mail.z_team.user;
 
+import android.graphics.Bitmap;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -15,6 +16,7 @@ public class User {
     public String id;
     public String imageUrl;
     public ArrayList<Friend> friends;
+    public Bitmap bitmap = null;
 
     public User(String name, int age, ArrayList<Friend> friends, String id) {
         this.name = name;

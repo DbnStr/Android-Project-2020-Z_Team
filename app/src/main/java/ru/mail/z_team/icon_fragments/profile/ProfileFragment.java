@@ -1,7 +1,6 @@
 package ru.mail.z_team.icon_fragments.profile;
 
 import android.Manifest;
-import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.ContentValues;
 import android.content.Intent;
@@ -28,7 +27,6 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-import com.squareup.picasso.Picasso;
 
 import java.util.HashMap;
 
@@ -128,9 +126,7 @@ public class ProfileFragment extends Fragment {
         enableEditAbility(age);
 
         image.setClickable(true);
-        image.setOnClickListener(v -> {
-            showImagePickDialog();
-        });
+        image.setOnClickListener(v -> showImagePickDialog());
     }
 
     private void enableEditAbility(EditText editText) {
@@ -163,21 +159,11 @@ public class ProfileFragment extends Fragment {
         return info;
     }
 
-    @SuppressLint("SetTextI18n")
     private void setProfileData(@NonNull User user) {
         name.setText(user.getName());
         age.setText(String.valueOf(user.getAge()));
-        if (user.getImageUrl() != null
-                && !user.getImageUrl().isEmpty()
-                && !user.getImageUrl().equals("no Image")) {
-            StorageReference reference = FirebaseStorage.getInstance()
-                    .getReferenceFromUrl(getString(R.string.base_storage_url) + user.getImageUrl());
-            reference.getDownloadUrl().addOnSuccessListener(uri -> Picasso.get()
-                    .load(uri)
-                    .resize(image.getHeight(), image.getWidth())
-                    .centerCrop()
-                    .placeholder(ContextCompat.getDrawable(getActivity(), R.drawable.ic_baseline_photo_24))
-                    .into(image)).addOnFailureListener(e -> logger.errorLog(e.getMessage()));
+        if (user.bitmap != null) {
+            image.setImageBitmap(user.bitmap);
         }
     }
 

@@ -1,27 +1,33 @@
 package ru.mail.z_team.icon_fragments.profile;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import retrofit2.Response;
 import ru.mail.z_team.ApplicationModified;
 import ru.mail.z_team.Logger;
+import ru.mail.z_team.R;
+import ru.mail.z_team.databases.DatabaseFriend;
 import ru.mail.z_team.databases.DatabaseUser;
+import ru.mail.z_team.databases.local_storage.LocalDatabase;
+import ru.mail.z_team.databases.local_storage.UserDao;
+import ru.mail.z_team.databases.network.DatabaseApiRepository;
+import ru.mail.z_team.databases.network.UserApi;
 import ru.mail.z_team.icon_fragments.DatabaseCallback;
 import ru.mail.z_team.icon_fragments.DatabaseNetworkControlExecutor;
 import ru.mail.z_team.icon_fragments.Transformer;
-import ru.mail.z_team.databases.local_storage.LocalDatabase;
-import ru.mail.z_team.databases.local_storage.UserDao;
-import ru.mail.z_team.databases.DatabaseFriend;
-import ru.mail.z_team.databases.network.DatabaseApiRepository;
-import ru.mail.z_team.databases.network.UserApi;
 import ru.mail.z_team.user.Friend;
 import ru.mail.z_team.user.User;
 
@@ -80,8 +86,34 @@ public class ProfileRepository {
 
             @Override
             public void onSuccessResponse(Response<DatabaseUser> response) {
-                currentUserData.postValue(Transformer.transformToUser(response.body()));
+                User user = Transformer.transformToUser(response.body());
+                if (user.getImageUrl() != null
+                        && !user.getImageUrl().isEmpty()
+                        && !user.getImageUrl().equals("no Image")) {
+                    StorageReference reference = FirebaseStorage.getInstance()
+                            .getReferenceFromUrl(context.getString(R.string.base_storage_url) + user.getImageUrl());
+                    localDatabase.databaseWriteExecutor.execute(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
 
+                                Bitmap bitmap =
+                                        Glide.with(context.getApplicationContext())
+                                                .asBitmap()
+                                                .load(reference)
+                                                .submit(100, 100)
+                                                .get();
+                                user.bitmap = bitmap;
+                                currentUserData.postValue(user);
+                            } catch (Error | ExecutionException |
+                                    InterruptedException error) {
+                                logger.log(error.getMessage());
+                            }
+                        }
+                    });
+                } else {
+                    currentUserData.postValue(user);
+                }
                 addUserInLocalDB(response.body());
             }
         });
@@ -99,7 +131,6 @@ public class ProfileRepository {
             }
 
             List<DatabaseFriend> fr = userDao.getUserFriends(currentUser.id);
-            logger.log(fr.get(0).name);
         });
     }
 
