@@ -88,6 +88,7 @@ public class StoryFragment extends Fragment {
     private void showStory() {
         place.setText(story.getPlace());
         description.setText(story.getDescription());
+        gallery.removeAllViews();
         if (story.getUrlImages() != null) {
             for (String url : story.getUrlImages()) {
                 ImageView imageView = new ImageView(getActivity());
