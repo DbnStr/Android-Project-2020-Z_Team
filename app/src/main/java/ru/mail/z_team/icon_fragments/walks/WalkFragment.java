@@ -154,22 +154,27 @@ public class WalkFragment extends Fragment {
     }
 
     private void animateCamera(MapboxMap mapboxMap) {
-        ArrayList<Point> routePoints = new ArrayList<>();
-        for (Feature feature : walk.getMap().features()) {
-            if (feature.geometry() instanceof LineString) {
-                routePoints = (ArrayList<Point>) ((LineString) feature
-                        .geometry()).coordinates();
+        if (walk.getMap() != null){
+            ArrayList<Point> routePoints = new ArrayList<>();
+            for (Feature feature : walk.getMap().features()) {
+                if (feature.geometry() instanceof LineString) {
+                    routePoints = (ArrayList<Point>) ((LineString) feature
+                            .geometry()).coordinates();
+                }
             }
-        }
 
-        ArrayList<LatLng> routeLatLngs = new ArrayList<>();
-        for (Point point : routePoints) {
-            routeLatLngs.add(new LatLng(point.latitude(), point.longitude()));
+            ArrayList<LatLng> routeLatLngs = new ArrayList<>();
+            for (Point point : routePoints) {
+                routeLatLngs.add(new LatLng(point.latitude(), point.longitude()));
+            }
+            LatLngBounds latLngBounds = new LatLngBounds.Builder()
+                    .includes(routeLatLngs)
+                    .build();
+            mapboxMap.animateCamera(CameraUpdateFactory.newLatLngBounds(latLngBounds, 10));
         }
-        LatLngBounds latLngBounds = new LatLngBounds.Builder()
-                .includes(routeLatLngs)
-                .build();
-        mapboxMap.animateCamera(CameraUpdateFactory.newLatLngBounds(latLngBounds, 10));
+        else {
+            logger.errorLog("walk didn't have a map");
+        }
     }
 
     private void initLayers(@NonNull Style loadedMapStyle) {

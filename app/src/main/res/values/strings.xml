@@ -33,11 +33,20 @@
     <string name="friend_request">Friend Request</string>
     <string name="friends_list">friends list</string>
     <string name="you_have_no_friend_requests">You have no friend requests</string>
-    <string name="add_friend">Add friend</string>
+    <string name="add_friend">Accept</string>
     <string name="upload">Upload</string>
     <string name="zero_int">0</string>
     <string name="channel_go_out_name">Go Out channel</string>
     <string name="enter_user_id">Enter User ID</string>
     <string name="add_your_first_friend">Add your first friend</string>
     <string name="anonymous">Anonymous</string>
+    <string name="you_don_t_have_walks_yet">You don\'t have walks yet</string>
+    <string name="add_walk">Add Walk</string>
+    <string name="you_don_t_have_any_friend_to_watch_their_news">You don\'t have any friends to watch their news</string>
+    <string name="your_age">Your age</string>
+    <string name="your_name">Your name</string>
+    <string name="name">name:</string>
+    <string name="age">age: </string>
+    <string name="published_after_death">published after death</string>
+    <string name="title">Title</string>
 </resources>

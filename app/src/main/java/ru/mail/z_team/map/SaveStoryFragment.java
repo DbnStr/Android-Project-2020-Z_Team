@@ -15,7 +15,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -27,6 +26,7 @@ import androidx.lifecycle.ViewModelProvider;
 import com.google.android.material.textfield.TextInputLayout;
 import com.mapbox.geojson.Feature;
 import com.mapbox.geojson.Point;
+import com.muddzdev.styleabletoastlibrary.StyleableToast;
 
 import java.util.ArrayList;
 
@@ -244,7 +244,7 @@ public class SaveStoryFragment extends Fragment {
                     if (cameraAccepted && storageAccepted) {
                         pickFromCamera();
                     } else {
-                        Toast.makeText(getActivity(), "Permissions are necessary", Toast.LENGTH_LONG).show();
+                        StyleableToast.makeText(getActivity(), "Permissions are necessary", R.style.CustomToast).show();
                     }
                 }
                 break;
@@ -254,7 +254,7 @@ public class SaveStoryFragment extends Fragment {
                     if (storageAccepted) {
                         pickFromGallery();
                     } else {
-                        Toast.makeText(getActivity(), "Permission is necessary", Toast.LENGTH_LONG).show();
+                        StyleableToast.makeText(getActivity(), "Permission is necessary", R.style.CustomToast).show();
                     }
                 }
                 break;

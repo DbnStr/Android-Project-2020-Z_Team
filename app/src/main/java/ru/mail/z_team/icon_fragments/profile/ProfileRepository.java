@@ -98,7 +98,6 @@ public class ProfileRepository {
             }
 
             List<UserFriend> fr = userDao.getUserFriends();
-            logger.log(fr.get(0).name);
         });
     }
 

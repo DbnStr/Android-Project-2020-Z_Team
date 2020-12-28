@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
 public class MainActivity extends AppCompatActivity {
@@ -22,6 +23,9 @@ public class MainActivity extends AppCompatActivity {
 
         registerBtn.setOnClickListener(new BtnOnClickListener());
         loginBtn.setOnClickListener(new BtnOnClickListener());
+
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.hide();
     }
 
 

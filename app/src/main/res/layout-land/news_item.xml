@@ -12,10 +12,12 @@
         android:focusable="true"
         android:checkable="true"
         android:layout_width="match_parent"
-        app:cardElevation="5dp"
-        app:cardCornerRadius="15dp"
+        app:cardElevation="8dp"
+        app:cardCornerRadius="16dp"
         app:cardBackgroundColor="@color/card_back"
-        android:layout_margin="16dp"
+        app:checkedIcon="@color/primaryLightColor"
+        android:outlineAmbientShadowColor="@color/secondaryColor"
+        android:layout_margin="8dp"
         android:layout_height="wrap_content" >
 
         <LinearLayout
@@ -25,19 +27,22 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="60dp"
+                android:layout_height="wrap_content"
                 android:orientation="horizontal">
-                <ImageView
-                    android:layout_width="55dp"
-                    android:layout_height="55dp"
-                    android:layout_margin="2.5dp"
-                    android:background="@drawable/ic_person"/>
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:layout_width="64dp"
+                    android:layout_height="64dp"
+                    android:layout_margin="8dp"
+                    app:civ_border_width="5dp"
+                    app:civ_border_overlay="true"
+                    app:civ_border_color="@color/primaryDarkColor"
+                    android:src="@drawable/ic_person"/>
                 <TextView
                     android:id="@+id/news_item_author"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:text="Who knows who"
-                    android:textSize="24sp"/>
+                    android:text="@string/anonymous"
+                    style="@style/H1Text"/>
             </LinearLayout>
 
             <LinearLayout
@@ -48,20 +53,17 @@
                 <TextView
                     android:id="@+id/news_item_title"
                     android:layout_width="match_parent"
-                    android:layout_height="40dp"
-                    android:textSize="24sp"
-                    android:layout_marginStart="10dp"
-                    android:textStyle="italic"
-                    android:text="Title"/>
+                    android:layout_height="wrap_content"
+                    android:layout_margin="8dp"
+                    style="@style/H1Text"
+                    android:text="@string/title"/>
 
                 <TextView
                     android:id="@+id/news_item_date"
                     android:layout_width="match_parent"
-                    android:textAlignment="textEnd"
-                    android:layout_height="30dp"
-                    android:padding="5dp"
-                    android:textSize="12sp"
-                    android:text="published after death"/>
+                    android:layout_height="wrap_content"
+                    style="@style/DateText"
+                    android:text="@string/published_after_death"/>
 
             </LinearLayout>
 

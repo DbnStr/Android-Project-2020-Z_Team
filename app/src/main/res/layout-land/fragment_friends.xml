@@ -1,74 +1,73 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <TextView
-        android:id="@+id/no_friend_tv"
-        android:visibility="invisible"
-        android:text="@string/add_your_first_friend"
+    <com.google.android.material.appbar.AppBarLayout
+        style="@style/ActionBarTheme"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center_horizontal"
-        android:layout_marginTop="16dp"
-        app:layout_constraintTop_toBottomOf="@+id/friend_request" />
+        android:layout_height="wrap_content">
 
-    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-        android:id="@+id/swipe_to_refresh_friends"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/friend_request">
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recycler_friends"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_marginStart="8dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/friend_request" />
-
-    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
-
-    <LinearLayout
-        android:id="@+id/add_friend_by_id_layout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintTop_toTopOf="parent">
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/add_friend_by_id_et"
-            android:layout_width="600dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="0dp"
-            android:layout_marginTop="8dp"
-            app:startIconDrawable="@drawable/add_friend"
-            app:layout_constraintTop_toTopOf="parent"
-            android:hint="@string/enter_user_id">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" />
-
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <Button
-            android:id="@+id/add_friend_by_id_btn"
+        <com.google.android.material.appbar.CollapsingToolbarLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_margin="10dp"
-            android:background="@drawable/ic_add_cycle"/>
+            app:layout_scrollFlags="scroll|exitUntilCollapsed">
 
-    </LinearLayout>
+            <LinearLayout
+                android:id="@+id/add_friend_by_id_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:background="@color/secondaryLightColor">
 
-    <Button
-        android:id="@+id/friend_request"
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/add_friend_by_id_et"
+                    android:layout_width="match_parent"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="16dp"
+                    android:hint="@string/enter_user_id"
+                    app:hintTextColor="@color/secondaryDarkColor"
+                    app:startIconDrawable="@drawable/add_friend">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:layout_width="match_parent"
+                        android:layout_height="32dp"
+                        android:background="@drawable/custom_edit_text_shape"
+                        android:textColor="@color/secondaryDarkColor"/>
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <Button
+                    android:id="@+id/add_friend_by_id_btn"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_marginRight="8dp"
+                    android:layout_marginLeft="8dp"
+                    android:layout_gravity="bottom"
+                    android:layout_weight="0"
+                    android:background="@drawable/ic_baseline_add_circle_outline_24"/>
+
+            </LinearLayout>
+        </com.google.android.material.appbar.CollapsingToolbarLayout>
+
+
+        <com.google.android.material.tabs.TabLayout
+            android:id="@+id/tabs_friends"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="@style/CustomTabs"
+            android:background="@drawable/top_shape" />
+    </com.google.android.material.appbar.AppBarLayout>
+
+
+    <androidx.viewpager.widget.ViewPager
+        android:id="@+id/viewpager"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/friend_request"
-        app:layout_constraintTop_toBottomOf="@+id/add_friend_by_id_layout" />
+        android:layout_height="match_parent"
+        app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"/>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

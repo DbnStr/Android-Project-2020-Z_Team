@@ -6,13 +6,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import com.google.android.material.textfield.TextInputLayout;
 import com.mapbox.geojson.FeatureCollection;
+import com.muddzdev.styleabletoastlibrary.StyleableToast;
 
 import java.util.ArrayList;
 
@@ -60,9 +60,9 @@ public class SavingWalkFragment extends Fragment {
         viewModel.postWalk(title, walk, stories);
         viewModel.getPostStatus().observe(getActivity(), s -> {
             if (s == getString(R.string.SUCCESS)) {
-                Toast.makeText(getActivity(), "Posted successfully", Toast.LENGTH_LONG).show();
+                StyleableToast.makeText(getActivity(), "Posted successfully", R.style.CustomToast).show();
             } else {
-                Toast.makeText(getActivity(), "Failed post the walk", Toast.LENGTH_LONG).show();
+                StyleableToast.makeText(getActivity(), "Failed post the walk", R.style.CustomToast).show();
             }
             getActivity().finish();
         });

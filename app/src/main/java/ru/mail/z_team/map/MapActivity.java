@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.ViewModelProvider;
@@ -49,6 +50,10 @@ public class MapActivity extends AppCompatActivity implements PermissionsListene
         setContentView(R.layout.activity_map);
         fragmentManager = getSupportFragmentManager();
         container = R.id.map_activity_container;
+
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setTitle("MAP");
+        actionBar.setDisplayHomeAsUpEnabled(true);
 
         viewModel = new ViewModelProvider(this).get(MapViewModel.class);
         permissionsManager = new PermissionsManager(this);
@@ -125,5 +130,11 @@ public class MapActivity extends AppCompatActivity implements PermissionsListene
         super.onSaveInstanceState(outState);
         viewModel.setStories(stories);
         viewModel.setWalkList(walkList);
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return super.onSupportNavigateUp();
     }
 }

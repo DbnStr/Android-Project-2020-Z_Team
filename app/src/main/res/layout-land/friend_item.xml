@@ -1,27 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/news_card"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
-
+    android:layout_margin="8dp"
+    android:checkable="true"
+    android:clickable="true"
+    android:focusable="true"
+    android:outlineAmbientShadowColor="@color/secondaryColor"
+    app:cardBackgroundColor="@color/card_back"
+    app:cardCornerRadius="16dp"
+    app:cardElevation="8dp"
+    app:checkedIcon="@color/primaryLightColor">
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="80dp"
+        android:layout_height="wrap_content"
         app:layout_constraintTop_toTopOf="parent"
         android:orientation="horizontal">
-        <ImageView
-            android:layout_width="75dp"
-            android:layout_height="75dp"
-            android:layout_margin="2.5dp"
-            android:background="@drawable/ic_person"/>
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/user_image"
+            android:layout_width="88dp"
+            android:layout_height="88dp"
+            android:src="@drawable/ic_person"
+            app:civ_border_width="5dp"
+            app:civ_border_overlay="true"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            app:civ_border_color="@color/primaryDarkColor"/>
         <TextView
             android:id="@+id/friend_item"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:padding="15dp"
-            android:textSize="24sp"
-            android:text="Anonymous"/>
+            android:padding="16dp"
+            style="@style/H1Text"
+            android:text="@string/anonymous"/>
 
     </LinearLayout>
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+</com.google.android.material.card.MaterialCardView>

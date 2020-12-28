@@ -12,8 +12,10 @@
         app:layout_constraintTop_toTopOf="parent"
         android:layout_width="match_parent"
         android:textSize="24sp"
-        android:layout_margin="16dp"
+        android:padding="16dp"
         tools:text="place"
+        style="@style/H1Text"
+        android:background="@drawable/top_shape"
         android:layout_height="wrap_content"/>
 
     <com.google.android.material.textfield.TextInputLayout
@@ -21,13 +23,19 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
+        android:padding="8dp"
         android:hint="description"
+        android:background="@drawable/custom_button_shape"
+        app:hintTextColor="@color/secondaryDarkColor"
         app:startIconDrawable="@drawable/ic_point"
         app:layout_constraintTop_toBottomOf="@id/story_place">
 
         <com.google.android.material.textfield.TextInputEditText
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:textColor="@color/secondaryDarkColor"
+            android:background="@drawable/custom_edit_text_shape"
+            android:maxHeight="300dp"/>
 
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -47,7 +55,7 @@
                 android:background="@drawable/ic_baseline_add_a_photo_24"
                 android:layout_width="60dp"
                 android:layout_height="60dp"
-                android:layout_margin="16dp"/>
+                android:layout_margin="8dp"/>
 
             <LinearLayout
                 android:id="@+id/story_photo_count_layout"
@@ -79,6 +87,7 @@
             android:layout_height="wrap_content"
             android:text="@string/upload"
             style="@style/CustomButton"
+            android:background="@drawable/custom_button_shape"
             android:layout_margin="16dp" />
 
     </LinearLayout>

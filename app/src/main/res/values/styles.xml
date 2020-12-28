@@ -1,19 +1,10 @@
 <resources>
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
-        <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/primaryColor</item>
         <item name="colorPrimaryDark">@color/primaryDarkColor</item>
         <item name="colorAccent">@color/secondaryColor</item>
-    </style>
-
-    <style name="CustomButton" parent="Widget.AppCompat.Button.Colored">
-        <item name="android:background">@color/secondaryColor</item>
-        <item name="android:textStyle">italic</item>
-        <item name="android:paddingLeft">16dp</item>
-        <item name="android:paddingRight">16dp</item>
-        <item name="android:paddingBottom">16dp</item>
-        <item name="android:paddingTop">16dp</item>
+        <item name="alertDialogTheme">@style/AlertDialog</item>
     </style>
 
     <style name="MainTheme" parent="Theme.MaterialComponents.Light.DarkActionBar">
@@ -22,6 +13,66 @@
         <item name="colorAccent">@color/secondaryColor</item>
         <item name="colorSecondary">@color/secondaryColor</item>
         <item name="colorSecondaryVariant">@color/secondaryDarkColor</item>
+        <item name="alertDialogTheme">@style/AlertDialog</item>
     </style>
 
+    <style name="CustomButton" parent="Widget.AppCompat.Button">
+        <item name="android:background">@color/primaryColor</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/primaryTextColor</item>
+        <item name="android:layout_margin">16dp</item>
+        <item name="android:padding">8dp</item>
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerRadius">16dp</item>
+
+    </style>
+
+    <style name="NoSthText" parent="Widget.AppCompat.TextView">
+        <item name="android:textSize">24sp</item>
+        <item name="android:padding">16dp</item>
+        <item name="android:textColor">@color/primaryDarkColor</item>
+        <item name="android:textAlignment">center</item>
+    </style>
+
+    <style name="H1Text" parent="Widget.AppCompat.TextView">
+        <item name="android:textSize">@dimen/H1_text</item>
+        <item name="android:textColor">@color/primaryDarkColor</item>
+    </style>
+
+    <style name="DateText" parent="Widget.AppCompat.TextView">
+        <item name="android:padding">8dp</item>
+        <item name="android:textSize">@dimen/date_text</item>
+        <item name="android:textColor">@color/secondaryColor</item>
+        <item name="android:textAlignment">textEnd</item>
+    </style>
+
+    <style name="H1EditText" parent="Widget.AppCompat.EditText">
+        <item name="android:textSize">@dimen/H1_text</item>
+        <item name="android:inputType">text</item>
+        <item name="android:textColor">@color/primaryDarkColor</item>
+    </style>
+
+    <style name="CustomTabs" parent="Widget.Design.TabLayout">
+        <item name="tabSelectedTextColor">@color/secondaryDarkColor</item>
+        <item name="tabTextColor">@color/primaryTextColor</item>
+    </style>
+
+    <style name="AlertDialog" parent="Theme.MaterialComponents.Light.Dialog.Alert">
+        <item name="android:textColorPrimary">@color/secondaryDarkColor</item>
+        <item name="android:textSize">24sp</item>
+        <item name="android:windowBackground">@drawable/alert_dialog_shape</item>
+        <item name="colorAccent">@color/secondaryDarkColor</item>
+        <item name="android:alpha">0.5</item>
+    </style>
+
+    <style name="CustomToast">
+        <item name="colorBackground">@color/secondaryLightColor</item>
+        <item name="textColor">@color/secondaryDarkColor</item>
+        <item name="length">LONG</item>
+        <item name="cornerRadius">16dp</item>
+    </style>
+
+    <style name="ActionBarTheme" parent="@android:style/Widget.Holo.Light.ActionBar">
+        <item name="android:background">@drawable/alert_dialog_shape</item>
+    </style>
 </resources>
