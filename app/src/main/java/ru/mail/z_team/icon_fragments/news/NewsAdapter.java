@@ -48,7 +48,7 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsViewHolder> {
         holder.newsAuthor.setText(author);
         SimpleDateFormat sdf =
                 new SimpleDateFormat("EEE, MMM d, yyyy hh:mm:ss a z");
-        sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
+        sdf.setTimeZone(TimeZone.getDefault());
         holder.newsDate.setText(sdf.format(date));
 
         holder.newsBody.setOnClickListener(v -> {
