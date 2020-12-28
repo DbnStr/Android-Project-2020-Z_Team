@@ -64,4 +64,11 @@
         <item name="colorAccent">@color/secondaryDarkColor</item>
         <item name="android:alpha">0.5</item>
     </style>
+
+    <style name="CustomToast">
+        <item name="colorBackground">@color/secondaryLightColor</item>
+        <item name="textColor">@color/secondaryDarkColor</item>
+        <item name="length">LONG</item>
+        <item name="cornerRadius">16dp</item>
+    </style>
 </resources>

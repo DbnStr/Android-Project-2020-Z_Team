@@ -13,7 +13,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
@@ -24,6 +23,7 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
+import com.muddzdev.styleabletoastlibrary.StyleableToast;
 
 public class LoginActivity extends AppCompatActivity implements LifecycleOwner {
 
@@ -65,12 +65,12 @@ public class LoginActivity extends AppCompatActivity implements LifecycleOwner {
                     progressDialog.dismiss();
                 }
                 else if (s == getString(R.string.FAILED)){
-                    Toast.makeText(LoginActivity.this, "Failed to sent email:(",
-                            Toast.LENGTH_SHORT).show();
+                    StyleableToast.makeText(LoginActivity.this, "Failed to sent email:(",
+                            R.style.CustomToast).show();
                 }
                 else if (s == getString(R.string.ERROR)){
-                    Toast.makeText(LoginActivity.this, "ERROR",
-                            Toast.LENGTH_SHORT).show();
+                    StyleableToast.makeText(LoginActivity.this, "ERROR",
+                            R.style.CustomToast).show();
                 }
             }
         });
@@ -84,17 +84,17 @@ public class LoginActivity extends AppCompatActivity implements LifecycleOwner {
                 } else if (authState == getString(R.string.SUCCESS)) {
                     logger.log("signInWithEmail:success");
                     progressDialog.dismiss();
-                    Toast.makeText(LoginActivity.this, message + " signed in successfully",
-                            Toast.LENGTH_SHORT).show();
+                    StyleableToast.makeText(LoginActivity.this, message + " signed in successfully",
+                            R.style.CustomToast).show();
                     startActivity(new Intent(LoginActivity.this, MainMenuActivity.class));
                     finish();
                 } else if (authState == getString(R.string.FAILED)) {
                     progressDialog.dismiss();
-                    Toast.makeText(LoginActivity.this, "Authentication failed.",
-                            Toast.LENGTH_SHORT).show();
+                    StyleableToast.makeText(LoginActivity.this, "Authentication failed.",
+                            R.style.CustomToast).show();
                 } else if (authState == getString(R.string.ERROR)) {
                     progressDialog.dismiss();
-                    Toast.makeText(LoginActivity.this, message, Toast.LENGTH_LONG).show();
+                    StyleableToast.makeText(LoginActivity.this, message, R.style.CustomToast).show();
                 }
             }
         });

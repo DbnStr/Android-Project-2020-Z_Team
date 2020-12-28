@@ -31,6 +31,7 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.muddzdev.styleabletoastlibrary.StyleableToast;
 import com.squareup.picasso.Picasso;
 
 import java.util.HashMap;
@@ -182,8 +183,8 @@ public class ProfileFragment extends Fragment {
                     .getSystemService(CLIPBOARD_SERVICE);
             ClipData clipData = ClipData.newPlainText(PLAIN_TEXT, idTextView.getText());
             clipboardManager.setPrimaryClip(clipData);
-            Toast.makeText(getContext(), "Text is сopied to сlipboard",
-                    Toast.LENGTH_LONG).show();
+            StyleableToast.makeText(getContext(), "Text is сopied to сlipboard",
+                    R.style.CustomToast).show();
         });
     }
 
@@ -298,7 +299,7 @@ public class ProfileFragment extends Fragment {
                     if (storageAccepted) {
                         pickFromGallery();
                     } else {
-                        Toast.makeText(getActivity(), "Permission is necessary", Toast.LENGTH_LONG).show();
+                        StyleableToast.makeText(getActivity(), "Permission is necessary", R.style.CustomToast).show();
                     }
                 }
                 break;

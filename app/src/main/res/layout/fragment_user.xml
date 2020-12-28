@@ -11,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:background="@drawable/top_shape"
+        android:background="@color/secondaryLightColor"
         app:layout_constraintTop_toTopOf="parent">
 
         <de.hdodenhof.circleimageview.CircleImageView
@@ -23,6 +23,19 @@
             app:civ_border_overlay="true"
             android:layout_margin="32dp"
             app:civ_border_color="@color/secondaryDarkColor"/>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/white_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/tab_shape"
+        app:layout_constraintTop_toBottomOf="@id/user_image_layout">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="16dp"
+            android:background="@drawable/alert_dialog_shape"/>
     </RelativeLayout>
 
     <LinearLayout

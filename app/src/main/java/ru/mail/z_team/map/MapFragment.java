@@ -10,7 +10,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -42,6 +41,7 @@ import com.mapbox.mapboxsdk.style.layers.LineLayer;
 import com.mapbox.mapboxsdk.style.layers.SymbolLayer;
 import com.mapbox.mapboxsdk.style.sources.GeoJsonSource;
 import com.mapbox.mapboxsdk.utils.BitmapUtils;
+import com.muddzdev.styleabletoastlibrary.StyleableToast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -168,7 +168,7 @@ public class MapFragment extends Fragment {
                     addStory(mapboxMap);
                 }
                 else {
-                    Toast.makeText(getActivity(), "Build your route first", Toast.LENGTH_LONG).show();
+                    StyleableToast.makeText(getActivity(), "Build your route first", R.style.CustomToast).show();
                 }
             });
             saveMapButton.setOnClickListener(v -> {
@@ -180,7 +180,7 @@ public class MapFragment extends Fragment {
                             .commitAllowingStateLoss();
                 }
                 else {
-                    Toast.makeText(getActivity(), "Build a walk to save one", Toast.LENGTH_LONG).show();
+                    StyleableToast.makeText(getActivity(), "Build a walk to save one", R.style.CustomToast).show();
                 }
             });
         }));
