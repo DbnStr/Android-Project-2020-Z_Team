@@ -186,6 +186,10 @@ public class ProfileFragment extends Fragment {
     private void setProfileData(@NonNull User user) {
         name.setText(user.getName());
         age.setText(String.valueOf(user.getAge()));
+        idTextView.setText(user.getId());
+
+        initCopyBtn();
+
         if (user.bitmap != null) {
             image.setImageBitmap(user.bitmap);
         }

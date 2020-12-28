@@ -5,7 +5,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -14,6 +13,8 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+
+import com.muddzdev.styleabletoastlibrary.StyleableToast;
 
 import ru.mail.z_team.Logger;
 import ru.mail.z_team.R;
@@ -97,8 +98,8 @@ public class PageFragment extends Fragment {
                 viewModel.getRefreshStatus()
                         .observe(getActivity(), refreshStatus -> {
                             if (refreshStatus == FriendsRepository.RefreshStatus.FAILED) {
-                                Toast toast = Toast.makeText(getContext(),
-                                        "Fail with update", Toast.LENGTH_SHORT);
+                                StyleableToast toast = StyleableToast.makeText(getContext(),
+                                        "Fail with update", R.style.CustomToast);
                                 toast.show();
                             }
                             friendsRefreshLayout.setRefreshing(false);
