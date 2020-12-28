@@ -44,7 +44,7 @@ public class WalkAdapter extends RecyclerView.Adapter<WalksViewHolder> {
         holder.walkTitle.setText(title);
         SimpleDateFormat sdf =
                 new SimpleDateFormat("EEE, MMM d, yyyy hh:mm:ss a z");
-        sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
+        sdf.setTimeZone(TimeZone.getTimeZone("GMT+03:00"));
         holder.walkDate.setText(sdf.format(date));
 
         holder.walkBody.setOnClickListener(v -> {

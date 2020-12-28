@@ -90,6 +90,7 @@ public class MapActivity extends AppCompatActivity implements PermissionsListene
         }
         else {
             StyleableToast.makeText(this, "Turn on GPS", R.style.CustomToast).show();
+            finish();
         }
     }
 
