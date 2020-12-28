@@ -33,7 +33,7 @@ public class Transformer {
 
     @SuppressLint("SimpleDateFormat")
     public static SimpleDateFormat sdf =
-            new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
+            new SimpleDateFormat("yyMMddHHmmssZ");
 
     /* default User result */
 

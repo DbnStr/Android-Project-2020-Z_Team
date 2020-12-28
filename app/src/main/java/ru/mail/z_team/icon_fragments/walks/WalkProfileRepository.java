@@ -41,7 +41,7 @@ public class WalkProfileRepository {
 
     @SuppressLint("SimpleDateFormat")
     SimpleDateFormat sdf =
-            new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
+            new SimpleDateFormat("yyMMddHHmmssZ");
 
     public WalkProfileRepository(Context context) {
         this.context = context;

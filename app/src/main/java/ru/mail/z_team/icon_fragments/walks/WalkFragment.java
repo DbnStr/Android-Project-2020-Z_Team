@@ -66,7 +66,7 @@ public class WalkFragment extends Fragment {
 
     @SuppressLint("SimpleDateFormat")
     SimpleDateFormat sdf =
-            new SimpleDateFormat("EEE, MMM d, yyyy hh:mm:ss a z");
+            new SimpleDateFormat("yyMMddHHmmssZ");
 
     public WalkFragment() { }
 
