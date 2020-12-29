@@ -88,6 +88,7 @@ public class StoryFragment extends Fragment {
     private void showStory() {
         place.setText(story.getPlace());
         description.setText(story.getDescription());
+        gallery.removeAllViews();
         if (story.getUrlImages() != null) {
             for (String url : story.getUrlImages()) {
                 ImageView imageView = new ImageView(getActivity());
@@ -96,7 +97,7 @@ public class StoryFragment extends Fragment {
                 reference.getDownloadUrl().addOnSuccessListener(uri -> Picasso.get()
                         .load(uri)
                         .noFade()
-                        .resize(imageView.getHeight(), imageView.getHeight())
+                        .resize(800, 800)
                         .centerCrop()
                         .placeholder(ContextCompat.getDrawable(getActivity(), R.drawable.ic_baseline_photo_24))
                         .into(imageView)).addOnFailureListener(e -> logger.errorLog(e.getMessage()));

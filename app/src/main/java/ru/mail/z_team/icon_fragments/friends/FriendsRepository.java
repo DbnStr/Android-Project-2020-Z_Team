@@ -9,6 +9,7 @@ import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.ArrayList;
 
+import retrofit2.Call;
 import retrofit2.Response;
 import ru.mail.z_team.ApplicationModified;
 import ru.mail.z_team.Logger;
@@ -40,7 +41,8 @@ public class FriendsRepository {
     private final MutableLiveData<ArrayList<Friend>> currentUserFriendRequestList = new MutableLiveData<>();
     private final MutableLiveData<User> currentUserProfileData = new MutableLiveData<>();
     private final MutableLiveData<Boolean> userExistence = new MutableLiveData<>();
-    private final MutableLiveData<RefreshStatus> refreshStatus = new MutableLiveData<>();
+    private final MutableLiveData<RefreshStatus> friendListRefreshStatus = new MutableLiveData<>();
+    private final MutableLiveData<RefreshStatus> friendRequestListRefreshStatus = new MutableLiveData<>();
 
     public FriendsRepository(Context context) {
         this.context = context;
@@ -70,14 +72,18 @@ public class FriendsRepository {
         return currentUserFriendRequestList;
     }
 
-    public LiveData<RefreshStatus> getRefreshStatus() {
-        return refreshStatus;
+    public LiveData<RefreshStatus> getFriendListRefreshStatus() {
+        return friendListRefreshStatus;
+    }
+
+    public LiveData<RefreshStatus> getFriendRequestListRefreshStatus() {
+        return friendListRefreshStatus;
     }
 
     public void updateCurrentUserFriends() {
         String currentUserId = FirebaseAuth.getInstance().getUid();
 
-        logger.log("update user - " + currentUserId);
+        logger.log("update user friends - " + currentUserId);
         DatabaseNetworkControlExecutor executor = new DatabaseNetworkControlExecutor(context) {
             @Override
             public void networkRun() {
@@ -97,13 +103,13 @@ public class FriendsRepository {
             @Override
             public void onNullResponse(Response<DatabaseUser> response) {
                 logger.errorLog("Fail with update");
-                refreshStatus.postValue(RefreshStatus.FAILED);
+                friendListRefreshStatus.postValue(RefreshStatus.FAILED);
             }
 
             @Override
             public void onSuccessResponse(Response<DatabaseUser> response) {
                 currentUserFriends.postValue(Transformer.transformToUser(response.body()).getFriends());
-                refreshStatus.postValue(RefreshStatus.OK);
+                friendListRefreshStatus.postValue(RefreshStatus.OK);
 
                 replaceOldFriendsListInDbWithNew(Transformer.transformToUser(response.body()).getFriends(), userId);
             }
@@ -118,7 +124,7 @@ public class FriendsRepository {
         String currentUserId = FirebaseAuth.getInstance().getUid();
         localDatabase.databaseWriteExecutor.execute(() -> {
                 currentUserFriends.postValue(Transformer.transformToFriendAll(userDao.getUserFriends(currentUserId)));
-                refreshStatus.postValue(RefreshStatus.OK);
+                friendListRefreshStatus.postValue(RefreshStatus.OK);
         });
     }
 
@@ -166,7 +172,8 @@ public class FriendsRepository {
 
             @Override
             public void onSuccessResponse(Response<DatabaseFriend> response) {
-
+                logger.log("Successfully delete friend request");
+                updateCurrentUserFriendRequestList();
             }
         });
     }
@@ -174,11 +181,13 @@ public class FriendsRepository {
     public void updateCurrentUserFriendRequestList() {
         final String currentUserId = FirebaseAuth.getInstance().getUid();
 
+        logger.log("update user friendRequestList - " + currentUserId);
         userApi.getFriendRequestList(currentUserId).enqueue(new DatabaseCallback<ArrayList<DatabaseFriend>>(LOG_TAG) {
             @Override
             public void onNullResponse(Response<ArrayList<DatabaseFriend>> response) {
                 logger.log("the current user has no new friend requests");
 
+                friendRequestListRefreshStatus.postValue(RefreshStatus.FAILED);
                 currentUserFriendRequestList.postValue(new ArrayList<>());
             }
 
@@ -186,7 +195,14 @@ public class FriendsRepository {
             public void onSuccessResponse(Response<ArrayList<DatabaseFriend>> response) {
                 logger.log("the current user has " + response.body().size() + " friend requests");
 
+                friendRequestListRefreshStatus.postValue(RefreshStatus.OK);
                 currentUserFriendRequestList.postValue(Transformer.transformToFriendAll(response.body()));
+            }
+
+            @Override
+            public void onFailure(Call<ArrayList<DatabaseFriend>> call, Throwable t) {
+                super.onFailure(call, t);
+                friendRequestListRefreshStatus.postValue(RefreshStatus.FAILED);
             }
         });
     }
